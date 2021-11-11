@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Intro To Data Science: Online Workshop",
+    "dateAndTime": "2022-01-01 09:00:00",
+    "location": "online",
+    "description": "Join Flatiron School for an introductory workshop on how to use simple and multiple linear regression models from data science instructors. It will be important to understand the relationship between multiple variables in order to make future predictions on behaviors.",
+    "maxParticipants": 100,
+    "imgUrl": "https://sg-media.apjonlinecdn.com/wysiwyg/buying-desktop/what_is_aio/premium.jpg",
+    "tokenVideo": "",
+    "categoryId": 1,
+    "eventOrganizerId": 1
+  },
+  {
+    "name": "Intro To JavaScript: Online Workshop JavaScript",
+    "dateAndTime": "2022-01-02 09:00:00",
+    "location": "online",
+    "description": "Join Flatiron School for an introductory workshop on how to use simple and multiple linear regression models from data science instructors. It will be important to understand the relationship between multiple variables in order to make future predictions on behaviors.",
+    "maxParticipants": 100,
+    "imgUrl": "https://www.dicoding.com/blog/wp-content/uploads/2020/05/internship-rendi-override-overloading.png",
+    "tokenVideo": "",
+    "categoryId": 1,
+    "eventOrganizerId": 2
+  }
+]
