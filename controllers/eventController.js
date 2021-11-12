@@ -49,14 +49,30 @@ class EventController {
       }
 
       if (day) {
-        if (day == "this week") {
+        if (day == "tomorrow") {
+          condition.dateAndTime = {
+            [Op.between]: [
+              new Date(),
+              new Date().setDate(new Date().getDate() + 1),
+            ],
+          };
+        }
+        if (day == "today") {
+          const TODAY_START = new Date().setHours(0, 0, 0, 0);
+          const NOW = new Date();
+          condition.dateAndTime = {
+            [Op.gt]: TODAY_START,
+            [Op.lt]: NOW,
+          };
+        }
+        if (day == "thisWeek") {
           condition.dateAndTime = {
             [Op.between]: [new Date(), thisWeek(new Date())],
           };
         }
-        if (day == "tomorrow") {
+        if (day == "nextWeek") {
           condition.dateAndTime = {
-            [Op.between]: [new Date(), tomorrow],
+            [Op.between]: [new Date(), thisWeek(new Date())],
           };
         }
       }

@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notNull: { msg: "Username is required" },
           notEmpty: { msg: "Username is required" },
+          customValidator(value) {
+            if (/^[-\w\.\$@\*\!]{1,30}$/i.test(value) === false)
+              throw new Error(
+                "maximum 30 characters allowed and no space allowed in username."
+              );
+          },
         },
       },
       password: {

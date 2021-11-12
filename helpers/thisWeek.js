@@ -1,4 +1,4 @@
-let gantiHari = function (param) {
+let thisWeek = function (param) {
   let days = [
     "Sunday",
     "Monday",
@@ -20,4 +20,6 @@ let gantiHari = function (param) {
   return d;
 };
 
-module.exports = gantiHari;
+let todayLimit = (date) => {};
+
+module.exports = thisWeek;
