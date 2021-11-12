@@ -3,13 +3,8 @@ const { User } = require('../models')
 
 const authentication = async (req, res, next) => {
     
-    //ambil acces token dari headers
     const token = req.headers.access_token 
 
-    /*
-    convert access token jadi payload untuk memeriksa 
-    apakah access tokennya benar atau tidak
-    */
     try {
         const payload = verify(token)
         const foundUser = await User.findOne({
