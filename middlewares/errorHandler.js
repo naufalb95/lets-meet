@@ -4,6 +4,9 @@ let errorHandler = (error, req, res, next) => {
     case "SequelizeValidationError":
       message = res.status(400).json({ message: `${error.errors[0].message}` });
       break;
+    case "SequelizeUniqueConstraintError":
+      message = res.status(400).json({ message: `${error.errors[0].message}` });
+      break;
     case "Need Email":
       message = res.status(400).json({ message: `Email is required` });
       break;
