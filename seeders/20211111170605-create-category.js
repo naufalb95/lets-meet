@@ -6,12 +6,12 @@ module.exports = {
       "Categories",
       [
         {
-          name: "online",
+          name: "Technology",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          name: "offline",
+          name: "Hobbies & Passions",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
