@@ -16,6 +16,12 @@ let errorHandler = (error, req, res, next) => {
     case "failed login":
       message = res.status(401).json({ message: `Invalid email / password` });
       break;
+    case "Event Not Found":
+      message = res.status(404).json({ message: `Event Not Found` });
+      break;
+    case "Access Denied":
+      message = res.status(403).json({ message: `Not Enough Access` });
+      break;
     default:
       message = res.status(500).json({ message: "Internal server error." });
       break;

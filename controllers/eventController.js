@@ -1,7 +1,5 @@
 const { Event, Category, User, Participant } = require("../models");
 const { Op } = require("sequelize");
-const thisWeek = require("../helpers/thisWeek");
-const date = require("date-and-time");
 
 class EventController {
   static async create(req, res, next) {
@@ -47,32 +45,45 @@ class EventController {
           condition.location = { [Op.iLike]: `%${location}%` };
         }
       }
-
       if (day) {
         if (day == "tomorrow") {
+          let today = new Date();
+          let tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          tomorrow.setHours(23, 59, 59, 59);
           condition.dateAndTime = {
-            [Op.between]: [
-              new Date(),
-              new Date().setDate(new Date().getDate() + 1),
-            ],
+            [Op.between]: [today, tomorrow],
           };
         }
         if (day == "today") {
-          const TODAY_START = new Date().setHours(0, 0, 0, 0);
-          const NOW = new Date();
+          let today = new Date();
           condition.dateAndTime = {
-            [Op.gt]: TODAY_START,
-            [Op.lt]: NOW,
+            [Op.between]: [
+              today.setHours(0, 0, 0, 0),
+              today.setHours(23, 59, 59, 0),
+            ],
           };
         }
         if (day == "thisWeek") {
+          let today = new Date();
+          let sunday = new Date();
+          sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
+          sunday.setHours(23, 59, 59, 59);
           condition.dateAndTime = {
-            [Op.between]: [new Date(), thisWeek(new Date())],
+            [Op.between]: [today, sunday],
           };
         }
         if (day == "nextWeek") {
+          let sundayFirst = new Date();
+          sundayFirst.setDate(
+            sundayFirst.getDate() + (7 - sundayFirst.getDay())
+          );
+          sundayFirst.setHours(23, 59, 59, 59);
+          let sundayLast = new Date();
+          sundayLast.setDate(sundayLast.getDate() + (14 - sundayLast.getDay()));
+          sundayLast.setHours(23, 59, 59, 59);
           condition.dateAndTime = {
-            [Op.between]: [new Date(), thisWeek(new Date())],
+            [Op.between]: [sundayFirst, sundayLast],
           };
         }
       }
@@ -111,10 +122,31 @@ class EventController {
   }
 
   static async detailEvent(req, res, next) {
-    const { eventId } = req.params;
     try {
-      const result = await Event.findByPk(eventId);
-      res.status(200).json(result);
+      const { eventId } = req.params;
+      const event = await Event.findByPk(eventId, {
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      });
+      const eventOrganizer = await User.findByPk(event.eventOrganizerId, {
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "password"],
+        },
+      });
+      const participants = await Participant.findAll({
+        where: { eventId: event.id },
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+        include: [
+          {
+            model: User,
+            attributes: ["username"],
+          },
+        ],
+      });
+      res.status(200).json({ event, eventOrganizer, participants });
     } catch (err) {
       next(err);
     }
@@ -184,7 +216,6 @@ class EventController {
         res.status(404).json({ message: "You never joined this event" });
       }
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
