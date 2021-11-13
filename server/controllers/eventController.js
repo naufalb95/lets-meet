@@ -31,14 +31,14 @@ class EventController {
         eventOrganizerId,
       });
 
-     CRON_SCHEDULER[result.id] = cron.schedule(`0 1 * * *`, () => {
-        console.log('Running a job at 01:00 at America/Sao_Paulo timezone');
+     CRON_SCHEDULER[result.id] = cron.schedule(`35 14 * * *`, () => {
+        console.log('Running a job at 01:00 at Asia/Jakarta timezone');
       }, {
         scheduled: false,
-        timezone: "Indonesia"
+        timezone: "Asia/Jakarta"
       });
 
-      CRON_SCHEDULER.start()
+      CRON_SCHEDULER[result.id].start()
 
       res.status(201).json(result);
     } catch (err) {
