@@ -48,12 +48,16 @@ class EventController {
         }
       }
 
+      const today = new Date(new Date().setHours(0, 0, 0, 0))
+      const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1, 0)
+      const lusa = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2, 0)
+
       if (day) {
         if (day == "tomorrow") {
           condition.dateAndTime = {
             [Op.between]: [
-              new Date(),
-              new Date().setDate(new Date().getDate() + 1),
+              tomorrow,
+              lusa,
             ],
           };
         }
