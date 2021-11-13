@@ -1,5 +1,7 @@
 const { Event, Category, User, Participant } = require("../models");
 const { Op } = require("sequelize");
+const cron = require('node-cron');
+
 
 class EventController {
   static async create(req, res, next) {
@@ -26,6 +28,16 @@ class EventController {
         categoryId,
         eventOrganizerId,
       });
+
+      const schedule = cron.schedule(`0 1 * * *`, () => {
+        console.log('Running a job at 01:00 at America/Sao_Paulo timezone');
+      }, {
+        scheduled: false,
+        timezone: "Indonesia"
+      });
+
+      schedule.start()
+
       res.status(201).json(result);
     } catch (err) {
       next(err);
