@@ -52,7 +52,7 @@ class EventController {
           tomorrow.setDate(tomorrow.getDate() + 1);
           tomorrow.setHours(23, 59, 59, 59);
           condition.dateAndTime = {
-            [Op.between]: [today, tomorrow],
+            [Op.between]: [today, tomorrow]
           };
         }
         if (day == "today") {

@@ -32,14 +32,37 @@
 //   if (dayName == "Saturday") d.setDate(d.getDate() + 1);
 //   return d;
 // };
-const kata = "giolove frengky";
+// const kata = "giolove frengky";
 
-let validateUsername = function (words) {
-  // let output = true;
-  // // for (let word of words) {
-  // //   if (word === " ") output = false;
-  // // }
-  // if (/^[-\w\.\$@\*\!]{1,30}$/.test(words)) output = false;
-  return /^[-\w\.\$@\*\!]{1,30}$/i.test(words);
-};
-console.log(validateUsername(kata));
+// let validateUsername = function (words) {
+//   // let output = true;
+//   // // for (let word of words) {
+//   // //   if (word === " ") output = false;
+//   // // }
+//   // if (/^[-\w\.\$@\*\!]{1,30}$/.test(words)) output = false;
+//   return /^[-\w\.\$@\*\!]{1,30}$/i.test(words);
+// };
+// console.log(validateUsername(kata));
+
+
+const today = new Date(new Date().setHours(0, 0, 0, 0))
+const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
+
+console.log(today);
+console.log(tomorrow);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
