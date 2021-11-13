@@ -1,5 +1,6 @@
 let message;
 let errorHandler = (error, req, res, next) => {
+  console.log('ERR:', error);
   switch (error.name) {
     case "SequelizeValidationError":
       message = res.status(400).json({ message: `${error.errors[0].message}` });

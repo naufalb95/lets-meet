@@ -1,5 +1,9 @@
 const { Event, Category, User, Participant } = require("../models");
 const { Op } = require("sequelize");
+const cron = require('node-cron');
+
+const CRON_SCHEDULER = {}
+
 
 class EventController {
   static async create(req, res, next) {
@@ -26,6 +30,16 @@ class EventController {
         categoryId,
         eventOrganizerId,
       });
+
+     CRON_SCHEDULER[result.id] = cron.schedule(`17 15 * * *`, () => {
+        console.log('Running a job at 01:00 at Asia/Jakarta timezone');
+      }, {
+        scheduled: false,
+        timezone: "Asia/Jakarta"
+      });
+
+      CRON_SCHEDULER[result.id].start()
+
       res.status(201).json(result);
     } catch (err) {
       next(err);
@@ -187,13 +201,27 @@ class EventController {
   }
 
   static async deleteEvent(req, res, next) {
+    console.log('delete triggered')
+
     const { eventId } = req.params;
     try {
       const foundEvent = await Event.findByPk(eventId);
       await Event.destroy({ where: { id: eventId } });
       const result = `Event ${foundEvent.name} has been deleted`;
+
+     CRON_SCHEDULER[eventId].stop();
+
+    console.log(CRON_SCHEDULER, "cek");
+
+    //  CRON_SCHEDULER[eventId].destroy()
+
+     delete CRON_SCHEDULER[eventId]
+
+     console.log(CRON_SCHEDULER);
+
       res.status(200).json({ result });
     } catch (err) {
+      console.log(err);
       next(err);
     }
   }
