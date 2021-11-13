@@ -45,13 +45,21 @@
 // console.log(validateUsername(kata));
 
 
-const today = new Date(new Date().setHours(0, 0, 0, 0))
-const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
+// const today = new Date(new Date().setHours(0, 0, 0, 0))
+// const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
 
-console.log(today);
-console.log(tomorrow);
+// console.log(today);
+// console.log(tomorrow);
 
+let datel = '2022-03-01 16:15'
+let arry = ''
+let minute = datel.slice(14,16)
+let hour = datel.slice(11,13)
+let day = datel.slice(8, 10)
+let month = datel.slice(5, 7)
 
+const dateEvent = minute + " "+ hour + " " + day + " " + month
+console.log(dateEvent);
 
 
 

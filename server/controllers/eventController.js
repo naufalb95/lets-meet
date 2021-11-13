@@ -15,6 +15,10 @@ class EventController {
       maxParticipants,
       categoryId,
     } = req.body;
+
+
+    console.log(req.body.dateAndTime, "<<< date and time");
+
     const imgUrl = req.body.imgUrl
       ? req.body.imgUrl
       : "https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png";
@@ -29,14 +33,25 @@ class EventController {
         imgUrl,
         categoryId,
         eventOrganizerId,
-      });
+      })
 
-     CRON_SCHEDULER[result.id] = cron.schedule(`17 15 * * *`, () => {
-        console.log('Running a job at 01:00 at Asia/Jakarta timezone');
+      let dateInput = req.body.dateAndTime
+
+      let minute = dateInput.slice(14, 16)
+      let hour = dateInput.slice(11, 13)
+      let day = dateInput.slice(8, 10)
+      let month = dateInput.slice(5, 7)
+
+      console.log(minute, " ", hour, " ", day, " ", month, " ");
+
+      CRON_SCHEDULER[result.id] = cron.schedule(`${minute} ${hour} ${day} ${month} *`, () => {
+        console.log('Running on');
       }, {
         scheduled: false,
         timezone: "Asia/Jakarta"
       });
+
+      // console.log(CRON_SCHEDULER, "ISI POST")
 
       CRON_SCHEDULER[result.id].start()
 
@@ -194,6 +209,33 @@ class EventController {
       );
 
       const eventResult = result[1][0];
+
+
+      CRON_SCHEDULER[id].stop();
+
+      delete CRON_SCHEDULER[id]
+
+      let dateInput = req.body.dateAndTime
+
+      let minute = dateInput.slice(14, 16)
+      let hour = dateInput.slice(11, 13)
+      let day = dateInput.slice(8, 10)
+      let month = dateInput.slice(5, 7)
+
+      console.log(minute, " ", hour, " ", day, " ", month, " ");
+
+      CRON_SCHEDULER[id] = cron.schedule(`${minute} ${hour} ${day} ${month} *`, () => {
+        console.log('Running a job (edit)');
+      }, {
+        scheduled: false,
+        timezone: "Asia/Jakarta"
+      });
+
+      CRON_SCHEDULER[id].start()
+
+
+
+
       res.status(200).json(eventResult);
     } catch (err) {
       next(err);
@@ -209,15 +251,15 @@ class EventController {
       await Event.destroy({ where: { id: eventId } });
       const result = `Event ${foundEvent.name} has been deleted`;
 
-     CRON_SCHEDULER[eventId].stop();
+      CRON_SCHEDULER[eventId].stop();
 
-    console.log(CRON_SCHEDULER, "cek");
+      console.log(CRON_SCHEDULER, "cek");
 
-    //  CRON_SCHEDULER[eventId].destroy()
+      //  CRON_SCHEDULER[eventId].destroy()
 
-     delete CRON_SCHEDULER[eventId]
+      delete CRON_SCHEDULER[eventId]
 
-     console.log(CRON_SCHEDULER);
+      //  console.log(CRON_SCHEDULER);
 
       res.status(200).json({ result });
     } catch (err) {
