@@ -98,7 +98,7 @@ export default {
       options: {
         appId: 'bba821c9f0374c0a86b015c0668097d8',
         channel: 'test2',
-        token: '006bba821c9f0374c0a86b015c0668097d8IACMD0Mw3MRG4xyMORrrkBbGvu/BGcCGP1/Oe9mKn3KoOliNuxMAAAAAEABr21wCUhSRYQEAAQA3FJFh',
+        token: '006bba821c9f0374c0a86b015c0668097d8IADgTMOAOH7BSLZqBu12dAL35jIyzLd6k2S0wvPHmJK+9FiNuxMAAAAAEABr21wCKaWSYQEAAQAMpZJh',
         uid: 123456
       }
     }
@@ -243,6 +243,9 @@ export default {
         this.rtc.localVideoTrack.play(container)
       }
     }
+  },
+  async created () {
+    this.$store.commit('SET_IS_VIDEO_CONFERENCE', true)
   },
   async mounted () {
     window.addEventListener('resize', this.videoResizeHandler)
