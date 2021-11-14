@@ -12,7 +12,7 @@
           </router-link>
         </div>
       </div>
-      <div class="mt-44 w-5/12 absolute top-0 right-0 rounded-xl overflow-hidden shadow-2xl">
+      <div class="mt-44 w-5/12 absolute top-0 right-0 rounded-l-xl overflow-hidden shadow-2xl">
         <img src="../assets/5235.jpg" />
       </div>
     </div>
