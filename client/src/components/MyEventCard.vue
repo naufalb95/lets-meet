@@ -1,13 +1,14 @@
 <template>
-  <div class="w-5/12 px-4 py-4 border-b border-t border-indigo-900 flex">
-  <div class="w-2/3">
-    <h1 class="text-blue-900 font-medium">Sun, Nov 14 @14.00 WIB</h1>
-    <h1 class="text-blue-900 font-bold">Event Name</h1>
-  </div>
-  <div class="w-1/3 flex justify-center">
-    <button @click.prevent="showEditModal" style="width: 40%" class="text-white font-bold bg-blue-500 rounded p-2 mx-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-opacity-50">Edit</button>
-    <button style="width: 40%" @click.prevent="" class="text-white font-bold bg-blue-500 rounded p-2 mx-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-opacity-50">Delete</button>
-  </div>
+  <div class="w-5/12 px-10 py-8 bg-white rounded-xl mb-3 shadow-lg border border-white">
+    <div class="w-2/3">
+      <h1 class="text-gray-700 text-md font-medium">Sun, Nov 14 @ 14.00 WIB</h1>
+      <h1 class="text-blue-900 font-semibold text-3xl filter drop-shadow-lg">Event Name</h1>
+    </div>
+    <div class="mt-6">
+      <button @click.prevent="showEditModal" style="width: 100px" class="text-white py-1 font-semibold border border-blue-500 bg-blue-500 rounded hover:bg-blue-600 mr-2">Detail</button>
+      <button @click.prevent="showEditModal" style="width: 100px" class="text-white py-1 font-semibold border border-yellow-500 bg-yellow-500 rounded hover:bg-yellow-600 mr-2">Edit</button>
+      <button @click.prevent="showEditModal" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">Delete</button>
+    </div>
   </div>
 </template>
 

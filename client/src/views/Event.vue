@@ -1,35 +1,34 @@
 <template>
-  <div class="flex flex-col mt-28">
-    <div class="text-transparent bg-clip-text bg-gradient-to-br from-blue-600 to-indigo-800">
-      <h1 class="text-5xl text-center">Event List</h1>
-    </div>
+  <div class="flex flex-col mt-24">
     <div class="mt-14 w-screen flex justify-center">
-      <input type="text" placeholder="e.g. Yoga Event" class="w-2/6 px-3 py-3 placeholder-blue-400 rounded text-sm border shadow focus:outline-none focus:ring"/>
-      <button type="text" class="text-center w-1/12 px-3 py-3 placeholder-blue-400 rounded text-base text-white border shadow focus:outline-none focus:ring bg-blue-400 hover:bg-blue-500">Search</button>
+      <input type="text" placeholder="e.g. Yoga Event" class="w-2/6 px-3 py-3 placeholder-gray-400 rounded-l-lg text-sm border border-gray-300 shadow focus:outline-none"/>
+      <button type="text" class="text-center border border-blue-600 px-8 py-3 rounded-r-lg text-white shadow focus:outline-none bg-blue-600 hover:bg-blue-700 hover:border-blue-700">
+        <font-awesome-icon icon="search" class="text-xl"/>
+      </button>
     </div>
     <div class="mt-4 w-screen flex justify-center mb-8">
-      <select class="text-center w-1/12 mx-4 px-3 py-3 placeholder-blue-400 text-base text-white border shadow focus:outline-none focus:ring bg-blue-400 hover:bg-blue-500">
+      <select class="text-center mx-4 py-2 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="1">Damar</option>
         <option value="2">Gio</option>
         <option value="3">Nopal</option>
         <option value="4">Frengki</option>
         <option value="5">Far</option>
       </select>
-      <select class="text-center w-1/12 mx-4 px-3 py-3 placeholder-blue-400 text-base text-white border shadow focus:outline-none focus:ring bg-blue-400 hover:bg-blue-500">
+      <select class="text-center mx-4 py-2 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="1">Damar</option>
         <option value="2">Gio</option>
         <option value="3">Nopal</option>
         <option value="4">Frengki</option>
         <option value="5">Far</option>
       </select>
-      <select class="text-center w-1/12 mx-4 px-3 py-3 placeholder-blue-400 text-base text-white border shadow focus:outline-none focus:ring bg-blue-400 hover:bg-blue-500">
+      <select class="text-center mx-4 py-2 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="1">Damar</option>
         <option value="2">Gio</option>
         <option value="3">Nopal</option>
         <option value="4">Frengki</option>
         <option value="5">Far</option>
       </select>
-      <select class="text-center w-1/12 mx-4 px-3 py-3 placeholder-blue-400 text-base text-white border shadow focus:outline-none focus:ring bg-blue-400 hover:bg-blue-500">
+      <select class="text-center mx-4 py-2 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="1">Damar</option>
         <option value="2">Gio</option>
         <option value="3">Nopal</option>
