@@ -1,0 +1,45 @@
+<template>
+  <div id="app" class="bg-white-ground flex flex-col h-screen min-w-screen bg-cover bg-no-repeat bg-center bg-fixed overflow-x-hidden relative">
+    <ModalOverlayLogin v-if="isModalLogin" />
+    <ModalOverlayRegister v-if="isModalRegister" />
+    <ModalOverlayCreate v-if="isModalCreate" />
+    <ModalOverlayEdit v-if="isModalEdit" />
+    <Navbar />
+    <router-view class="flex flex-col mt-14 mb-28 flex-grow"/>
+    <Footer />
+  </div>
+</template>
+
+<script>
+import Navbar from './components/Navbar.vue'
+import Footer from './components/Footer.vue'
+import ModalOverlayLogin from './overlay/ModalOverlayLogin.vue'
+import ModalOverlayRegister from './overlay/ModalOverlayRegister.vue'
+import ModalOverlayCreate from './overlay/ModalOverlayCreate.vue'
+import ModalOverlayEdit from './overlay/ModalOverlayEdit.vue'
+export default {
+  name: 'App',
+  computed: {
+    isModalLogin () {
+      return this.$store.state.isModalLogin
+    },
+    isModalRegister () {
+      return this.$store.state.isModalRegister
+    },
+    isModalCreate () {
+      return this.$store.state.isModalCreate
+    },
+    isModalEdit () {
+      return this.$store.state.isModalEdit
+    }
+  },
+  components: {
+    Navbar,
+    Footer,
+    ModalOverlayLogin,
+    ModalOverlayRegister,
+    ModalOverlayCreate,
+    ModalOverlayEdit
+  }
+}
+</script>
