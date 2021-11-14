@@ -1,6 +1,6 @@
 <template>
   <div v-on:click.stop class="flex justify-center items-center">
-    <form  class="bg-gradient-to-r from-white to-blue-100 text-blue-900 shadow-md rounded px-8 py-6 justify-center items-center flex-col">
+    <form @submit.prevent="loginSubmit" class="bg-gradient-to-r from-white to-blue-100 text-blue-900 shadow-md rounded px-8 py-6 justify-center items-center flex-col">
         <h1 class="text-center text-3xl font-bold">Sign In</h1>
         <label class="text-center text-xl font-normal">Email Address</label><br>
         <input type="email" style="width: 35vw" class="mt-2 mb-3 px-3 py-3 rounded text-sm border shadow focus:outline-none focus:ring"/><br>
@@ -18,6 +18,10 @@ export default {
   methods: {
     showRegisterModal () {
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', true)
+      this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
+    },
+    loginSubmit () {
+      this.$store.commit('SET_IS_LOGIN', true)
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
     }
   }

@@ -11,13 +11,19 @@
       <label class="text-xl font-normal">Confirm Password</label><br>
       <input type="password" style="width: 35vw" class="mt-2 mb-3 px-3 py-3 rounded text-sm border shadow focus:outline-none focus:ring"/><br>
       <input type="submit" style="width: 35vw" class="text-white text-center bg-blue-600 hover:bg-blue-700 px-2 py-2 rounded "/>
-      <h1 class="text-center mt-3">Already a member? <label class="text-blue-400" @click="showRegisterModal">Sign In</label></h1>
+      <h1 class="text-center mt-3">Already a member? <label class="text-blue-400" @click="showLoginModal">Sign In</label></h1>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Register'
+  name: 'Register',
+  methods: {
+    showLoginModal () {
+      this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
+      this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
+    }
+  }
 }
 </script>
