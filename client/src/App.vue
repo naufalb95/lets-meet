@@ -1,12 +1,13 @@
 <template>
-  <div id="app" class="bg-white-ground flex flex-col h-screen min-w-screen bg-cover bg-no-repeat bg-center bg-fixed overflow-x-hidden relative">
+  <div id="app" class="flex flex-col min-h-screen min-w-screen bg-gray-50 relative font-base relative">
     <ModalOverlayLogin v-if="isModalLogin" />
     <ModalOverlayRegister v-if="isModalRegister" />
     <ModalOverlayCreate v-if="isModalCreate" />
     <ModalOverlayEdit v-if="isModalEdit" />
-    <Navbar />
-    <router-view class="flex flex-col mt-14 mb-28 flex-grow"/>
-    <Footer />
+    <Navbar class="relative z-10" v-if="!isVideoConference" />
+    <!-- <router-view class="flex flex-col mt-14 mb-28 flex-grow z-10"/> -->
+    <router-view />
+    <Footer class="relative z-10" v-if="!isVideoConference"/>
   </div>
 </template>
 
@@ -31,6 +32,9 @@ export default {
     },
     isModalEdit () {
       return this.$store.state.isModalEdit
+    },
+    isVideoConference () {
+      return this.$store.state.isVideoConference
     }
   },
   components: {

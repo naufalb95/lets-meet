@@ -4,8 +4,9 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'white-ground': "url('https://wallpapercave.com/wp/wp3306977.jpg')"
-       }
+        'event': "url('./assets/background-4.jpeg')"
+      },
+      fontFamily: {'base':['Open Sans'], 'logo': ['Pacifico']}
     },
   },
   variants: {

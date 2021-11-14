@@ -9,7 +9,8 @@ export default new Vuex.Store({
     isModalRegister: false,
     isModalCreate: false,
     isModalEdit: false,
-    isLogin: false
+    isLogin: false,
+    isVideoConference: false
   },
   mutations: {
     SET_IS_MODAL_SHOW_LOGIN (state, payload) {
@@ -26,6 +27,9 @@ export default new Vuex.Store({
     },
     SET_IS_LOGIN (state, payload) {
       state.isLogin = payload
+    },
+    SET_IS_VIDEO_CONFERENCE (state, payload) {
+      state.isVideoConference = payload
     }
   },
   actions: {
