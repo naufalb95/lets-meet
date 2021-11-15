@@ -7,10 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         targetKey: "id",
       });
-      Participant.belongsTo(models.Event, {
-        foreignKey: "eventId",
-        targetKey: "id",
-      });
+      Participant.belongsTo(models.Event, {foreignKey: "eventId", targetKey: "id"});
     }
   }
   Participant.init(
