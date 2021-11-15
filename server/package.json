@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx jest --watchAll"
+    "test": "npx jest --watchAll --detectOpenHandles --runInBand --verbose --forceExit --coverage"
   },
   "keywords": [],
   "author": "",

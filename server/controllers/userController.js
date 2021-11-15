@@ -18,8 +18,6 @@ class UserController {
   static async login(req, res, next) {
     try {
       const { email, password } = req.body;
-      if (!email) throw { name: "Need Email" };
-      if (!password) throw { name: "Need Password" };
       const foundUser = await User.findOne({ where: { email } });
       if (!foundUser) throw { name: `failed login` };
       const isValid = decode(password, foundUser.password);

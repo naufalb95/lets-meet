@@ -4,7 +4,6 @@ const cron = require('node-cron');
 
 const CRON_SCHEDULER = {}
 
-
 class EventController {
   static async create(req, res, next) {
     const {
@@ -129,9 +128,9 @@ class EventController {
           exclude: ["createdAt", "updatedAt"],
         },
       });
+      
       res.status(200).json(result);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
@@ -142,9 +141,23 @@ class EventController {
     try {
       const foundUser = await User.findByPk(userId);
       const foundEvent = await Event.findByPk(eventId);
-      await Participant.create({ userId, eventId });
-      const result = `${foundUser.username} Succes Join Event ${foundEvent.name}`;
-      res.status(201).json({ result });
+      const foundParticipant = await Participant.findOne({
+          where: {
+            userId,
+            eventId
+          }
+      })
+      if (foundEvent && !foundParticipant) {
+        await Participant.create({ userId, eventId });
+        const result = `${foundUser.username} Succes Join Event ${foundEvent.name}`;
+        res.status(201).json({ message: result });    
+      } else if (foundParticipant) {
+          throw { name: "You Have Joined This Event" }
+      }
+      else {
+        throw { name: "Event Not Found" };
+      }
+      
     } catch (err) {
       next(err);
     }
@@ -152,30 +165,36 @@ class EventController {
 
   static async detailEvent(req, res, next) {
     try {
-      const { eventId } = req.params;
-      const event = await Event.findByPk(eventId, {
-        attributes: {
-          exclude: ["createdAt", "updatedAt"],
-        },
-      });
-      const eventOrganizer = await User.findByPk(event.eventOrganizerId, {
-        attributes: {
-          exclude: ["createdAt", "updatedAt", "password"],
-        },
-      });
-      const participants = await Participant.findAll({
-        where: { eventId: event.id },
-        attributes: {
-          exclude: ["createdAt", "updatedAt"],
-        },
-        include: [
-          {
-            model: User,
-            attributes: ["username"],
-          },
-        ],
-      });
-      res.status(200).json({ event, eventOrganizer, participants });
+        const { eventId } = req.params;
+        const event = await Event.findByPk(eventId, {
+            attributes: {
+            exclude: ["createdAt", "updatedAt"],
+            },
+        });
+      
+        if (event) {
+            const eventOrganizer = await User.findByPk(event.eventOrganizerId, {
+                attributes: {
+                  exclude: ["createdAt", "updatedAt", "password"],
+                },
+              });
+              const participants = await Participant.findAll({
+                where: { eventId: event.id },
+                attributes: {
+                  exclude: ["createdAt", "updatedAt"],
+                },
+                include: [
+                  {
+                    model: User,
+                    attributes: ["username"],
+                  },
+                ],
+              });
+            res.status(200).json({ event, eventOrganizer, participants });
+        } else {
+            throw { name: "Event Not Found" };
+        }
+
     } catch (err) {
       next(err);
     }
@@ -233,9 +252,6 @@ class EventController {
 
       CRON_SCHEDULER[id].start()
 
-
-
-
       res.status(200).json(eventResult);
     } catch (err) {
       next(err);
@@ -243,27 +259,26 @@ class EventController {
   }
 
   static async deleteEvent(req, res, next) {
-    console.log('delete triggered')
-
     const { eventId } = req.params;
     try {
-      const foundEvent = await Event.findByPk(eventId);
-      await Event.destroy({ where: { id: eventId } });
-      const result = `Event ${foundEvent.name} has been deleted`;
-
-      CRON_SCHEDULER[eventId].stop();
-
-      console.log(CRON_SCHEDULER, "cek");
-
-      //  CRON_SCHEDULER[eventId].destroy()
-
-      delete CRON_SCHEDULER[eventId]
-
-      //  console.log(CRON_SCHEDULER);
-
-      res.status(200).json({ result });
+        const foundEvent = await Event.findByPk(eventId);
+        if (foundEvent) {
+            await Event.destroy({ where: { id: eventId } });
+    
+            CRON_SCHEDULER[eventId].stop();
+    
+            //  CRON_SCHEDULER[eventId].destroy()
+    
+            delete CRON_SCHEDULER[eventId]
+    
+            //  console.log(CRON_SCHEDULER);
+    
+            res.status(200).json({message: `Event ${foundEvent.name} has been deleted` });
+        } else {
+            throw { name: "Event Not Found" };
+        }
+        
     } catch (err) {
-      console.log(err);
       next(err);
     }
   }
@@ -280,10 +295,9 @@ class EventController {
 
       if (foundPartipant) {
         await Participant.destroy({ where: { userId, eventId } });
-        const result = `${foundUser.username} Succes Left ${foundEvent.name} Event`;
-        res.status(200).json({ result });
+        res.status(200).json({message: `${foundUser.username} Succes Left ${foundEvent.name} Event`});
       } else {
-        res.status(404).json({ message: "You never joined this event" });
+        throw { name: "You never joined this event" };
       }
     } catch (err) {
       next(err);

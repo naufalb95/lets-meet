@@ -8,3 +8,5 @@ AuthN DELETE  /events/:eventId/participants => ganti join atau gak => Done
 AuthN POST /events => bikin event baru => Done
 AuthN, AuthZ PUT /events/:eventId => edit event baru  => Done
 AuthN, AuthZ DELETE /events/:eventId => delete event baru => Done
+
+tambah column isDone di event, yang berisi true atau false, dan yang boleh mengganti hanya pembuat acara

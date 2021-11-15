@@ -21,6 +21,65 @@ describe('Register fiture', () => {
             })
     })
 
+    test('register invalid cause username not given', (done) => {
+        request(app)
+            .post('/users/register')
+            .send({
+                email: "test228@gmail.com",
+                password: "test1",
+            })
+
+        .then((res) => {
+            expect(res.status).toBe(400)
+            expect(res.body).toEqual({"message": "Username is required"});
+            done()
+        })
+
+        .catch((err) => {
+            done(err)
+        })
+    })
+
+    test('register invalid cause username already registered', (done) => {
+        request(app)
+            .post('/users/register')
+            .send({
+                username: "test",
+                email: "test228@gmail.com",
+                password: "test1",
+            })
+
+        .then((res) => {
+            expect(res.status).toBe(400)
+            expect(res.body).toEqual({"message": "Username must be unique"});
+            done()
+        })
+
+        .catch((err) => {
+            done(err)
+        })
+    })
+
+    test('register invalid cause username validation not met', (done) => {
+        request(app)
+            .post('/users/register')
+            .send({
+                username: "test test",
+                email: "test228@gmail.com",
+                password: "test1",
+            })
+
+        .then((res) => {
+            expect(res.status).toBe(400)
+            expect(res.body).toEqual({"message": "maximum 16 characters allowed and no space allowed in username."});
+            done()
+        })
+
+        .catch((err) => {
+            done(err)
+        })
+    })
+
     test('register invalid cause email not given', (done) => {
         request(app)
             .post('/users/register')
@@ -234,7 +293,7 @@ describe('Login fiture', () => {
             done(err)
         })
     })
-}   )
+})
 
 beforeAll( async () => {
     await User.destroy({

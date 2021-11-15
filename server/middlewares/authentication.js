@@ -13,9 +13,6 @@ const authentication = async (req, res, next) => {
                 email: payload.email
             }
         })
-        if (!foundUser) {
-            throw new Error ("User not found")
-        }
         req.user = {
             id: foundUser.id,
             username: foundUser.username,
@@ -24,10 +21,10 @@ const authentication = async (req, res, next) => {
         }
         next()
     } catch (err) {
-        if (err.message === "User not found") {
-            res.status(401).json( { msg: "Invalid JWT Token" } )
+        if(err.message === "invalid signature") {
+            res.status(401).json( { message: "Invalid JWT Token" } )
         } else {
-            res.status(401).json( { msg: "Something Wicked Happened" } )
+            res.status(401).json( { message: "Something Wicked Happened" } )
         }
     }
 }

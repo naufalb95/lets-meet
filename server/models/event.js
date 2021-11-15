@@ -59,8 +59,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-          notNull: { msg: "Category ID is required." },
-          notEmpty: { msg: "Category ID is required." },
+          notNull: { msg: "Category is required." },
+          notEmpty: { msg: "Category is required." },
         },
       },
       eventOrganizerId: {
