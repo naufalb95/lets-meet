@@ -1,18 +1,8 @@
 <template>
   <nav>
-    <div class="flex items-center justify-between flex-wrap bg-gradient-to-r from-blue-600 to-blue-400 py-2 px-10 bottom-0 border-t-8 border-gray-200">
-      <div class="ml-72">
-        <span class="cursor-default font-medium inline-block text-2xl text-white mr-1 ml-1">Footer</span>
-      </div>
-      <div>
-        <span class="cursor-default font-medium inline-block text-2xl text-white mr-1 ml-1">Footer</span>
-      </div>
-      <div>
-        <span class="cursor-default font-medium inline-block text-2xl text-white mr-1 ml-1">Footer</span>
-      </div>
-      <div class="mr-72">
-        <span class="cursor-default font-medium inline-block text-2xl text-white mr-1 ml-1">Footer</span>
-      </div>
+    <div class="relative flex justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 100 1440 170"><path fill="#111827" fill-opacity="1" d="M0,192L48,186.7C96,181,192,171,288,170.7C384,171,480,181,576,181.3C672,181,768,171,864,160C960,149,1056,139,1152,138.7C1248,139,1344,149,1392,154.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
+      <div class="absolute bottom-0 text-white mb-12 text-lg font-semibold">&copy; 2021 Let's Meet Team</div>
     </div>
   </nav>
 </template>

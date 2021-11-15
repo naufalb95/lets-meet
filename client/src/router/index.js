@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Event from '../views/Event.vue'
 import Detail from '../views/Detail.vue'
 import MyEvent from '../views/MyEvent.vue'
+import VideoConference from '../views/VideoConference.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/myevent',
     name: 'MyEvent',
     component: MyEvent
+  },
+  {
+    path: '/event/:id/meet',
+    name: 'VideoConference',
+    component: VideoConference
   }
 ]
 
