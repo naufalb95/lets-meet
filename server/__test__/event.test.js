@@ -1,6 +1,5 @@
 const request = require('supertest')
 const app = require("../app")
-const { createToken } = require('../helpers/jwt')
 const { Event, User, Category, Participant } = require('../models')
 const { sign } = require('../helpers/jwt');
 const access_token = sign({ id: 1, email: 'usertest@mail.com' })
@@ -30,7 +29,7 @@ beforeAll( async () => {
 
     await Event.create( { 
         name: 'Jakarta Professional Development Meetup Group', 
-        dateAndTime: '2022-01-01 16:00:00.000 +0700', 
+        dateAndTime: '2021-11-20 16:00:00.000 +0700', 
         location: 'Bandung', 
         description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.', 
         maxParticipants: 50, 
@@ -41,8 +40,19 @@ beforeAll( async () => {
 
     await Event.create( { 
         name: 'Intro To Data Science: Online Workshop', 
-        dateAndTime: '2022-01-01 16:00:00.000 +0700', 
+        dateAndTime: '2022-11-28 16:00:00.000 +0700', 
         location: 'Semarang', 
+        description: 'Join Flatiron School for an introductory workshop on how to use simple and multiple linear regression models from data science instructors. It will be important to understand the relationship between multiple variables in order to make future predictions on behaviors.', 
+        maxParticipants: 30, 
+        imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
+        categoryId: 2, 
+        eventOrganizerId: 1
+    })
+
+    await Event.create( { 
+        name: 'Intro To Data Science: Online Workshop', 
+        dateAndTime: '2022-01-01 16:00:00.000 +0700', 
+        location: 'Online', 
         description: 'Join Flatiron School for an introductory workshop on how to use simple and multiple linear regression models from data science instructors. It will be important to understand the relationship between multiple variables in order to make future predictions on behaviors.', 
         maxParticipants: 30, 
         imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
@@ -130,12 +140,7 @@ describe('Event fiture', () => {
 
     test('Get All Item With 1 Query Filter ', (done) => {
         request(app)
-            .get('/events')
-            .query({
-                filter: {
-                    eventName: "Jakarta Professional Development Meetup Group",
-                },
-            })
+            .get('/events?day=today')
 
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -149,13 +154,7 @@ describe('Event fiture', () => {
 
     test('Get All Item With 2 Query Filter ', (done) => {
         request(app)
-            .get('/events')
-            .query({
-                filter: {
-                    eventName: "Jakarta Professional Development Meetup Group",
-                    day: "tomorrow"
-                },
-            })
+            .get('/events?eventName=Jakarta Professional Development Meetup Group&day=nextWeek')
 
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -169,14 +168,7 @@ describe('Event fiture', () => {
 
     test('Get All Item With 3 Query Filter ', (done) => {
         request(app)
-            .get('/events')
-            .query({
-                filter: {
-                    eventName: "Jakarta Professional Development Meetup Group",
-                    day: "tomorrow",
-                    location: "Semarang"
-                },
-            })
+            .get('/events?eventName=Jakarta Professional Development Meetup Group&day=tomorrow&location=Semarang')
 
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -190,15 +182,21 @@ describe('Event fiture', () => {
 
     test('Get All Item With 4 Query Filter ', (done) => {
         request(app)
-            .get('/events')
-            .query({
-                filter: {
-                    eventName: "Jakarta Professional Development Meetup Group",
-                    day: "tomorrow",
-                    location: "Semarang",
-                    category: "Technology"
-                },
+            .get('/events?eventName=Jakarta Professional Development Meetup Group&day=thisWeek&location=Semarang&category=1')
+
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Array));
+                done()
             })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Get All Item With Query Location Online ', (done) => {
+        request(app)
+            .get('/events?location=Online')
 
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -258,14 +256,37 @@ describe('Event fiture', () => {
             })
     })
 
-    test('Create New Event', (done) => {
+    test('Create New Event With Location Offline', (done) => {
         request(app)
             .post('/events')
             .set({ access_token })
             .send({
-                name: 'Test Create Event',
+                name: 'Test Create Event Offline',
                 dateAndTime: '2022-01-01 16:00:00.000 +0700', 
-                location: 'Bandung', 
+                location: 'Bengkulu', 
+                description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.', 
+                maxParticipants: 50, 
+                imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
+                categoryId: 1,
+            })
+            .then((res) => {
+                expect(res.status).toBe(201);
+                expect(res.body).toEqual(expect.any(Object));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Create New Event With Location Online', (done) => {
+        request(app)
+            .post('/events')
+            .set({ access_token })
+            .send({
+                name: 'Test Create Event Online',
+                dateAndTime: '2022-01-01 16:00:00.000 +0700', 
+                location: 'Online', 
                 description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.', 
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
@@ -509,9 +530,53 @@ describe('Event fiture', () => {
             })
     })
 
-    test('Edit Event', (done) => {
+    test('Edit Event With Location Offline', (done) => {
         request(app)
-            .put('/events/3')
+            .put('/events/4')
+            .set({ access_token })
+            .send({
+                name: 'Test Edit',
+                dateAndTime: '2022-01-01 16:00:00.000 +0700', 
+                description: 'Ddescription Test Edit Event', 
+                maxParticipants: 30, 
+                imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
+                categoryId: 1,
+            })
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Object));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Edit Event With Location online', (done) => {
+        request(app)
+            .put('/events/5')
+            .set({ access_token })
+            .send({
+                name: 'Test Edit',
+                dateAndTime: '2021-12-19 16:00:00.000 +0700', 
+                description: 'Ddescription Test Edit Event', 
+                maxParticipants: 30, 
+                imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
+                categoryId: 1,
+            })
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Object));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Edit Event Fail Cause Event Id Invalid', (done) => {
+        request(app)
+            .put('/events/300')
             .set({ access_token })
             .send({
                 name: 'Test Edit',
@@ -523,8 +588,8 @@ describe('Event fiture', () => {
                 categoryId: 1,
             })
             .then((res) => {
-                expect(res.status).toBe(200);
-                expect(res.body).toEqual(expect.any(Object));
+                expect(res.status).toBe(404);
+                expect(res.body).toEqual({message: 'Event Not Found'});
                 done();
             })
             .catch((err) => {
@@ -555,9 +620,24 @@ describe('Event fiture', () => {
             })
     })
 
-    test('Delete Event', (done) => {
+    test('Delete Event With Location Offline', (done) => {
         request(app)
-            .delete('/events/3')
+            .delete('/events/4')
+            .set({ access_token })
+            
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Object));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Delete Event With Location Online', (done) => {
+        request(app)
+            .delete('/events/5')
             .set({ access_token })
             
             .then((res) => {

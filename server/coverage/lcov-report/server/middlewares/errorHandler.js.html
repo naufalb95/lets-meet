@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">10% </span>
+                <span class="strong">90% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>2/20</span>
+                <span class='fraction'>18/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>7/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">10% </span>
+                <span class="strong">90% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/20</span>
+                <span class='fraction'>18/20</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -91,29 +91,29 @@
 <a name='L32'></a><a href='#L32'>32</a>
 <a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -122,31 +122,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">let message;
-let errorHandler = <span class="fstat-no" title="function not covered" >(e</span>rror, req, res, next) =&gt; {
-<span class="cstat-no" title="statement not covered" >  console.log('ERR:', error);</span>
-<span class="cstat-no" title="statement not covered" >  switch (error.name) {</span>
+let errorHandler = (error, req, res, next) =&gt; {
+  console.log('ERR:', error);
+  switch (error.name) {
     case "SequelizeValidationError":
-<span class="cstat-no" title="statement not covered" >        message = res.status(400).json({ message: `${error.errors[0].message}` });</span>
-<span class="cstat-no" title="statement not covered" >        break;</span>
+        message = res.status(400).json({ message: `${error.errors[0].message}` });
+        break;
     case "SequelizeUniqueConstraintError":
-<span class="cstat-no" title="statement not covered" >        message = res.status(400).json({ message: `${error.errors[0].message}` });</span>
-<span class="cstat-no" title="statement not covered" >        break;</span>
+        message = res.status(400).json({ message: `${error.errors[0].message}` });
+        break;
     case "failed login":
-<span class="cstat-no" title="statement not covered" >        message = res.status(401).json({ message: `Invalid email / password` });</span>
-<span class="cstat-no" title="statement not covered" >        break;</span>
+        message = res.status(401).json({ message: `Invalid email / password` });
+        break;
     case "Event Not Found":
-<span class="cstat-no" title="statement not covered" >        message = res.status(404).json({ message: `Event Not Found` });</span>
-<span class="cstat-no" title="statement not covered" >        break;</span>
+        message = res.status(404).json({ message: `Event Not Found` });
+        break;
     case "Access Denied":
-<span class="cstat-no" title="statement not covered" >        message = res.status(403).json({ message: `Not Enough Access` });</span>
-<span class="cstat-no" title="statement not covered" >        break;</span>
+        message = res.status(403).json({ message: `Not Enough Access` });
+        break;
     case "You Have Joined This Event":
-<span class="cstat-no" title="statement not covered" >        message = res.status(400).json({ message: `You Have Joined This Event` });</span>
-<span class="cstat-no" title="statement not covered" >        break;</span>
+        message = res.status(400).json({ message: `You Have Joined This Event` });
+        break;
     case "You never joined this event":
-<span class="cstat-no" title="statement not covered" >        message = res.status(404).json({ message: `You never joined this event` });</span>
-<span class="cstat-no" title="statement not covered" >        break;</span>
-    default:
+        message = res.status(404).json({ message: `You never joined this event` });
+        break;
+<span class="branch-7 cbranch-no" title="branch not covered" >    default:</span>
 <span class="cstat-no" title="statement not covered" >      message = res.status(500).json({ message: "Internal server error." });</span>
 <span class="cstat-no" title="statement not covered" >      break;</span>
   }
@@ -160,7 +160,7 @@ module.exports = errorHandler;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Mon Nov 15 2021 13:57:04 GMT+0700 (Western Indonesia Time)
+                at Mon Nov 15 2021 22:04:45 GMT+0700 (Western Indonesia Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>
