@@ -36,18 +36,30 @@
         <option value="5">Far</option>
       </select>
     </div>
-    <section class="flex items-center flex-col" v-for="index in 10" :key="index">
-      <EventCard></EventCard>
+    <section class="flex items-center flex-col" v-for="event in events" :key="event.id">
+      <EventCard v-bind:event={event} />
     </section>
   </div>
 </template>
 
 <script>
 import EventCard from '../components/EventCard.vue'
+import { mapActions, mapState } from 'vuex'
+
 export default {
   name: 'Event',
   components: {
     EventCard
+  },
+  computed: {
+    ...mapState(['events'])
+  },
+  methods: {
+    ...mapActions(['fetchEvents'])
+  },
+  async created () {
+    await this.fetchEvents()
+    console.log(this.events)
   }
 }
 </script>

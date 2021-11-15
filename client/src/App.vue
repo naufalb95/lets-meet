@@ -4,10 +4,9 @@
     <ModalOverlayRegister v-if="isModalRegister" />
     <ModalOverlayCreate v-if="isModalCreate" />
     <ModalOverlayEdit v-if="isModalEdit" />
-    <Navbar class="relative z-10" v-if="!isVideoConference" />
-    <!-- <router-view class="flex flex-col mt-14 mb-28 flex-grow z-10"/> -->
-    <router-view />
-    <Footer class="relative z-10" v-if="!isVideoConference"/>
+    <Navbar id="navbar" class="relative z-10" v-if="!isVideoConference" />
+    <router-view id="content" />
+    <Footer id="footer" class="relative z-10" v-if="!isVideoConference"/>
   </div>
 </template>
 
