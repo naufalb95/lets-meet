@@ -61,6 +61,17 @@ export default new Vuex.Store({
       })
 
       context.commit('SET_EVENT_DETAIL', response.data)
+    },
+    async attendEvent (context, payload) {
+      const response = await server({
+        method: 'POST',
+        url: 'events/' + payload.eventId,
+        headers: {
+          access_token: 'token'
+        }
+      })
+
+      console.log(response.data)
     }
   },
   modules: {
