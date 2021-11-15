@@ -1,17 +1,25 @@
 <template>
-  <div v-on:click.stop class="flex justify-center items-center">
-    <form class="bg-gradient-to-r from-white to-blue-100 text-blue-900 shadow-md rounded px-8 py-6 justify-center items-center flex-col">
-      <h1 class="text-center text-3xl font-bold">Sign Up</h1>
-      <label class="text-xl font-normal mt-8">Your Name</label><br>
-      <input type="text" style="width: 35vw" class="mt-2 mb-3 px-3 py-3 rounded text-sm border shadow focus:outline-none focus:ring"/><br>
-      <label class="text-xl font-normal">Email Address</label><br>
-      <input type="email" style="width: 35vw" class="mt-2 mb-3 px-3 py-3 rounded text-sm border shadow focus:outline-none focus:ring"/><br>
-      <label class="text-xl font-normal">Password</label><br>
-      <input type="password" style="width: 35vw" class="mt-2 mb-3 px-3 py-3 rounded text-sm border shadow focus:outline-none focus:ring"/><br>
-      <label class="text-xl font-normal">Confirm Password</label><br>
-      <input type="password" style="width: 35vw" class="mt-2 mb-3 px-3 py-3 rounded text-sm border shadow focus:outline-none focus:ring"/><br>
-      <input type="submit" style="width: 35vw" class="text-white text-center bg-blue-600 hover:bg-blue-700 px-2 py-2 rounded "/>
-      <h1 class="text-center mt-3">Already a member? <label class="text-blue-400" @click="showLoginModal">Sign In</label></h1>
+  <div @click.stop class="px-8 py-6 bg-white shadow-lg rounded-lg w-1/3 z-20 relative">
+    <form @submit.prevent="loginSubmit" class="justify-center items-center flex-col flex">
+        <h1 class="text-center text-3xl font-bold text-blue-800 mb-10">Sign Up</h1>
+        <div class="w-3/4 mb-4">
+          <label class="text-center text-lg font-normal">Your Name</label>
+          <input type="text" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
+        </div>
+        <div class="w-3/4 mb-4">
+          <label class="text-center text-lg font-normal">Email Address</label>
+          <input type="email" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
+        </div>
+        <div class="w-3/4 mb-4">
+          <label class="text-center text-lg font-normal">Password</label>
+          <input type="password" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
+        </div>
+        <div class="w-3/4 mb-4">
+          <label class="text-center text-lg font-normal">Confirm Password</label>
+          <input type="password" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
+        </div>
+        <input type="submit" value="Submit" class="w-3/4 mt-4 text-white text-center bg-blue-600 hover:bg-blue-700 px-2 py-3 shadow rounded cursor-pointer"/>
+        <h1 class="text-center mt-12">Already a member? <span class="text-blue-700 font-bold cursor-pointer">Sign In</span></h1>
     </form>
   </div>
 </template>

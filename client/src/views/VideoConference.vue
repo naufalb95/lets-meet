@@ -1,5 +1,5 @@
 <template>
-  <div id='app' class='h-screen w-screen bg-gray-900 relative'>
+  <div id='app' class='min-h-screen w-screen bg-gray-900 relative'>
     <div id='back_row' class='text-white pl-5 flex items-center'>
       <button>Home</button>
     </div>
@@ -50,23 +50,7 @@
 <script>
 import AgoraRTC from 'agora-rtc-sdk-ng'
 
-// const rtc = {
-//   localAudioTrack: null,
-//   localVideoTrack: null,
-//   localScreenTrack: null,
-//   client: null,
-//   camClient: null,
-//   screenClient: null
-// }
-
 // ! Tombol Screen Share hanya ada host saja
-
-// let options = {
-//     appId: 'bba821c9f0374c0a86b015c0668097d8',
-//     channel: 'mbem',
-//     token: '006bba821c9f0374c0a86b015c0668097d8IAC3f9IeCqqW9u4l27HEOYRasH56OfeiGSCY6NAqlILiG4tt0ogAAAAAEABr21wCusaPYQEAAQCgxo9h',
-//     uid: 123462
-// }
 
 // ! options dan rtc dimasukkan ke state data
 

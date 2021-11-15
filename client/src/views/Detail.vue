@@ -46,7 +46,10 @@ export default {
     ...mapState(['eventDetail'])
   },
   methods: {
-    ...mapActions(['fetchEventDetail'])
+    ...mapActions(['fetchEventDetail', 'attendEvent']),
+    async attendHandler () {
+      await this.attendEvent(this.eventDetail.id)
+    }
   },
   async created () {
     await this.fetchEventDetail(this.$route.params.id)

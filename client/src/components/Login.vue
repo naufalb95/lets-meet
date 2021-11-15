@@ -1,13 +1,17 @@
 <template>
-  <div v-on:click.stop class="flex justify-center items-center">
-    <form @submit.prevent="loginSubmit" class="bg-gradient-to-r from-white to-blue-100 text-blue-900 shadow-md rounded px-8 py-6 justify-center items-center flex-col">
-        <h1 class="text-center text-3xl font-bold">Sign In</h1>
-        <label class="text-center text-xl font-normal">Email Address</label><br>
-        <input type="email" style="width: 35vw" class="mt-2 mb-3 px-3 py-3 rounded text-sm border shadow focus:outline-none focus:ring"/><br>
-        <label class="text-center text-xl font-normal">Password</label><br>
-        <input type="password" style="width: 35vw" class="mt-2 mb-3 px-3 py-3 rounded text-sm border shadow focus:outline-none focus:ring"/><br>
-        <input type="submit" style="width: 35vw" class="text-white text-center bg-blue-600 hover:bg-blue-700 px-2 py-2 rounded "/>
-        <h1 class="text-center mt-3">Not a member? <label class="text-blue-400" @click="showRegisterModal">Sign Up</label></h1>
+  <div @click.stop class="px-8 py-6 bg-white shadow-lg rounded-lg w-1/4 z-20 relative">
+    <form @submit.prevent="loginSubmit" class="justify-center items-center flex-col flex">
+        <h1 class="text-center text-3xl font-bold text-blue-800 mb-10">Sign In</h1>
+        <div class="w-3/4 mb-4">
+          <label class="text-center text-lg font-normal">Email Address</label>
+          <input type="email" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/><br>
+        </div>
+        <div class="w-3/4 mb-4">
+          <label class="text-center text-lg font-normal">Password</label>
+          <input type="password" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/><br>
+        </div>
+        <input type="submit" value="Submit" class="w-3/4 mt-4 text-white text-center bg-blue-600 hover:bg-blue-700 px-2 py-3 shadow rounded cursor-pointer"/>
+        <h1 class="text-center mt-12">Not a member? <span class="text-blue-700 font-bold cursor-pointer" @click="showRegisterModal">Sign Up</span></h1>
     </form>
   </div>
 </template>
