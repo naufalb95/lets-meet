@@ -39,7 +39,8 @@ export default new Vuex.Store({
       participants: [],
       tokenMessage: '',
       messages: []
-    }
+    },
+    categories: []
   },
   mutations: {
     GET_TOKEN_MESSAGE (state, payload) {
@@ -74,6 +75,9 @@ export default new Vuex.Store({
     },
     SET_EVENT_DETAIL (state, payload) {
       state.eventDetail = payload
+    },
+    SET_CATEGORIES (state, payload) {
+      state.categories = payload
     }
   },
   actions: {
@@ -120,15 +124,13 @@ export default new Vuex.Store({
       context.commit('SET_EVENTS', response.data)
     },
     async attendEvent (_, payload) {
-      const response = await server({
+      await server({
         method: 'POST',
         url: '/events/' + payload,
         headers: {
           access_token: localStorage.getItem('access_token')
         }
       })
-
-      console.log(response.data)
     },
     async registerUser (_, payload) {
       await server({
@@ -154,13 +156,21 @@ export default new Vuex.Store({
       context.commit('SET_USER_ID', userId)
     },
     async createEvent (_, payload) {
+      console.log(payload)
+      const formData = new FormData()
+
+      for (const key in payload) {
+        formData.append(key, payload[key])
+      }
+
       await server({
         method: 'POST',
         url: '/events',
         headers: {
-          access_token: localStorage.getItem('access_token')
+          access_token: localStorage.getItem('access_token'),
+          'Content-Type': 'multipart/form-data'
         },
-        data: payload
+        data: formData
       })
     },
     async editEvent (_, payload) {
@@ -168,7 +178,8 @@ export default new Vuex.Store({
         method: 'PUT',
         url: '/events/' + payload.eventId,
         headers: {
-          access_token: localStorage.getItem('access_token')
+          access_token: localStorage.getItem('access_token'),
+          'Content-Type': 'multipart/form-data'
         },
         data: payload.form
       })
@@ -192,7 +203,6 @@ export default new Vuex.Store({
       })
     },
     async doneEvent (_, payload) {
-      console.log(payload)
       await server({
         method: 'PATCH',
         url: '/events/' + payload,
@@ -200,6 +210,14 @@ export default new Vuex.Store({
           access_token: localStorage.getItem('access_token')
         }
       })
+    },
+    async fetchCategories (context) {
+      const response = await server({
+        method: 'GET',
+        url: '/categories'
+      })
+
+      context.commit('SET_CATEGORIES', response.data)
     }
   },
   modules: {
