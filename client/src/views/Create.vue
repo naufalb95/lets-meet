@@ -19,18 +19,18 @@
         <div class="w-full mb-4">
           <label id="category" class="text-center text-lg font-normal">Category</label>
           <select name="category" v-model="categoryId" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none">
-            <option>AA</option>
-            <option>AA</option>
-            <option>AA</option>
-            <option>AA</option>
-            <option>AA</option>
+            <option value="1">AA</option>
+            <option value="2">AA</option>
+            <option value="3">AA</option>
+            <option value="4">AA</option>
+            <option value="5">AA</option>
           </select>
         </div>
         <div class="w-full mb-4">
           <label id="event-type" class="text-center text-lg font-normal">Event Type</label>
           <select name="event-type" v-model="eventType" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none">
-            <option value="offline" selected>Offline</option>
-            <option value="online">Online</option>
+            <option value="Offline" selected>Offline</option>
+            <option value="Online">Online</option>
           </select>
         </div>
         <div class="w-full mb-4">
@@ -44,11 +44,11 @@
         <div class="w-full mb-4">
           <label id="location" class="text-center text-lg font-normal">Location</label>
           <form @submit.prevent="changeLocationHandler">
-            <input name="location" type="text" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none mb-2" v-model="findPlace" placeholder="Grand Indonesia" />
+            <input name="location" type="text" v-model="location" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none mb-2" placeholder="Grand Indonesia" />
           </form>
           <div id="maps" ref="googleMap" class="w-full border rounded shadow"></div>
         </div>
-        <input type="submit" class="w-full text-white text-center bg-blue-600 hover:bg-blue-700 py-2 mt-4 rounded "/>
+        <input type="submit" class="w-full text-white text-center bg-blue-600 hover:bg-blue-700 py-2 mt-4 rounded cursor-pointer"/>
     </form>
   </div>
 </template>
@@ -65,7 +65,6 @@ export default {
       map: null,
       mapContainer: null,
       marker: null,
-      findPlace: null,
       coords: {
         lat: 0,
         lng: 0
@@ -76,9 +75,25 @@ export default {
       location: '',
       description: '',
       maxParticipants: 0,
-      categoryId: 1,
-      eventType: 'offline'
+      categoryId: '1',
+      eventType: 'Offline'
     }
+  },
+  created () {
+    const date = new Date()
+    const years = date.getFullYear()
+    let months = date.getMonth()
+    let day = date.getDate()
+    let hours = date.getHours()
+    let minutes = date.getMinutes()
+
+    if (months < 10) months = '0' + months
+    if (day < 10) day = '0' + day
+    if (hours < 10) hours = '0' + hours
+    if (minutes < 10) minutes = '0' + minutes
+
+    this.time = hours + ':' + minutes
+    this.date = years + '-' + months + '-' + day
   },
   async mounted () {
     const googleMapApi = await GoogleMapsApiLoader({
@@ -92,9 +107,32 @@ export default {
     this.initializeMap()
   },
   methods: {
-    ...mapActions(['findGooglePlaces']),
-    submitHandler () {
-      console.log('haii')
+    ...mapActions(['createEvent']),
+    async submitHandler () {
+      const date = new Date(this.date)
+      const time = this.time.split(':')
+      const eventHours = time[0]
+      const eventMinutes = time[1]
+
+      this.dateAndTime = new Date(date.setHours(eventHours, eventMinutes))
+
+      const payload = {
+        name: this.name,
+        dateAndTime: this.dateAndTime,
+        description: this.description,
+        maxParticipants: +this.maxParticipants,
+        categoryId: +this.categoryId
+      }
+
+      if (this.eventType === 'Offline') {
+        payload.location = this.location
+        payload.latitude = this.coords.lat
+        payload.longitude = this.coords.lng
+      } else {
+        payload.location = this.eventType
+      }
+
+      await this.createEvent(payload)
     },
     initializeMap () {
       this.mapContainer = this.$refs.googleMap
@@ -117,7 +155,7 @@ export default {
     },
     changeLocationHandler () {
       const request = {
-        query: this.findPlace,
+        query: this.location,
         fields: ['name', 'geometry']
       }
 
@@ -137,8 +175,6 @@ export default {
           map: this.map
         })
       })
-
-      console.log(this.coords)
     }
   }
 }

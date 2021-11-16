@@ -65,28 +65,11 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async findGooglePlaces () {
-      const config = {
-        method: 'get',
-        url: 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=mongolian&inputtype=textquery&locationbias=circle%3A2000%4047.6918452%2C-122.2226413&fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&key=AIzaSyDOJpP-lEnakyV5PKJHbSOzKxTUu9oIeh0',
-        headers: {},
-        secure: false
-      }
-
-      axios(config)
-        .then(() => {
-          console.log('hai masuk')
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-      // console.log(response)
-    },
-    async fetchEvents (context) {
+    async fetchEvents (context, payload) {
       const response = await server({
         method: 'GET',
-        url: '/events'
+        url: '/events',
+        params: payload
       })
 
       context.commit('SET_EVENTS', response.data)
@@ -94,21 +77,49 @@ export default new Vuex.Store({
     async fetchEventDetail (context, payload) {
       const response = await server({
         method: 'GET',
-        url: 'events/' + payload
+        url: '/events/' + payload
       })
 
       context.commit('SET_EVENT_DETAIL', response.data)
     },
-    async attendEvent (context, payload) {
+    async attendEvent (_, payload) {
       const response = await server({
         method: 'POST',
-        url: 'events/' + payload.eventId,
+        url: '/events/' + payload.eventId,
         headers: {
           access_token: 'token'
         }
       })
 
       console.log(response.data)
+    },
+    async registerUser (_, payload) {
+      await server({
+        method: 'POST',
+        url: '/users/register',
+        data: payload
+      })
+    },
+    async loginUser (_, payload) {
+      const response = await server({
+        method: 'POST',
+        url: '/users/login',
+        data: payload
+      })
+
+      const token = response.data.access_token
+
+      localStorage.setItem('access_token', token)
+    },
+    async createEvent (_, payload) {
+      await server({
+        method: 'POST',
+        url: '/events',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        },
+        data: payload
+      })
     }
   },
   modules: {
