@@ -41,7 +41,7 @@
       </select>
     </div>
     <section class="flex items-center flex-col" v-for="event in events" :key="event.id">
-      <EventCard v-bind:event={event} />
+      <EventCard :event={event} />
     </section>
   </div>
 </template>

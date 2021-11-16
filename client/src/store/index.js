@@ -16,6 +16,7 @@ export default new Vuex.Store({
     isModalEdit: false,
     isLogin: false,
     isVideoConference: false,
+    userId: null,
     events: [],
     eventDetail: {
       event: {
@@ -65,6 +66,9 @@ export default new Vuex.Store({
     SET_IS_VIDEO_CONFERENCE (state, payload) {
       state.isVideoConference = payload
     },
+    SET_USER_ID (state, payload) {
+      state.userId = payload
+    },
     SET_EVENTS (state, payload) {
       state.events = payload
     },
@@ -104,6 +108,17 @@ export default new Vuex.Store({
 
       context.commit('SET_EVENT_DETAIL', response.data)
     },
+    async fetchMyEvents (context) {
+      const response = await server({
+        method: 'GET',
+        url: '/myevent',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+
+      context.commit('SET_EVENTS', response.data)
+    },
     async attendEvent (_, payload) {
       const response = await server({
         method: 'POST',
@@ -130,10 +145,13 @@ export default new Vuex.Store({
       })
 
       const token = response.data.access_token
+      const userId = response.data.id
 
       localStorage.setItem('access_token', token)
+      localStorage.setItem('user_id', userId)
 
       context.commit('SET_IS_LOGIN', true)
+      context.commit('SET_USER_ID', userId)
     },
     async createEvent (_, payload) {
       await server({
@@ -143,6 +161,44 @@ export default new Vuex.Store({
           access_token: localStorage.getItem('access_token')
         },
         data: payload
+      })
+    },
+    async editEvent (_, payload) {
+      await server({
+        method: 'PUT',
+        url: '/events/' + payload.eventId,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        },
+        data: payload.form
+      })
+    },
+    async userLeaveEvent (_, payload) {
+      await server({
+        method: 'DELETE',
+        url: '/events/' + payload + '/participants',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+    },
+    async deleteEvent (_, payload) {
+      await server({
+        method: 'DELETE',
+        url: '/events/' + payload,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+    },
+    async doneEvent (_, payload) {
+      console.log(payload)
+      await server({
+        method: 'PATCH',
+        url: '/events/' + payload,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
       })
     }
   },
