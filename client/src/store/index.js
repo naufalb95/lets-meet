@@ -98,7 +98,6 @@ export default new Vuex.Store({
         url: '/events',
         params: payload
       })
-
       context.commit('SET_EVENTS', response.data)
     },
     async fetchEventDetail (context, payload) {

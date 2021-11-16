@@ -1,6 +1,9 @@
 const { Event, Category, User, Participant } = require("../models");
 const { Op } = require("sequelize");
 const cron = require("node-cron");
+const {RtmTokenBuilder, RtmRole} = require('agora-access-token');
+const APP_ID = "ffe414caa68c4da0a6b8837b05bc649e";
+const APP_CERTIFICATE = "8ff6c4059a074b0caab9eb9c56e80029";
 
 const CRON_SCHEDULER = {};
 
@@ -398,7 +401,7 @@ class EventController {
       }
 
       if (foundEvent.eventOrganizerId === userId) {
-        const updateStatusDoneEvent = await Event.update(
+        await Event.update(
             isDone, {
                 where: {
                     id: eventId
@@ -406,8 +409,7 @@ class EventController {
                 returning: true,
             }
         )
-        const result = updateStatusDoneEvent[1][0]
-        res.status(200).json(result);
+        res.status(200).json({message: 'event ended.'});
       } else {
         throw { name: "Access Denied" };
       }
@@ -416,32 +418,62 @@ class EventController {
     }
   }
 
-    static async getMyEvent(req, res, next) {
-        try {
-            const userId = +req.user.id;
-            let foundParticipant = await Participant.findAll({
-                where: { userId },
-                include: [
-                    {
-                    model: Event,
-                    }
-                ]
-            });
+  static async getMyEvent(req, res, next) {
+      try {
+          const userId = +req.user.id;
+          let foundParticipant = await Participant.findAll({
+              where: { userId },
+              include: [
+                  {
+                  model: Event,
+                  }
+              ]
+          });
 
-            let foundMyEvent = await Event.findAll({
-                where: { eventOrganizerId: userId },
-            })
+          let foundMyEvent = await Event.findAll({
+              where: { eventOrganizerId: userId },
+          })
 
-            // console.log(foundParticipant);
-            let result = foundParticipant.map(event => {
-                return event.Event
-            }).concat(foundMyEvent)
-            
-            res.status(200).json(result);
-        } catch (err) {
-            next(err);
-        }
+          // console.log(foundParticipant);
+          let result = foundParticipant.map(event => {
+              return event.Event
+          }).concat(foundMyEvent)
+          
+          res.status(200).json(result);
+      } catch (err) {
+          next(err);
+      }
+  }
+
+  static generateAccessToken(req, res, next) {
+    try {
+      const channelName = req.query.channelName;
+      res.header('Access-Control-Allow-Origin', '*');
+      if (!channelName) {
+        return res.status(400).json({ error: 'channel is required' });
+      }
+      let uid = req.query.uid;
+      if(!uid || uid == '') {
+        uid = 0;
+      }
+      let role = RtmRole.PUBLISHER;
+      if (req.query.role == 'publisher') {
+        role = RtmRole.PUBLISHER;
+      }
+      let expireTime = req.query.expireTime;
+      if (!expireTime || expireTime == '') {
+        expireTime = 3600;
+      } else {
+        expireTime = parseInt(expireTime, 10);
+      }
+      const currentTime = Math.floor(Date.now() / 1000);
+      const privilegeExpireTime = currentTime + expireTime;
+      const token = RtmTokenBuilder.buildToken(APP_ID, APP_CERTIFICATE, uid, role, privilegeExpireTime);
+      res.status(200).json({ token });
+    } catch (error) {
+      next(error);
     }
+  }
 
 }
 

@@ -22,7 +22,7 @@
         "imgUrl": "https://secure-content.meetupstatic.com/images/classic-events/500035938/676x380.webp",
         "tokenVideo": "",
         "categoryId": 2,
-        "eventOrganizerId": 2,
+        "eventOrganizerId": 1,
         "tokenChat": "",
         "longitude": "",
         "latitude": ""
@@ -36,7 +36,7 @@
         "imgUrl": "https://secure-content.meetupstatic.com/images/classic-events/499787523/676x380.webp",
         "tokenVideo": "",
         "categoryId": 1,
-        "eventOrganizerId": 2,
+        "eventOrganizerId": 1,
         "tokenChat": "",
         "longitude": "106.8957853",
         "latitude": "-6.2146223"

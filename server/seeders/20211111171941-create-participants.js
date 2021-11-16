@@ -6,7 +6,7 @@ module.exports = {
       "Participants",
       [
         {
-          eventId: 1,
+          eventId: 4,
           userId: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -17,6 +17,12 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+          eventId: 3,
+          userId: 2,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
       ],
       {}
     );
