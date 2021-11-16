@@ -19,7 +19,7 @@
         <div class="w-full mb-4">
           <label id="category" class="text-center text-lg font-normal">Category</label>
           <select name="category" v-model="categoryId" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none">
-            <option :value="category.id"  v-for="category in categories" :key="category.id">
+            <option :value="category.id" v-for="category in categories" :key="category.id">
               {{ category.name }}
             </option>
           </select>
@@ -78,7 +78,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['eventDetail'])
+    ...mapState(['eventDetail', 'categories'])
   },
   async mounted () {
     await this.fetchEventDetail(this.$route.params.id)
