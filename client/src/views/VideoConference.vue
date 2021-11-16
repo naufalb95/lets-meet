@@ -21,8 +21,8 @@
             <div class="border-b-2 border-black mb-2">
               Chat Participants
             </div>
-            <div v-for="(data, index) in this.getMessages" :key="index" class="my-2"> // ! dapetin semua message dari Computed
-              <div><span class="font-semibold text-sm">{{ data.name }},</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
+            <div v-for="(data, index) in this.getMessages" :key="index" class="my-2">
+              <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
               <div class="text-sm">{{ data.message }}</div>
             </div>
           </div>
@@ -114,6 +114,7 @@ export default {
     // ! buat pesan / chat baru
     async createNewMessage () {
       const channel = this.$store.state.tokenMessage
+      // console.log(channel)
       if (channel != null) {
         await channel.sendMessage({ text: this.newMessage }).then(() => {
           this.$store.commit('GET_ALL_MESSAGES', { message: this.newMessage, name: this.name, time: date.format(new Date(), 'hh:mm A') }) // ! <---- this.name == nama user yg masuk

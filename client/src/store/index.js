@@ -35,10 +35,10 @@ export default new Vuex.Store({
         id: 0,
         username: ''
       },
-      participants: [],
-      tokenMessage: '',
-      messages: []
-    }
+      participants: []
+    },
+    tokenMessage: '',
+    messages: []
   },
   mutations: {
     GET_TOKEN_MESSAGE (state, payload) {
@@ -75,11 +75,12 @@ export default new Vuex.Store({
   actions: {
     getTokenMessage (_, payload) {
       return new Promise((resolve, reject) => {
-        axios({
+        server({
           url: `/access_token?channelName=${payload.channelName}&uid=${payload.uid}`,
           method: 'GET'
         })
           .then(({ data }) => {
+            console.log(data)
             resolve(data)
           })
           .catch((err) => {
