@@ -5,6 +5,7 @@
         <router-link to="/" class="font-medium inline-block text-3xl text-white mr-1 ml-1 font-logo hover:text-gray-300">Let's Meet</router-link>
       </div>
       <ul>
+        <router-link to="/event" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Event List</router-link>
         <li v-if="!isLogin" @click="showLoginModal" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Sign In</li>
         <li v-if="!isLogin" @click="showRegisterModal" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Sign Up</li>
         <router-link to="/event/create" v-if="isLogin" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Create Event</router-link>
@@ -25,7 +26,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      mutateIsLogin: 'SET_IS_LOGIN'
+      mutateIsLogin: 'SET_IS_LOGIN',
+      setUserId: 'SET_USER_ID'
     }),
     showLoginModal () {
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
@@ -39,6 +41,7 @@ export default {
       localStorage.clear()
 
       this.mutateIsLogin(false)
+      this.setUserId(null)
 
       this.$router.push({ name: 'Home' })
     }

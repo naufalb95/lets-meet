@@ -74,15 +74,17 @@ export default {
     async dropdownFilterHandler (e) {
       const { name, value } = e.target
 
-      console.log(name, value)
-
       if (!value) {
         delete this.filter[name]
         this.$refs[name].classList.remove('bg-blue-300')
         this.$refs[name].classList.remove('hover:bg-blue-400')
         this.$refs[name].classList.add('bg-gray-200')
         this.$refs[name].classList.add('hover:bg-gray-300')
-      } else {
+
+        const payload = { ...this.filter }
+
+        await this.fetchEvents(payload)
+      } else if (name !== 'distance') {
         this.filter = {
           ...this.filter,
           [name]: value
@@ -92,11 +94,29 @@ export default {
         this.$refs[name].classList.add('hover:bg-blue-400')
         this.$refs[name].classList.remove('bg-gray-200')
         this.$refs[name].classList.remove('hover:bg-gray-300')
+
+        const payload = { ...this.filter }
+
+        await this.fetchEvents(payload)
+      } else {
+        this.filter = {
+          distance: value
+        }
+
+        navigator.geolocation.getCurrentPosition(this.showPosition)
+      }
+    },
+    async showPosition (position) {
+      this.latitude = position.coords.latitude
+      this.longitude = position.coords.longitude
+
+      this.filter = {
+        ...this.filter,
+        latitude: this.latitude,
+        longitude: this.longitude
       }
 
       const payload = { ...this.filter }
-
-      console.log(payload)
 
       await this.fetchEvents(payload)
     },

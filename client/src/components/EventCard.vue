@@ -3,7 +3,7 @@
     <h1 class="text-gray-900 font-semibold text-lg">{{ dateAndTime }} WIB</h1>
     <h1 class="text-blue-800 font-bold text-2xl">{{ event.event.name }}</h1>
     <h1 class="text-gray-900">{{ event.event.location }}</h1>
-    <h1 class="text-gray-700 text-sm mt-3">0/{{ event.event.maxParticipants }} Attendees</h1>
+    <h1 class="text-gray-700 text-sm mt-3">{{ attendees }}/{{ event.event.maxParticipants }} Attendees</h1>
   </router-link>
 </template>
 
@@ -18,6 +18,9 @@ export default {
     dateAndTime () {
       const timeZone = 'Asia/Jakarta'
       return format(utcToZonedTime(new Date(this.event.event.dateAndTime), timeZone), 'dd MMMM yyyy @ HH:mm')
+    },
+    attendees () {
+      return this.event.event.participants.length + 1
     }
   }
 }
