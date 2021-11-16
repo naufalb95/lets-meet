@@ -98,7 +98,7 @@ export default {
   created () {
     const date = new Date()
     const years = date.getFullYear()
-    let months = date.getMonth()
+    let months = date.getMonth() + 1
     let day = date.getDate()
     let hours = date.getHours()
     let minutes = date.getMinutes()
