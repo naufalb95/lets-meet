@@ -21,7 +21,7 @@
         <option value="Online">Online</option>
         <option value="Offline">Offline</option>
       </select>
-      <select name="distance" ref="distance" v-model="distance" @change="dropdownFilterHandler" class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
+      <select name="distance" ref="distance" :disabled="location === 'Online'" v-model="distance" @change="dropdownFilterHandler" class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="">Any Distance</option>
         <option value="1">1 KM</option>
         <option value="2">2 KM</option>
@@ -85,6 +85,8 @@ export default {
 
         await this.fetchEvents(payload)
       } else if (name !== 'distance') {
+        if (name === 'location') this.distance = ''
+
         this.filter = {
           ...this.filter,
           [name]: value
