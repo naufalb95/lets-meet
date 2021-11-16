@@ -82,7 +82,7 @@ export default new Vuex.Store({
 
       context.commit('SET_EVENT_DETAIL', response.data)
     },
-    async attendEvent (context, payload) {
+    async attendEvent (_, payload) {
       const response = await server({
         method: 'POST',
         url: '/events/' + payload.eventId,
@@ -93,14 +93,14 @@ export default new Vuex.Store({
 
       console.log(response.data)
     },
-    async registerUser (context, payload) {
+    async registerUser (_, payload) {
       await server({
         method: 'POST',
         url: '/users/register',
         data: payload
       })
     },
-    async loginUser (context, payload) {
+    async loginUser (_, payload) {
       const response = await server({
         method: 'POST',
         url: '/users/login',
@@ -110,6 +110,16 @@ export default new Vuex.Store({
       const token = response.data.access_token
 
       localStorage.setItem('access_token', token)
+    },
+    async createEvent (_, payload) {
+      await server({
+        method: 'POST',
+        url: '/events',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        },
+        data: payload
+      })
     }
   },
   modules: {

@@ -84,8 +84,6 @@ export default {
         }
       }
 
-      console.log(this.filter)
-
       const payload = { ...this.filter }
 
       await this.fetchEvents(payload)
