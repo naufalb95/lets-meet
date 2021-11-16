@@ -212,14 +212,25 @@ class EventController {
           eventId,
         },
       });
-      if (foundEvent && !foundParticipant) {
-        await Participant.create({ userId, eventId });
-        const result = `${foundUser.username} Succes Join Event ${foundEvent.name}`;
-        res.status(201).json({ message: result });
-      } else if (foundParticipant) {
-        throw { name: "You Have Joined This Event" };
+      const numberOfParticipants = await Participant.count({
+        where: {
+          eventId,
+        },
+      });
+
+      if (!foundEvent) {
+        throw { name: "Event Not Found" };          
+      }
+      if (foundEvent.maxParticipants > numberOfParticipants) {
+          if (foundEvent && !foundParticipant) {
+            await Participant.create({ userId, eventId });
+            const result = `${foundUser.username} Succes Join Event ${foundEvent.name}`;
+            res.status(201).json({ message: result });
+          } else if (foundParticipant) {
+            throw { name: "You Have Joined This Event" };
+          }
       } else {
-        throw { name: "Event Not Found" };
+        throw { name: "Event Full" };
       }
     } catch (err) {
       next(err);
