@@ -23,6 +23,9 @@ let errorHandler = (error, req, res, next) => {
     case "You never joined this event":
         message = res.status(404).json({ message: `You never joined this event` });
         break;
+    case "Event Full":
+        message = res.status(400).json({ message: `Event Full` });
+        break;
     default:
         message = res.status(500).json({ message: "Internal server error." });
         break;

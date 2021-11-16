@@ -83,6 +83,8 @@ class EventController {
 
             if (location === "Online") {
                 condition.location = "Online";
+            } else if (location === "Offline") {
+                condition.location = "Offline";
             }
 
             if (day) {
@@ -142,7 +144,7 @@ class EventController {
                 },
             });
 
-            if (distance && location !== 'Online') {
+            if (distance && location !== 'Online') {    
                 result = result.filter((item) => {
                     const lon1 = longitude * Math.PI / 180;
                     const lon2 = item.longitude * Math.PI / 180;
@@ -210,14 +212,25 @@ class EventController {
           eventId,
         },
       });
-      if (foundEvent && !foundParticipant) {
-        await Participant.create({ userId, eventId });
-        const result = `${foundUser.username} Succes Join Event ${foundEvent.name}`;
-        res.status(201).json({ message: result });
-      } else if (foundParticipant) {
-        throw { name: "You Have Joined This Event" };
+      const numberOfParticipants = await Participant.count({
+        where: {
+          eventId,
+        },
+      });
+
+      if (!foundEvent) {
+        throw { name: "Event Not Found" };          
+      }
+      if (foundEvent.maxParticipants > numberOfParticipants) {
+          if (foundEvent && !foundParticipant) {
+            await Participant.create({ userId, eventId });
+            const result = `${foundUser.username} Succes Join Event ${foundEvent.name}`;
+            res.status(201).json({ message: result });
+          } else if (foundParticipant) {
+            throw { name: "You Have Joined This Event" };
+          }
       } else {
-        throw { name: "Event Not Found" };
+        throw { name: "Event Full" };
       }
     } catch (err) {
       next(err);
