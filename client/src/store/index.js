@@ -152,6 +152,16 @@ export default new Vuex.Store({
         },
         data: payload
       })
+    },
+    async editEvent (_, payload) {
+      await server({
+        method: 'PUT',
+        url: '/events/' + payload.eventId,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        },
+        data: payload.form
+      })
     }
   },
   modules: {

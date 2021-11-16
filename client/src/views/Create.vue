@@ -44,7 +44,7 @@
         </div>
         <div class="w-full mb-4">
           <label id="event-type" class="text-center text-lg font-normal">Event Type</label>
-          <select name="event-type" v-model="eventType" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none">
+          <select name="event-type" @change="eventTypeHandler" v-model="eventType" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none">
             <option value="Offline" selected>Offline</option>
             <option value="Online">Online</option>
           </select>
@@ -57,7 +57,7 @@
           <label id="description" class="text-center text-lg font-normal">Description</label>
           <textarea name="description" v-model="description" class="overflow-y-auto mb-2 px-2 py-2 rounded text-xs border shadow focus:outline-none block w-full" rows="8" placeholder="Type your event description here"/>
         </div>
-        <div class="w-full mb-4">
+        <div class="w-full mb-4" ref="location">
           <label id="location" class="text-center text-lg font-normal">Location</label>
           <form @submit.prevent="changeLocationHandler">
             <input name="location" type="text" v-model="location" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none mb-2" placeholder="Grand Indonesia" />
@@ -191,6 +191,10 @@ export default {
           map: this.map
         })
       })
+    },
+    eventTypeHandler () {
+      if (this.eventType === 'Online') this.$refs.location.classList.add('hidden')
+      if (this.eventType === 'Offline') this.$refs.location.classList.remove('hidden')
     }
   }
 }

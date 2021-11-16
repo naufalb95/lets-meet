@@ -44,7 +44,7 @@
         </div>
         <div class="w-full mb-4">
           <label id="event-type" class="text-center text-lg font-normal">Event Type</label>
-          <select name="event-type" v-model="eventType" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none">
+          <select name="event-type" @change="eventTypeHandler" v-model="eventType" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none">
             <option value="Offline" selected>Offline</option>
             <option value="Online">Online</option>
           </select>
@@ -57,10 +57,10 @@
           <label id="description" class="text-center text-lg font-normal">Description</label>
           <textarea name="description" v-model="description" class="overflow-y-auto mb-2 px-2 py-2 rounded text-xs border shadow focus:outline-none block w-full" rows="8" placeholder="Type your event description here"/>
         </div>
-        <div class="w-full mb-4">
+        <div class="w-full mb-4" ref="location">
           <label id="location" class="text-center text-lg font-normal">Location</label>
           <form @submit.prevent="changeLocationHandler">
-            <input name="location" type="text" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none mb-2" v-model="findPlace" placeholder="Grand Indonesia" />
+            <input name="location" type="text" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none mb-2" v-model="location" placeholder="Grand Indonesia" />
           </form>
           <div id="maps" ref="googleMap" class="w-full border rounded shadow"></div>
         </div>
@@ -81,7 +81,6 @@ export default {
       map: null,
       mapContainer: null,
       marker: null,
-      findPlace: null,
       coords: {
         lat: 0,
         lng: 0
@@ -131,9 +130,9 @@ export default {
       this.eventType = this.eventDetail.event.location
     } else {
       this.location = this.eventDetail.event.location
-      this.eventType = 'offline'
-      this.coords.lat = this.eventDetail.event.latitude
-      this.coords.lng = this.eventDetail.event.longitude
+      this.eventType = 'Offline'
+      this.coords.lat = +this.eventDetail.event.latitude
+      this.coords.lng = +this.eventDetail.event.longitude
     }
 
     this.google = googleMapApi
@@ -141,9 +140,39 @@ export default {
     this.showPosition()
   },
   methods: {
-    ...mapActions(['fetchEventDetail']),
-    submitHandler () {
-      console.log('haii')
+    ...mapActions(['fetchEventDetail', 'editEvent']),
+    async submitHandler () {
+      const date = new Date(this.date)
+      const time = this.time.split(':')
+      const eventHours = time[0]
+      const eventMinutes = time[1]
+
+      this.dateAndTime = new Date(date.setHours(eventHours, eventMinutes))
+
+      const form = {
+        name: this.name,
+        dateAndTime: this.dateAndTime,
+        description: this.description,
+        maxParticipants: +this.maxParticipants,
+        categoryId: +this.categoryId
+      }
+
+      if (this.eventType === 'Offline') {
+        form.location = this.location
+        form.latitude = this.coords.lat
+        form.longitude = this.coords.lng
+      } else {
+        form.location = this.eventType
+      }
+
+      const payload = {
+        form,
+        eventId: this.$route.params.id
+      }
+
+      await this.editEvent(payload)
+
+      this.$router.push({ name: 'MyEvent' })
     },
     initializeMap () {
       this.mapContainer = this.$refs.googleMap
@@ -163,7 +192,7 @@ export default {
     },
     changeLocationHandler () {
       const request = {
-        query: this.findPlace,
+        query: this.location,
         fields: ['name', 'geometry']
       }
 
@@ -183,6 +212,10 @@ export default {
           map: this.map
         })
       })
+    },
+    eventTypeHandler () {
+      if (this.eventType === 'Online') this.$refs.location.classList.add('hidden')
+      if (this.eventType === 'Offline') this.$refs.location.classList.remove('hidden')
     }
   }
 }
