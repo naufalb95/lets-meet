@@ -41,9 +41,13 @@
               </div>
             </div>
             <div class="w-full flex items-center flex-col mt-12 px-6">
-              <button @click="attendHandler" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">Attend</button>
-              <button @click="attendHandler" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">Join Meet</button>
-              <button @click="attendHandler" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">Leave Event</button>
+              <button @click="attendHandler" v-if="!isHost && !isAttending && !isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">Attend</button>
+              <button @click="attendHandler" v-if="isAttending && isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">Join Meet</button>
+              <button @click="attendHandler" v-if="!isHost && isAttending && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">Leave Event</button>
+              <button @click="attendHandler" v-if="isHost && !isStart && !isDone" class="bg-yellow-500 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-yellow-600">Edit Event</button>
+              <button @click="attendHandler" v-if="isHost && isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">End Event</button>
+              <button @click="attendHandler" v-if="isHost && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">Delete Event</button>
+              <h3 class="font-semibold" v-if="isDone">Event already ended</h3>
             </div>
           </div>
           <div id="maps" ref="googleMap" class="bg-gray-700 rounded-b-lg shadow-2xl" v-if="eventDetail.event.location !== 'Online'"></div>
@@ -65,6 +69,8 @@ export default {
     return {
       isLoading: true,
       isAttending: false,
+      isHost: false,
+      isStart: false,
       google: null,
       map: null,
       mapContainer: null,
@@ -76,7 +82,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['eventDetail', 'isLogin']),
+    ...mapState(['eventDetail', 'isLogin', 'userId']),
     date () {
       const timeZone = 'Asia/Jakarta'
       if (this.eventDetail.event?.dateAndTime) return format(utcToZonedTime(new Date(this.eventDetail.event.dateAndTime), timeZone), 'dd MMMM yyyy')
@@ -86,6 +92,9 @@ export default {
       const timeZone = 'Asia/Jakarta'
       if (this.eventDetail.event?.dateAndTime) return format(utcToZonedTime(new Date(this.eventDetail.event.dateAndTime), timeZone), 'HH:mm')
       else return ''
+    },
+    isDone () {
+      return this.eventDetail.event.isDone
     }
   },
   methods: {
@@ -97,7 +106,8 @@ export default {
       this.map = new this.google.maps.Map(
         this.mapContainer, {
           center: { lat: this.coords.lat, lng: this.coords.lng },
-          zoom: 18
+          zoom: 18,
+          disableDefaultUI: true
         }
       )
 
@@ -119,6 +129,17 @@ export default {
 
     this.isLoading = false
 
+    if (+this.userId === this.eventDetail.eventOrganizer.id) this.isHost = true
+
+    const participantIdx = this.eventDetail.participants.findIndex(p => p.userId === +this.userId)
+
+    if (participantIdx !== -1) this.isAttending = true
+
+    const startDate = new Date(this.eventDetail.event.dateAndTime)
+    const nowDate = new Date()
+
+    if ((nowDate > startDate) && !this.eventDetail.event.isDone) this.isStart = true
+
     if (this.eventDetail.event.location === 'Online') {
       this.eventType = this.eventDetail.event.location
       this.$refs.detail.classList.add('rounded-b-lg')
@@ -130,8 +151,8 @@ export default {
 
       this.location = this.eventDetail.event.location
       this.eventType = 'offline'
-      this.coords.lat = this.eventDetail.event.latitude
-      this.coords.lng = this.eventDetail.event.longitude
+      this.coords.lat = +this.eventDetail.event.latitude
+      this.coords.lng = +this.eventDetail.event.longitude
 
       this.google = googleMapApi
       this.initializeMap()

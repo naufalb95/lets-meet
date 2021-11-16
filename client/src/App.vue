@@ -35,13 +35,16 @@ export default {
   },
   methods: {
     ...mapMutations({
-      mutateIsLogin: 'SET_IS_LOGIN'
+      mutateIsLogin: 'SET_IS_LOGIN',
+      mutateUserId: 'SET_USER_ID'
     })
   },
   mounted () {
     const token = localStorage.getItem('access_token')
+    const userId = localStorage.getItem('user_id')
 
     if (token) this.mutateIsLogin(true)
+    if (userId) this.mutateUserId(userId)
   }
 }
 </script>

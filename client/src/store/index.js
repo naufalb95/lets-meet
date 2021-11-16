@@ -16,6 +16,7 @@ export default new Vuex.Store({
     isModalEdit: false,
     isLogin: false,
     isVideoConference: false,
+    userId: null,
     events: [],
     eventDetail: {
       event: {
@@ -64,6 +65,9 @@ export default new Vuex.Store({
     },
     SET_IS_VIDEO_CONFERENCE (state, payload) {
       state.isVideoConference = payload
+    },
+    SET_USER_ID (state, payload) {
+      state.userId = payload
     },
     SET_EVENTS (state, payload) {
       state.events = payload
@@ -131,10 +135,13 @@ export default new Vuex.Store({
       })
 
       const token = response.data.access_token
+      const userId = response.data.id
 
       localStorage.setItem('access_token', token)
+      localStorage.setItem('user_id', userId)
 
       context.commit('SET_IS_LOGIN', true)
+      context.commit('SET_USER_ID', userId)
     },
     async createEvent (_, payload) {
       await server({
