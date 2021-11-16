@@ -38,7 +38,10 @@ export default new Vuex.Store({
       },
       participants: []
     },
-    tokenMessage: '',
+    token: {
+      chat: '',
+      video: ''
+    },
     messages: []
   },
   mutations: {
@@ -77,24 +80,24 @@ export default new Vuex.Store({
     },
     SET_CATEGORIES (state, payload) {
       state.categories = payload
+    },
+    SET_TOKEN_VIDEO (state, payload) {
+      state.token.video = payload
+    },
+    SET_TOKEN_CHAT (state, payload) {
+      state.token.chat = payload
     }
   },
   actions: {
-    getTokenMessage (_, payload) {
-      return new Promise((resolve, reject) => {
-        server({
-          url: `/access_token?channelName=${payload.channelName}&uid=${payload.uid}`,
-          method: 'GET'
-        })
-          .then(({ data }) => {
-            console.log(data)
-            resolve(data)
-          })
-          .catch((err) => {
-            console.log('fail')
-            reject(err)
-          })
+    async getToken (context, payload) {
+      const response = await server({
+        url: `/access_token?channelName=${payload.channelName}&uid=${payload.uid}`,
+        method: 'GET'
       })
+
+      console.log(response.data.token)
+
+      context.commit('SET_TOKEN_CHAT', response.data.token)
     },
     async fetchEvents (context, payload) {
       const response = await server({
