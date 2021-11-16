@@ -74,6 +74,8 @@ import date from 'date-and-time'
 
 // ! dapetin semua chat di computed
 
+// ! ganti date and time ke date-fns
+
 export default {
   name: 'VideoConference',
   data () {
