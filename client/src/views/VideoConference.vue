@@ -26,14 +26,14 @@
               <div class="text-sm">{{ data.message }}</div>
             </div>
           </div>
-          <div class="flex p-3" style="height: 12.5%" @submit.prevent="createNewMessage"> // ! bikin chat/message
+          <form class="flex p-3" style="height: 12.5%" @submit.prevent="createNewMessage">
             <div class='w-5/6'>
-              <textarea id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-gray-300 w-full h-full rounded-l-md outline-none' v-model="newMessage"></textarea>
+              <input type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-gray-300 w-full h-full rounded-l-md outline-none' v-model="newMessage">
             </div>
             <div class='w-1/6'>
               <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none'><i class="fab fa-telegram-plane"></i></button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -106,7 +106,7 @@ export default {
         uid: 123456
       },
       newMessage: null, // * buat bikin message
-      name: null, // * buat bikin message
+      name: 'damar', // ! buat bikin message dummy
       token: null // * buat token
     }
   },
@@ -118,6 +118,7 @@ export default {
         await channel.sendMessage({ text: this.newMessage }).then(() => {
           this.$store.commit('GET_ALL_MESSAGES', { message: this.newMessage, name: this.name, time: date.format(new Date(), 'hh:mm A') }) // ! <---- this.name == nama user yg masuk
           this.newMessage = null
+          console.log('masuk sini')
         })
           .catch((err) => { console.log('kirim message ke channel mana lu woi?', err) }) // ! boleh di custom lagi catch nya wkwk
       }
@@ -138,8 +139,6 @@ export default {
             const channel = client.createChannel(this.options.channel) // ! <----------dinamis nama channel
             await channel.join()
             this.$store.commit('GET_TOKEN_MESSAGE', channel)
-          } else {
-            this.errorText = 'Please enter your name.'
           }
         })
         .catch((err) => {
@@ -306,6 +305,28 @@ export default {
     }
   },
   async mounted () {
+    // ! coba login test
+    this.$store.dispatch('getTokenMessage', { uid: this.name, channelName: this.options.channel }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
+      .then(async (data) => {
+        this.token = data.token
+        const appID = 'ffe414caa68c4da0a6b8837b05bc649e'
+        const client = AgoraRTM.createInstance(appID)
+        const options = {
+          uid: this.name, // ! nama user
+          token: this.token // ! token dari server
+        }
+        if (this.name) {
+          await client.login(options)
+          const channel = client.createChannel(this.options.channel) // ! <----------dinamis nama channel
+          await channel.join()
+          this.$store.commit('GET_TOKEN_MESSAGE', channel)
+        }
+      })
+      .catch((err) => {
+        console.log('masuk sini')
+        console.log(err)
+      })
+
     window.addEventListener('resize', this.videoResizeHandler)
 
     this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })

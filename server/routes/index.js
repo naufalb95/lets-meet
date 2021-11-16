@@ -4,12 +4,14 @@ const UserController = require("../controllers/userController");
 const CategoryController = require("../controllers/categoryController");
 const EventController = require("../controllers/eventController");
 const errorHandler = require("../middlewares/errorHandler");
+const nocache = require('../middlewares/cacheRTMAgora')
 
 router.post("/users/register", UserController.register);
 router.post("/users/login", UserController.login);
 router.get("/events", EventController.findAll);
 router.get("/events/:eventId", EventController.detailEvent);
 router.get("/categories", CategoryController.getAll);
+router.get("/access_token", nocache, EventController.generateAccessToken);
 
 router.use(authentication);
 
