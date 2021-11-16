@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   name: 'Login',
   data () {
@@ -26,12 +27,21 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['loginUser']),
     showRegisterModal () {
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', true)
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
     },
-    submitHandler () {
-      console.log('hai')
+    async submitHandler () {
+      const payload = {
+        email: this.email,
+        password: this.password
+      }
+
+      await this.loginUser(payload)
+
+      this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
+      this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
     }
   }
 }

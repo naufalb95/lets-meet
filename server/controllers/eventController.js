@@ -130,7 +130,8 @@ class EventController {
                     };
                 }
             }
-            const result = await Event.findAll({
+
+            let result = await Event.findAll({
                 where: condition,
                 include: [
                 {
@@ -144,12 +145,13 @@ class EventController {
                 },
             });
 
+
             if (distance) {
-                result.filter((item) => {
+                result = result.filter((item) => {
                     const lon1 = longitude * Math.PI / 180;
-                    const lon2 = r.longitude * Math.PI / 180;
+                    const lon2 = item.longitude * Math.PI / 180;
                     const lat1 = latitude * Math.PI / 180;
-                    const lat2 = r.latitude * Math.PI / 180;
+                    const lat2 = item.latitude * Math.PI / 180;
                 
                     // Haversine formula
                     let dlon = lon2 - lon1;
@@ -165,9 +167,11 @@ class EventController {
                     let r = 6371;
                 
                     // calculate the result
-                    return(c * r) <= distance;
+                    console.log(c * r, "<=====");
+                    console.log(distance, "<=====");
+                    return(c * r) <= +distance;
                 });
-            }   
+            }
 
             let container = result
 
