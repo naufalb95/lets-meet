@@ -7,19 +7,19 @@
       </button>
     </div>
     <div class="mt-4 w-screen flex justify-center mb-8">
-      <select v-model="day" class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
+      <select name="day" v-model="day" @change="dropdownFilterHandler" class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="">Any Day</option>
         <option value="today">Today</option>
         <option value="tomorrow">Tomorrow</option>
         <option value="thisWeek">This Week</option>
         <option value="nextWeek">Next Week</option>
       </select>
-      <select v-model="location" class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
+      <select name="location" v-model="location" @change="dropdownFilterHandler"  class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="">Any Type</option>
         <option value="Online">Online</option>
         <option value="Offline">Offline</option>
       </select>
-      <select v-model="distance" class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
+      <select name="distance" v-model="distance" @change="dropdownFilterHandler"  class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="">Any Distance</option>
         <option value="1">1 KM</option>
         <option value="2">2 KM</option>
@@ -30,7 +30,7 @@
         <option value="100">100 KM</option>
         <option value="200">200 KM</option>
       </select>
-      <select v-model="category" class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
+      <select name="category" v-model="category" @change="dropdownFilterHandler"  class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
         <option value="">Any Category</option>
         <option value="2">Gio</option>
         <option value="3">Nopal</option>
@@ -68,7 +68,11 @@ export default {
     ...mapState(['events'])
   },
   methods: {
-    ...mapActions(['fetchEvents'])
+    ...mapActions(['fetchEvents']),
+    dropdownFilterHandler (e) {
+      const { name, value } = e.target
+      console.log(name, value)
+    }
   },
   async created () {
     await this.fetchEvents()
