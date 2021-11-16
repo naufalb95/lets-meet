@@ -5,6 +5,8 @@ const CategoryController = require("../controllers/categoryController");
 const EventController = require("../controllers/eventController");
 const errorHandler = require("../middlewares/errorHandler");
 const nocache = require('../middlewares/cacheRTMAgora')
+const uploadimage = require('../middlewares/multer')
+const imageKit = require('../middlewares/imageKit')
 
 router.post("/users/register", UserController.register);
 router.post("/users/login", UserController.login);
@@ -16,9 +18,9 @@ router.get("/access_token", nocache, EventController.generateAccessToken);
 router.use(authentication);
 
 router.get('/myevent', EventController.getMyEvent);
-router.post("/events", EventController.create);
+router.post("/events", uploadimage, imageKit, EventController.create);
 router.post("/events/:eventId", EventController.userJoinEvent);
-router.put("/events/:eventId", EventController.updateEvent);
+router.put("/events/:eventId", uploadimage, imageKit, EventController.updateEvent);
 router.patch("/events/:eventId", EventController.eventDone);
 router.delete("/events/:eventId", EventController.deleteEvent);
 router.delete("/events/:eventId/participants", EventController.userLeaveEvent);
