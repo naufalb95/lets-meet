@@ -7,6 +7,8 @@ const errorHandler = require("../middlewares/errorHandler");
 const uploadimage = require('../middlewares/multer')
 const imageKit = require('../middlewares/imageKit')
 
+
+
 router.post("/users/register", UserController.register);
 router.post("/users/login", UserController.login);
 router.get("/events", EventController.findAll);
