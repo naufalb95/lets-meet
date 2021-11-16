@@ -23,8 +23,8 @@
             <div class="mb-5">
               <h2 class="text-2xl font-semibold">Event Detail</h2>
             </div>
-            <div class="flex w-full pl-6">
-              <div class="flex justify-center items-center text-gray-600">
+            <div class="flex w-full pl-6 mb-2">
+              <div class="flex justify-center items-center text-gray-600 w-1/6">
                 <font-awesome-icon :icon="['far', 'clock']" class="mr-2 text-xl"/>
               </div>
               <div>
@@ -32,15 +32,23 @@
                 <h3 class="block text-gray-800">{{ time }} WIB</h3>
               </div>
             </div>
-            <div class="flex w-full pl-6">
-              <div class="flex justify-center items-center text-gray-600">
-                <font-awesome-icon :icon="['far', 'clock']" class="mr-2 text-xl"/>
+            <div class="flex w-full pl-6 mb-2">
+              <div class="flex justify-center items-center text-gray-600 w-1/6">
+                <font-awesome-icon :icon="['far', 'map']" class="mr-2 text-xl"/>
               </div>
               <div>
                 <h3 class="block text-gray-800">{{ eventDetail.event.location }}</h3>
               </div>
             </div>
-            <div class="w-full flex items-center flex-col mt-12 px-6">
+            <div class="flex w-full pl-6">
+              <div class="flex justify-center items-center text-gray-600 w-1/6">
+                <font-awesome-icon :icon="['far', 'user']" class="mr-2 text-xl"/>
+              </div>
+              <div>
+                <h3 class="block text-gray-800">{{ attendees }}/{{ eventDetail.event.maxParticipants }} Attendees</h3>
+              </div>
+            </div>
+            <div class="w-full flex items-center flex-col mt-4 px-6">
               <button @click="attendHandler" v-if="!isHost && !isAttending && !isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
                 Attend
               </button>
@@ -107,6 +115,9 @@ export default {
     },
     isDone () {
       return this.eventDetail.event.isDone
+    },
+    attendees () {
+      return this.eventDetail.participants?.length + 1
     }
   },
   methods: {
