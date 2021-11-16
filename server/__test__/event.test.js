@@ -4,9 +4,12 @@ const { Event, User, Category, Participant } = require('../models')
 const { sign } = require('../helpers/jwt');
 const access_token = sign({ id: 1, email: 'usertest@mail.com' })
 const access_token2 = sign({ id: 2, email: 'usertest1@mail.com' })
+const access_token3 = sign({ id: 3, email: 'usertest2@mail.com' })
 const invalid_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ1c2VyMkBtYWlsLmNvbSIsImlhdCI6MTYzNjkyNjUyNn0.l4F5cE2MzymVxZMndO83F3N0OqHszlnNzj9qQoC"
 
 beforeAll( async () => {
+    jest.restoreAllMocks();
+
     await User.create({
         username: 'testevent',
         email: 'usertest@mail.com',
@@ -16,6 +19,12 @@ beforeAll( async () => {
     await User.create({
         username: 'testevent1',
         email: 'usertest1@mail.com',
+        password: '12345678',
+    })
+
+    await User.create({
+        username: 'testevent2',
+        email: 'usertest2@mail.com',
         password: '12345678',
     })
 
@@ -30,26 +39,32 @@ beforeAll( async () => {
     await Event.create( { 
         name: 'Jakarta Professional Development Meetup Group', 
         dateAndTime: '2021-11-20 16:00:00.000 +0700', 
-        location: 'Bandung', 
+        location: 'Offline', 
         description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.', 
-        maxParticipants: 50, 
+        maxParticipants: 50,
         imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
         categoryId: 1,
                 isDone: false,
         eventOrganizerId: 1,
         isDone: false,
+        "tokenChat": "",
+        "longitude": "106.85553068718718",
+        "latitude": "-6.228343404007166"
     })
 
     await Event.create( { 
         name: 'Intro To Data Science: Online Workshop', 
         dateAndTime: '2022-11-28 16:00:00.000 +0700', 
-        location: 'Semarang', 
+        location: 'Online', 
         description: 'Join Flatiron School for an introductory workshop on how to use simple and multiple linear regression models from data science instructors. It will be important to understand the relationship between multiple variables in order to make future predictions on behaviors.', 
-        maxParticipants: 30, 
+        maxParticipants: 0, 
         imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
         categoryId: 2, 
         eventOrganizerId: 1,
         isDone: false,
+        "tokenChat": "",
+        "longitude": "",
+        "latitude": ""
     })
 
     await Event.create( { 
@@ -62,6 +77,9 @@ beforeAll( async () => {
         categoryId: 2, 
         eventOrganizerId: 1,
         isDone: false,
+        "tokenChat": "",
+        "longitude": "106.8957853",
+        "latitude": "-6.2146223"
     })
 
     await Participant.create( {
@@ -80,6 +98,12 @@ afterAll( async ()=>{
     await User.destroy({
         where: {
             email: 'testevent1@test.com'
+        }
+    })
+
+    await User.destroy({
+        where: {
+            email: 'testevent2@test.com'
         }
     })
 
@@ -217,6 +241,20 @@ describe('Event fiture', () => {
             })
     })
 
+    test('Get All Item With Query Location Offline ', (done) => {
+        request(app)
+            .get('/events?location=Offline&distance=10&latitude=-6.161683&longitude=106.8415304')
+
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Array));
+                done()
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
     test('Get All Item If Empty Data Result', (done) => {
         request(app)
             .get('/events')
@@ -272,12 +310,15 @@ describe('Event fiture', () => {
             .send({
                 name: 'Test Create Event Offline',
                 dateAndTime: '2022-01-01 16:00:00.000 +0700', 
-                location: 'Bengkulu', 
+                location: 'Offline', 
                 description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.', 
-                maxParticipants: 50, 
+                maxParticipants: 5,
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
                 isDone: false,
+                "tokenChat": "",
+                "longitude": "106.8492431375419",
+                "latitude": "-6.16070502742932"
             })
             .then((res) => {
                 expect(res.status).toBe(201);
@@ -302,6 +343,9 @@ describe('Event fiture', () => {
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
                 isDone: false,
+                "tokenChat": "",
+                "longitude": "",
+                "latitude": ""
             })
             .then((res) => {
                 expect(res.status).toBe(201);
@@ -534,13 +578,27 @@ describe('Event fiture', () => {
             })
     })
 
-    test('User Join Event Fail Cause Invalid Id Event', (done) => {
+    test('User Join Event Fail Cause User Have Been Joined Event', (done) => {
         request(app)
             .post('/events/1')
             .set({ access_token })
             .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toEqual({message: "You Have Joined This Event"});
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('User Join Event Fail Cause Full Participant', (done) => {
+        request(app)
+            .post('/events/2')
+            .set({ access_token: access_token3 })
+            .then((res) => {
+                expect(res.status).toBe(400);
+                expect(res.body).toEqual({message: `Event Full`});
                 done();
             })
             .catch((err) => {
@@ -784,5 +842,49 @@ describe('Event fiture', () => {
             .catch((err) => {
                 done(err)
             })
+    })
+
+    test('Get All Category', (done) => {
+        request(app)
+            .get('/categories')
+            
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Array));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Get My Event', (done) => {
+        request(app)
+            .get('/myevent')
+            .set({ access_token })
+            
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Array));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test("Error 500 When Get My Event", async () => {
+        jest.spyOn(Event, "findAll").mockRejectedValue("Error");
+    
+        return request(app)
+          .get("/myevent")
+          .set({ access_token })
+
+          .then((res) => {
+            const { body, status } = res
+            expect(status).toBe(500)
+            expect(body).toEqual(expect.any(Object));
+            expect(res.body).toEqual({"message": "Internal server error."});
+          })
     })
 })

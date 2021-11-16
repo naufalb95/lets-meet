@@ -26,6 +26,6 @@
 
 (Done) tambah routingan fetch all category 
 
-tambah routingan dan controller baru untuk semua my event
+(Done) tambah routingan dan controller baru untuk semua my event
 
-tambah is participant true or not, is event organizer true or not
+(Done) tambah is participant true or not, is event organizer true or not

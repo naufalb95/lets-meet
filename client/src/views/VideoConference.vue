@@ -308,6 +308,38 @@ export default {
     ...mapState(['token', 'eventDetail', 'userId'])
   },
   async mounted () {
+    // ! coba login test token chat
+    this.$store.dispatch('getTokenMessage', { uid: this.name, channelName: this.options.channel }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
+      .then(async (data) => {
+        this.token = data.token
+        const appID = 'ffe414caa68c4da0a6b8837b05bc649e'
+        const client = AgoraRTM.createInstance(appID)
+        const options = {
+          uid: this.name, // ! nama user
+          token: this.token // ! token dari server
+        }
+        if (this.name) {
+          await client.login(options)
+          const channel = client.createChannel(this.options.channel) // ! <----------dinamis nama channel
+          await channel.join()
+          this.$store.commit('GET_TOKEN_MESSAGE', channel)
+        }
+      })
+      .catch((err) => {
+        console.log('masuk sini')
+        console.log(err)
+      })
+
+    // ! coba login test token video
+    this.$store.dispatch('getTokenVideo', { uid: 'cobaTokenVideo', channelName: 'cobaTokenVideo' }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
+      .then(async (data) => {
+        console.log(data, '<--- dari mounted')
+      })
+      .catch((err) => {
+        console.log('masuk sini')
+        console.log(err)
+      })
+
     window.addEventListener('resize', this.videoResizeHandler)
 
     this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
