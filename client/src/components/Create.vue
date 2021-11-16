@@ -1,6 +1,6 @@
 <template>
   <div v-on:click.stop class="flex justify-center items-center">
-    <form style="max-height: 95vh" @submit.prevent="" class="bg-white overflow-y-auto overflow-x-hidden shadow-md rounded px-12 py-12 justify-center items-center flex-col">
+    <form style="max-height: 95vh" @submit.prevent="cek" class="bg-white overflow-y-auto overflow-x-hidden shadow-md rounded px-12 py-12 justify-center items-center flex-col">
         <h1 class="text-center text-3xl text-blue-800 font-bold mb-12">Create Event</h1>
         <div class="w-full mb-4">
           <label class="text-center text-lg font-normal">Event Name</label>
@@ -18,6 +18,9 @@
         </div>
         <div class="w-full mb-4">
           <label class="text-center text-lg font-normal">Location</label>
+          <form @submit.prevent="changeLocationHandler">
+            <input type="text" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none mb-2" v-model="findPlace" />
+          </form>
           <div id="maps" ref="googleMap" class="w-full border rounded shadow"></div>
         </div>
         <label class="text-center text-sm font-normal">Description</label><br>
@@ -43,6 +46,7 @@
 
 <script>
 import GoogleMapsApiLoader from 'google-maps-api-loader'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Create',
@@ -55,19 +59,23 @@ export default {
         lng: 0
       },
       mapContainer: null,
-      marker: null
+      marker: null,
+      findPlace: null
     }
   },
   async mounted () {
-    navigator.geolocation.getCurrentPosition(this.showPosition)
     const googleMapApi = await GoogleMapsApiLoader({
-      apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY
+      apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
+      libraries: ['places', 'maps']
     })
+
+    navigator.geolocation.getCurrentPosition(this.showPosition)
 
     this.google = googleMapApi
     this.initializeMap()
   },
   methods: {
+    ...mapActions(['findGooglePlaces']),
     initializeMap () {
       this.mapContainer = this.$refs.googleMap
     },
@@ -85,6 +93,29 @@ export default {
       this.marker = new this.google.maps.Marker({
         position: this.coords,
         map: this.map
+      })
+    },
+    changeLocationHandler () {
+      const request = {
+        query: this.findPlace,
+        fields: ['name', 'geometry']
+      }
+
+      const service = new this.google.maps.places.PlacesService(this.map)
+
+      service.findPlaceFromQuery(request, (res) => {
+        const result = res[0]
+        this.coords.lat = result.geometry.location.lat()
+        this.coords.lng = result.geometry.location.lng()
+
+        this.map.setCenter((new this.google.maps.LatLng(this.coords.lat, this.coords.lng)), 13)
+        this.marker = new this.google.maps.Marker({
+          position: {
+            lat: this.coords.lat,
+            lng: this.coords.lng
+          },
+          map: this.map
+        })
       })
     }
   }
