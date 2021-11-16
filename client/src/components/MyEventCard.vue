@@ -17,7 +17,7 @@ export default {
   name: 'MyEventCard',
   methods: {
     showEditModal () {
-      this.$router.push({ name: 'Edit' })
+      this.$router.push({ name: 'Edit', params: { id: 2 } })
     }
   }
 }
