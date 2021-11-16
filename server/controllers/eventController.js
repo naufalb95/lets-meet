@@ -13,7 +13,6 @@ class EventController {
       description,
       maxParticipants,
       categoryId,
-      tokenChat,
       longitude,
       latitude,
     } = req.body;
@@ -34,7 +33,6 @@ class EventController {
         imgUrl,
         categoryId,
         eventOrganizerId,
-        tokenChat,
         longitude,
         latitude,
       });
@@ -80,12 +78,8 @@ class EventController {
                 condition.categoryId = category;
             }
 
-            if (location) {
-                if (location === "Online") {
-                    condition.location = "Online";
-                } else {
-                    condition.location = { [Op.iLike]: `%${location}%` };
-                }
+            if (location === "Online") {
+                condition.location = "Online";
             }
 
             if (day) {
@@ -145,8 +139,7 @@ class EventController {
                 },
             });
 
-
-            if (distance) {
+            if (distance && location !== 'Online') {
                 result = result.filter((item) => {
                     const lon1 = longitude * Math.PI / 180;
                     const lon2 = item.longitude * Math.PI / 180;
@@ -422,6 +415,34 @@ class EventController {
       next(err);
     }
   }
+
+    static async getMyEvent(req, res, next) {
+        try {
+            const userId = +req.user.id;
+            let foundParticipant = await Participant.findAll({
+                where: { userId },
+                include: [
+                    {
+                    model: Event,
+                    attributes: ["name"],
+                    },
+                    {
+                        model: User,
+                        attributes: ["username", "email"],
+                    },
+                ]
+            });
+
+            let foundParticipan = foundParticipant.map((item) => {
+
+            })
+            
+            res.status(200).json(foundParticipant);
+        } catch (err) {
+            next(err);
+        }
+    }
+
 }
 
 module.exports = EventController;

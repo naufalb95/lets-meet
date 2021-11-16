@@ -74,7 +74,6 @@ module.exports = (sequelize, DataTypes) => {
       isDone: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false,
         validate: {
           notNull: { msg: "Is Done is required." },
           notEmpty: { msg: "Is Done is required." },
@@ -91,8 +90,13 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      sequelize,
-      modelName: "Event",
+        hooks: {
+            beforeValidate: (event) => {
+                event.isDone = true;
+            }
+        },
+        sequelize,
+        modelName: "Event",
     }
   );
   return Event;

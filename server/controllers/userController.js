@@ -26,7 +26,7 @@ class UserController {
         id: foundUser.id,
         email: foundUser.email,
       });
-      res.status(200).json({ access_token });
+      res.status(200).json({ access_token, id: foundUser.id } );
     } catch (err) {
       next(err);
     }
