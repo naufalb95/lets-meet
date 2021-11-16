@@ -125,7 +125,7 @@ export default {
       const client = AgoraRTM.createInstance(appId)
       const options = {
         uid: this.options.uid.toString(),
-        token: this.token.chat
+        token: this.token.video
       }
 
       await client.login(options)
@@ -144,10 +144,10 @@ export default {
 
       // * Video
       // ! cek uid
-      // await this.rtc.client.join(this.options.appId, this.options.channel, this.options.token, +this.options.uid)
+      await this.rtc.client.join(this.options.appId, this.options.channel, this.options.token.video, this.options.uid)
       this.isJoined = true
-      // this.isMuted = true
-      // this.isOpenCam = false
+      this.isMuted = true
+      this.isOpenCam = false
     },
     videoResizeHandler () {
       const localVideoContainer = document.getElementById('main_video')
@@ -175,7 +175,7 @@ export default {
 
         // ! Check localStorage pada userId, kalau dia host maka masuk sini, ganti this.options.uid-nya
         // ! cek uid
-        if (this.hostId === +this.options.uid && !this.screenId) {
+        if (this.hostId === this.options.uid && !this.screenId) {
           container = document.getElementById('main_video')
           const localVidDiv = document.getElementById('local_video')
           localVidDiv.className = ''
@@ -206,7 +206,7 @@ export default {
       const remoteUsers = this.rtc.client.remoteUsers
 
       // ! cek uid
-      if (this.hostId === +this.options.uid) {
+      if (this.hostId === this.options.uid) {
         // ! Jika user adalah host, maka localVidDiv ditutup dan partchat div ditutup
         if (this.isScreenShare && remoteUsers.length === 1) {
           partChatDiv.classList.add('hidden')
@@ -234,7 +234,7 @@ export default {
       let container = null
 
       this.rtc.screenClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
-      await this.rtc.screenClient.join(this.options.appId, this.options.channel, this.options.token)
+      await this.rtc.screenClient.join(this.options.appId, this.options.channel, this.options.token.video)
 
       this.rtc.localScreenTrack = await AgoraRTC.createScreenVideoTrack({
         encoderConfig: '1080p_1',
@@ -308,38 +308,6 @@ export default {
     ...mapState(['token', 'eventDetail', 'userId'])
   },
   async mounted () {
-    // ! coba login test token chat
-    this.$store.dispatch('getTokenMessage', { uid: this.name, channelName: this.options.channel }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
-      .then(async (data) => {
-        this.token = data.token
-        const appID = 'ffe414caa68c4da0a6b8837b05bc649e'
-        const client = AgoraRTM.createInstance(appID)
-        const options = {
-          uid: this.name, // ! nama user
-          token: this.token // ! token dari server
-        }
-        if (this.name) {
-          await client.login(options)
-          const channel = client.createChannel(this.options.channel) // ! <----------dinamis nama channel
-          await channel.join()
-          this.$store.commit('GET_TOKEN_MESSAGE', channel)
-        }
-      })
-      .catch((err) => {
-        console.log('masuk sini')
-        console.log(err)
-      })
-
-    // ! coba login test token video
-    this.$store.dispatch('getTokenVideo', { uid: 'cobaTokenVideo', channelName: 'cobaTokenVideo' }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
-      .then(async (data) => {
-        console.log(data, '<--- dari mounted')
-      })
-      .catch((err) => {
-        console.log('masuk sini')
-        console.log(err)
-      })
-
     window.addEventListener('resize', this.videoResizeHandler)
 
     this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
