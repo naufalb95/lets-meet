@@ -10,6 +10,7 @@ function distance(lat1,lat2, lon1, lon2) {
     // The math module contains a function
     // named toRadians which converts from
     // degrees to radians.
+
     lon1 = lon1 * Math.PI / 180;
     lon2 = lon2 * Math.PI / 180;
     lat1 = lat1 * Math.PI / 180;
@@ -49,10 +50,13 @@ function distance(lat1,lat2, lon1, lon2) {
 function deg2rad(deg) {
     return deg * (Math.PI/180)
 }
- 
+
+const myHouse = (-6.2146223, 106.8957853);
+const kemayoran = (-6.161683, 106.8415304);
 const user = (-6.18983081903681, 106.79983291748873);
 const TOWER = (-6.201799749472874, 106.80109242061691);
+const PI = (-6.193994296143916, 106.82224202911836)
 //   module.exports = { distance }
 
-const result = distance(-6.18983081903681, -6.201799749472874, 106.79983291748873, 106.80109242061691)
+const result = distance(-6.2146223, -6.161683, 106.8957853, 106.8415304)
 console.log(result);

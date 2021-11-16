@@ -1,6 +1,6 @@
 "use strict";
 
-let data = require("../event.json");
+let data = require("../dataSeeder/event.json");
 data.forEach((el) => {
   el.createdAt = new Date();
   el.updatedAt = new Date();

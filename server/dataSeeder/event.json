@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "name": "Intro To Data Science: Online Workshop",
+        "dateAndTime": "2022-01-01 09:00:00",
+        "location": "online",
+        "description": "Join Flatiron School for an introductory workshop on how to use simple and multiple linear regression models from data science instructors. It will be important to understand the relationship between multiple variables in order to make future predictions on behaviors.",
+        "maxParticipants": 100,
+        "imgUrl": "https://sg-media.apjonlinecdn.com/wysiwyg/buying-desktop/what_is_aio/premium.jpg",
+        "tokenVideo": "",
+        "categoryId": 1,
+        "eventOrganizerId": 1,
+        "tokenChat": "",
+        "longitude": "",
+        "latitude": ""
+    },
+    {
+        "id": 2,
+        "name": "Linear Regression Models Workshop",
+        "dateAndTime": "2022-01-02 09:00:00",
+        "location": "online",
+        "description": "Linear regression is used as an attempt to model the relationship between two variables by fitting a linear equation to a set of data. It will be important to understand the relationship between multiple variables in order to make future predictions on behaviors.",
+        "maxParticipants": 20,
+        "imgUrl": "https://www.dicoding.com/blog/wp-content/uploads/2020/05/internship-rendi-override-overloading.png",
+        "tokenVideo": "",
+        "categoryId": 1,
+        "eventOrganizerId": 2,
+        "tokenChat": "",
+        "longitude": "",
+        "latitude": ""
+    },
+    {
+        "id": 3,
+        "name": "How to Become a Data Professional with No Experience",
+        "dateAndTime": "2022-01-02 09:00:00",
+        "location": "Jakarta",
+        "description": "Did you know data science and data analytics are among the fastest-growing career paths globally? Whether you have previous knowledge or little to no experience, this workshop will offer actionable tips for how you can begin your tech career in less than one year. Register today to save your spot.",
+        "maxParticipants": 35,
+        "imgUrl": "https://secure-content.meetupstatic.com/images/classic-events/499787523/676x380.webp",
+        "tokenVideo": "",
+        "categoryId": 1,
+        "eventOrganizerId": 2,
+        "tokenChat": "",
+        "longitude": "106.8957853",
+        "latitude": "-6.2146223"
+    }
+]

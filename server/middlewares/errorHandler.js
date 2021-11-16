@@ -24,8 +24,8 @@ let errorHandler = (error, req, res, next) => {
         message = res.status(404).json({ message: `You never joined this event` });
         break;
     default:
-      message = res.status(500).json({ message: "Internal server error." });
-      break;
+        message = res.status(500).json({ message: "Internal server error." });
+        break;
   }
 };
 
