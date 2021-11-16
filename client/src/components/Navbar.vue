@@ -31,7 +31,7 @@ export default {
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', true)
     },
     showCreateModal () {
-      this.$store.commit('SET_IS_MODAL_SHOW_CREATE', true)
+      this.$router.push({ name: 'Create' })
     },
     logout () {
       this.$store.commit('SET_IS_LOGIN', false)

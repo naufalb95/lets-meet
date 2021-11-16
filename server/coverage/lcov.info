@@ -17,7 +17,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:controllers\eventController.js
+SF:controllers/eventController.js
 FN:8,(anonymous_0)
 FN:46,(anonymous_1)
 FN:64,(anonymous_2)
@@ -221,7 +221,7 @@ BRF:44
 BRH:43
 end_of_record
 TN:
-SF:controllers\userController.js
+SF:controllers/userController.js
 FN:6,(anonymous_0)
 FN:18,(anonymous_1)
 FNF:2
@@ -256,7 +256,7 @@ BRF:4
 BRH:4
 end_of_record
 TN:
-SF:helpers\bcrypt.js
+SF:helpers/bcrypt.js
 FN:3,(anonymous_0)
 FN:8,(anonymous_1)
 FNF:2
@@ -276,7 +276,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:helpers\jwt.js
+SF:helpers/jwt.js
 FN:4,(anonymous_0)
 FN:7,(anonymous_1)
 FNF:2
@@ -296,7 +296,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:middlewares\authentication.js
+SF:middlewares/authentication.js
 FN:4,(anonymous_0)
 FNF:1
 FNH:1
@@ -323,7 +323,7 @@ BRF:2
 BRH:2
 end_of_record
 TN:
-SF:middlewares\errorHandler.js
+SF:middlewares/errorHandler.js
 FN:2,(anonymous_0)
 FNF:1
 FNH:1
@@ -362,7 +362,7 @@ BRF:8
 BRH:7
 end_of_record
 TN:
-SF:models\category.js
+SF:models/category.js
 FN:3,(anonymous_0)
 FN:5,(anonymous_1)
 FNF:2
@@ -380,7 +380,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:models\event.js
+SF:models/event.js
 FN:3,(anonymous_0)
 FN:5,(anonymous_1)
 FNF:2
@@ -400,7 +400,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:models\index.js
+SF:models/index.js
 FN:20,(anonymous_0)
 FN:23,(anonymous_1)
 FN:28,(anonymous_2)
@@ -444,7 +444,7 @@ BRF:9
 BRH:6
 end_of_record
 TN:
-SF:models\participant.js
+SF:models/participant.js
 FN:3,(anonymous_0)
 FN:5,(anonymous_1)
 FNF:2
@@ -463,7 +463,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:models\user.js
+SF:models/user.js
 FN:4,(anonymous_0)
 FN:6,(anonymous_1)
 FN:27,(anonymous_2)
@@ -492,7 +492,7 @@ BRF:2
 BRH:2
 end_of_record
 TN:
-SF:routes\index.js
+SF:routes/index.js
 FNF:0
 FNH:0
 DA:1,2

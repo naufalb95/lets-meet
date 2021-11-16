@@ -5,6 +5,8 @@ import Event from '../views/Event.vue'
 import Detail from '../views/Detail.vue'
 import MyEvent from '../views/MyEvent.vue'
 import VideoConference from '../views/VideoConference.vue'
+import Create from '../views/Create.vue'
+import Edit from '../views/Edit.vue'
 
 Vue.use(VueRouter)
 
@@ -20,6 +22,21 @@ const routes = [
     component: Event
   },
   {
+    path: '/event/create',
+    name: 'Create',
+    component: Create
+  },
+  {
+    path: '/event/edit',
+    name: 'Edit',
+    component: Edit
+  },
+  {
+    path: '/event/:id/meet',
+    name: 'VideoConference',
+    component: VideoConference
+  },
+  {
     path: '/event/:id',
     name: 'Detail',
     component: Detail
@@ -28,11 +45,6 @@ const routes = [
     path: '/myevent',
     name: 'MyEvent',
     component: MyEvent
-  },
-  {
-    path: '/event/:id/meet',
-    name: 'VideoConference',
-    component: VideoConference
   }
 ]
 

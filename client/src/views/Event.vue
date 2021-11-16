@@ -59,6 +59,7 @@ export default {
   },
   async created () {
     await this.fetchEvents()
+
     console.log(this.events)
   }
 }

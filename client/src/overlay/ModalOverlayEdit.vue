@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Edit from '../components/Edit.vue'
+import Edit from '../views/Edit.vue'
 export default {
   name: 'ModalEdit',
   components: {

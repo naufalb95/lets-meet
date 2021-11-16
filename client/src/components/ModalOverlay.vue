@@ -1,5 +1,5 @@
 <template>
-  <div @click="modalHandler" class="h-screen w-screen bg-gray-900 bg-opacity-70 absolute top-0 left-0 z-10 flex justify-center items-center">
+  <div @click="modalHandler" class="min-h-screen w-screen bg-gray-900 bg-opacity-70 absolute top-0 left-0 z-10 flex justify-center items-center">
     <Login v-if="isModalLogin" />
     <Register v-if="isModalRegister" />
     <Create v-if="isModalCreate" />
@@ -9,7 +9,7 @@
 <script>
 import Login from './Login.vue'
 import Register from './Register.vue'
-import Create from './Create.vue'
+import Create from '../views/Create.vue'
 
 export default {
   name: 'ModalOverlay',

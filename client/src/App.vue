@@ -3,7 +3,7 @@
     <!-- <ModalOverlayLogin v-if="isModalLogin" /> -->
     <!-- <ModalOverlayRegister v-if="isModalRegister" /> -->
     <!-- <ModalOverlayCreate v-if="isModalCreate" /> -->
-    <ModalOverlayEdit v-if="isModalEdit" />
+    <!-- <ModalOverlayEdit v-if="isModalEdit" /> -->
     <Navbar id="navbar" v-if="!isVideoConference" class="absolute z-10" />
     <router-view id="content" class="w-screen mb-64" />
     <div class="bottom-0 absolute">
@@ -19,7 +19,7 @@ import Footer from './components/Footer.vue'
 // import ModalOverlayLogin from './overlay/ModalOverlayLogin.vue'
 // import ModalOverlayRegister from './overlay/ModalOverlayRegister.vue'
 // import ModalOverlayCreate from './overlay/ModalOverlayCreate.vue'
-import ModalOverlayEdit from './overlay/ModalOverlayEdit.vue'
+// import ModalOverlayEdit from './overlay/ModalOverlayEdit.vue'
 import ModalOverlay from './components/ModalOverlay.vue'
 
 export default {
@@ -47,7 +47,7 @@ export default {
     // ModalOverlayLogin,
     // ModalOverlayRegister,
     // ModalOverlayCreate,
-    ModalOverlayEdit,
+    // ModalOverlayEdit,
     ModalOverlay
   }
 }
