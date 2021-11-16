@@ -85,7 +85,14 @@ export default {
 
         await this.fetchEvents(payload)
       } else if (name !== 'distance') {
-        if (name === 'location') this.distance = ''
+        if (name === 'location' && this.filter.distance) {
+          this.distance = ''
+          this.latitude = 0
+          this.longitude = 0
+          delete this.filter.distance
+          delete this.filter.latitude
+          delete this.filter.longitude
+        }
 
         this.filter = {
           ...this.filter,
@@ -106,7 +113,14 @@ export default {
         }
 
         navigator.geolocation.getCurrentPosition(this.showPosition)
+
+        this.$refs[name].classList.add('bg-blue-300')
+        this.$refs[name].classList.add('hover:bg-blue-400')
+        this.$refs[name].classList.remove('bg-gray-200')
+        this.$refs[name].classList.remove('hover:bg-gray-300')
       }
+
+      console.log(this.filter)
     },
     async showPosition (position) {
       this.latitude = position.coords.latitude
