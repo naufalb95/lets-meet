@@ -35,10 +35,18 @@ export default new Vuex.Store({
         id: 0,
         username: ''
       },
-      participants: []
+      participants: [],
+      tokenMessage: '',
+      messages: []
     }
   },
   mutations: {
+    GET_TOKEN_MESSAGE (state, payload) {
+      state.tokenMessage = payload
+    },
+    GET_ALL_MESSAGES (state, payload) {
+      state.messages.push(payload)
+    },
     SET_IS_MODAL_SHOW_LOGIN (state, payload) {
       state.isModalLogin = payload
     },
@@ -65,6 +73,21 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    getTokenMessage (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `/access_token?channelName=${payload.channelName}&uid=${payload.uid}`,
+          method: 'GET'
+        })
+          .then(({ data }) => {
+            resolve(data)
+          })
+          .catch((err) => {
+            console.log('fail')
+            reject(err)
+          })
+      })
+    },
     async findGooglePlaces () {
       const config = {
         method: 'get',
