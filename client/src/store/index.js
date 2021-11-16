@@ -162,6 +162,15 @@ export default new Vuex.Store({
         },
         data: payload.form
       })
+    },
+    async userLeaveEvent (_, payload) {
+      await server({
+        method: 'DELETE',
+        url: '/events/' + payload + '/participants',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
     }
   },
   modules: {

@@ -41,12 +41,24 @@
               </div>
             </div>
             <div class="w-full flex items-center flex-col mt-12 px-6">
-              <button @click="attendHandler" v-if="!isHost && !isAttending && !isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">Attend</button>
-              <button @click="attendHandler" v-if="isAttending && isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">Join Meet</button>
-              <button @click="attendHandler" v-if="!isHost && isAttending && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">Leave Event</button>
-              <button @click="attendHandler" v-if="isHost && !isStart && !isDone" class="bg-yellow-500 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-yellow-600">Edit Event</button>
-              <button @click="attendHandler" v-if="isHost && isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">End Event</button>
-              <button @click="attendHandler" v-if="isHost && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">Delete Event</button>
+              <button @click="attendHandler" v-if="!isHost && !isAttending && !isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
+                Attend
+              </button>
+              <button @click="attendHandler" v-if="isAttending && isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
+                Join Meet
+              </button>
+              <button @click="leaveEventHandler" v-if="!isHost && isAttending && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
+                Leave Event
+              </button>
+              <button @click="attendHandler" v-if="isHost && !isStart && !isDone" class="bg-yellow-500 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-yellow-600">
+                Edit Event
+              </button>
+              <button @click="attendHandler" v-if="isHost && isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
+                End Event
+              </button>
+              <button @click="attendHandler" v-if="isHost && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
+                Delete Event
+              </button>
               <h3 class="font-semibold" v-if="isDone">Event already ended</h3>
             </div>
           </div>
@@ -98,7 +110,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchEventDetail', 'attendEvent']),
+    ...mapActions(['fetchEventDetail', 'attendEvent', 'userLeaveEvent']),
     initializeMap () {
       this.mapContainer = this.$refs.googleMap
     },
@@ -122,6 +134,11 @@ export default {
       } else {
         await this.attendEvent(this.$route.params.id)
       }
+    },
+    async leaveEventHandler () {
+      await this.userLeaveEvent(this.$route.params.id)
+
+      this.isAttending = false
     }
   },
   async mounted () {
