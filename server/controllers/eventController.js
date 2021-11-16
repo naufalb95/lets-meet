@@ -83,6 +83,8 @@ class EventController {
 
             if (location === "Online") {
                 condition.location = "Online";
+            } else if (location === "Offline") {
+                condition.location = "Offline";
             }
 
             if (day) {
@@ -142,7 +144,7 @@ class EventController {
                 },
             });
 
-            if (distance && location !== 'Online') {
+            if (distance && location !== 'Online') {    
                 result = result.filter((item) => {
                     const lon1 = longitude * Math.PI / 180;
                     const lon2 = item.longitude * Math.PI / 180;
