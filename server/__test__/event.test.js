@@ -34,8 +34,10 @@ beforeAll( async () => {
         description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.', 
         maxParticipants: 50, 
         imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
-        categoryId: 1, 
-        eventOrganizerId: 1 
+        categoryId: 1,
+                isDone: false,
+        eventOrganizerId: 1,
+        isDone: false,
     })
 
     await Event.create( { 
@@ -46,7 +48,8 @@ beforeAll( async () => {
         maxParticipants: 30, 
         imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
         categoryId: 2, 
-        eventOrganizerId: 1
+        eventOrganizerId: 1,
+        isDone: false,
     })
 
     await Event.create( { 
@@ -57,7 +60,13 @@ beforeAll( async () => {
         maxParticipants: 30, 
         imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
         categoryId: 2, 
-        eventOrganizerId: 1
+        eventOrganizerId: 1,
+        isDone: false,
+    })
+
+    await Participant.create( {
+        userId: 2,
+        eventId: 1,
     })
 })
 
@@ -268,6 +277,7 @@ describe('Event fiture', () => {
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(201);
@@ -291,6 +301,7 @@ describe('Event fiture', () => {
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(201);
@@ -313,6 +324,7 @@ describe('Event fiture', () => {
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(401);
@@ -335,6 +347,7 @@ describe('Event fiture', () => {
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .set({ access_token: invalid_token})
             .then((res) => {
@@ -359,6 +372,7 @@ describe('Event fiture', () => {
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(400);
@@ -382,6 +396,7 @@ describe('Event fiture', () => {
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(400);
@@ -406,6 +421,7 @@ describe('Event fiture', () => {
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(400);
@@ -430,6 +446,7 @@ describe('Event fiture', () => {
                 maxParticipants: 50, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(400);
@@ -453,6 +470,7 @@ describe('Event fiture', () => {
                 description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.', 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(400);
@@ -541,6 +559,7 @@ describe('Event fiture', () => {
                 maxParticipants: 30, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -563,6 +582,7 @@ describe('Event fiture', () => {
                 maxParticipants: 30, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(200);
@@ -586,6 +606,7 @@ describe('Event fiture', () => {
                 maxParticipants: 30, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
             .then((res) => {
                 expect(res.status).toBe(404);
@@ -609,7 +630,62 @@ describe('Event fiture', () => {
                 maxParticipants: 30, 
                 imgUrl: 'https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png', 
                 categoryId: 1,
+                isDone: false,
             })
+            .then((res) => {
+                expect(res.status).toBe(403);
+                expect(res.body).toEqual({"message": "Not Enough Access"});
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('User Make Status Event Done', (done) => {
+        request(app)
+            .patch('/events/4')
+            .set({ access_token })
+            .send({
+                isDone: 'true'
+            })
+            
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Object));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('User Make Status Event Done Fail Cause Event Not Found', (done) => {
+        request(app)
+            .patch('/events/400')
+            .set({ access_token })
+            .send({
+                isDone: 'true'
+            })
+            
+            .then((res) => {
+                expect(res.status).toBe(404);
+                expect(res.body).toEqual({"message": "Event Not Found"});
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('User Make Status Event Done Fail Cause Forbidden Access', (done) => {
+        request(app)
+            .patch('/events/4')
+            .set({ access_token: access_token2 })
+            .send({
+                isDone: 'true'
+            })
+            
             .then((res) => {
                 expect(res.status).toBe(403);
                 expect(res.body).toEqual({"message": "Not Enough Access"});
@@ -710,4 +786,3 @@ describe('Event fiture', () => {
             })
     })
 })
-

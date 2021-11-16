@@ -1,76 +1,58 @@
-// const date = require("date-and-time");
-// const startedDate = new Date("2020-12-12 00:00:00");
-// const endDate = new Date("2020-12-26 00:00:00");
-// let hariIni = new Date();
-// let mingdep = hariIni.toString();
-// console.log(mingdep);
-// const d = new Date();
-// d.setDate(d.getDate() + 10);
-// console.log(d);
+function distance(lat1,lat2, lon1, lon2) {
+    // Mall Taman Anggrek
+    // lat: -6.1785831
+    // lng: 106.7922128
 
-// console.log(endDate, "end date");
-// console.log(startedDate, "started date");
+    // Grand Indonesia
+    // lat: -6.1951801
+    // lng: 106.8204412
 
-// let gantiHari = function (param) {
-//   let days = [
-//     "Sunday",
-//     "Monday",
-//     "Tuesday",
-//     "Wednesday",
-//     "Thursday",
-//     "Friday",
-//     "Saturday",
-//   ];
-//   let d = param;
-//   let dayName = days[d.getDay()];
-//   if (dayName == "Sunday") d.setDate(d.getDate() + 7);
-//   if (dayName == "Monday") d.setDate(d.getDate() + 6);
-//   if (dayName == "Tuesday") d.setDate(d.getDate() + 5);
-//   if (dayName == "Wednesday") d.setDate(d.getDate() + 4);
-//   if (dayName == "Thursday") d.setDate(d.getDate() + 3);
-//   if (dayName == "Friday") d.setDate(d.getDate() + 2);
-//   if (dayName == "Saturday") d.setDate(d.getDate() + 1);
-//   return d;
-// };
-// const kata = "giolove frengky";
+    // The math module contains a function
+    // named toRadians which converts from
+    // degrees to radians.
+    lon1 = lon1 * Math.PI / 180;
+    lon2 = lon2 * Math.PI / 180;
+    lat1 = lat1 * Math.PI / 180;
+    lat2 = lat2 * Math.PI / 180;
+  
+    // Haversine formula
+    let dlon = lon2 - lon1;
+    let dlat = lat2 - lat1;
+    let a = Math.pow(Math.sin(dlat / 2), 2)
+    + Math.cos(lat1) * Math.cos(lat2)
+    * Math.pow(Math.sin(dlon / 2),2);
+  
+    let c = 2 * Math.asin(Math.sqrt(a));
+  
+    // Radius of earth in kilometers. Use 3956
+    // for miles
+    let r = 6371;
+  
+    // calculate the result
+    return(c * r);
+}
 
-// let validateUsername = function (words) {
-//   // let output = true;
-//   // // for (let word of words) {
-//   // //   if (word === " ") output = false;
-//   // // }
-//   // if (/^[-\w\.\$@\*\!]{1,30}$/.test(words)) output = false;
-//   return /^[-\w\.\$@\*\!]{1,30}$/i.test(words);
-// };
-// console.log(validateUsername(kata));
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1); 
+    var a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ; 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; // Distance in km
+    return d;
+}
 
+function deg2rad(deg) {
+    return deg * (Math.PI/180)
+}
+ 
+const WISMA_76 = (-6.18983081903681, 106.79983291748873);
+const TOWER = (-6.201799749472874, 106.80109242061691);
+//   module.exports = { distance }
 
-// const today = new Date(new Date().setHours(0, 0, 0, 0))
-// const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
-
-// console.log(today);
-// console.log(tomorrow);
-
-let datel = '2022-03-01 16:15'
-let arry = ''
-let minute = datel.slice(14,16)
-let hour = datel.slice(11,13)
-let day = datel.slice(8, 10)
-let month = datel.slice(5, 7)
-
-const dateEvent = minute + " "+ hour + " " + day + " " + month
-console.log(dateEvent);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const result = distance(-6.18983081903681, -6.201799749472874, 106.79983291748873, 106.80109242061691)
+console.log(result);

@@ -71,6 +71,24 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: { msg: "Event Organizer ID is required." },
         },
       },
+      isDone: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        validate: {
+          notNull: { msg: "Is Done is required." },
+          notEmpty: { msg: "Is Done is required." },
+        },
+      },
+      tokenChat: {
+        type: DataTypes.STRING,
+      },
+      longitude: {
+        type: DataTypes.STRING,
+      },
+      latitude: {
+        type: DataTypes.STRING,
+      },
     },
     {
       sequelize,

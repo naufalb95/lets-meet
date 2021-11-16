@@ -17,3 +17,8 @@ tambah column latitude dan longitude di event, dan buat endpoint buat cari event
 
 column location diisi online atau nama lokasi
 
+- Column Event
+    - isDone
+    - tokenChat
+    - Longitude
+    - Latitude

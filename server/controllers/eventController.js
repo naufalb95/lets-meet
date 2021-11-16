@@ -13,6 +13,9 @@ class EventController {
       description,
       maxParticipants,
       categoryId,
+      tokenChat,
+      longitude,
+      latitude,
     } = req.body;
 
     console.log(req.body.dateAndTime, "<<< date and time");
@@ -31,6 +34,9 @@ class EventController {
         imgUrl,
         categoryId,
         eventOrganizerId,
+        tokenChat,
+        longitude,
+        latitude,
       });
 
       if (location === "Online") {
@@ -143,9 +149,34 @@ class EventController {
         },
       });
 
-      res.status(200).json(result);
+        let container = result
+
+        for(let i = 0; i < container.length; i++) {
+            const foundParticipant = await Participant.findAll({ where: { eventId: +result[i].id } });
+            let participantsContainer = []
+
+            let objUser = {}
+            if (foundParticipant.length > 0) {
+                for (let j = 0; j < foundParticipant.length; j++) {
+                    const userId = foundParticipant[j].dataValues.userId;
+                    const foundUser = await User.findByPk(userId);
+                    
+                    objUser = {
+                        userId: foundUser.id,
+                        username: foundUser.username,
+                        email: foundUser.email,
+                    }
+                    participantsContainer.push(objUser);
+                }
+            }
+            container[i].dataValues.participants = participantsContainer
+        }
+
+        console.log(container, "<=== container");
+
+        res.status(200).json(container);
     } catch (err) {
-      next(err);
+        next(err);
     }
   }
 
@@ -332,6 +363,38 @@ class EventController {
           });
       } else {
         throw { name: "You never joined this event" };
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async eventDone(req, res, next) {
+    const { eventId } = req.params;
+    const userId = +req.user.id;
+    const isDone = {
+        isDone: req.body.isDone
+    }
+    try {
+      const foundEvent = await Event.findByPk(eventId);
+
+      if (!foundEvent) {
+        throw { name: "Event Not Found" };
+      }
+
+      if (foundEvent.eventOrganizerId === userId) {
+        const updateStatusDoneEvent = await Event.update(
+            isDone, {
+                where: {
+                    id: eventId
+                },
+                returning: true,
+            }
+        )
+        const result = updateStatusDoneEvent[1][0]
+        res.status(200).json(result);
+      } else {
+        throw { name: "Access Denied" };
       }
     } catch (err) {
       next(err);

@@ -14,6 +14,7 @@ router.use(authentication);
 router.post("/events", EventController.create);
 router.post("/events/:eventId", EventController.userJoinEvent);
 router.put("/events/:eventId", EventController.updateEvent);
+router.patch("/events/:eventId", EventController.eventDone);
 router.delete("/events/:eventId", EventController.deleteEvent);
 router.delete("/events/:eventId/participants", EventController.userLeaveEvent);
 
