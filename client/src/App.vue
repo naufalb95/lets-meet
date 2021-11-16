@@ -13,6 +13,7 @@
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 import ModalOverlay from './components/ModalOverlay.vue'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'App',
@@ -31,6 +32,16 @@ export default {
     Navbar,
     Footer,
     ModalOverlay
+  },
+  methods: {
+    ...mapMutations({
+      mutateIsLogin: 'SET_IS_LOGIN'
+    })
+  },
+  mounted () {
+    const token = localStorage.getItem('access_token')
+
+    if (token) this.mutateIsLogin(true)
   }
 }
 </script>

@@ -73,7 +73,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getTokenMessage (context, payload) {
+    getTokenMessage (_, payload) {
       return new Promise((resolve, reject) => {
         axios({
           url: `/access_token?channelName=${payload.channelName}&uid=${payload.uid}`,
@@ -87,24 +87,6 @@ export default new Vuex.Store({
             reject(err)
           })
       })
-    },
-    async findGooglePlaces () {
-      const config = {
-        method: 'get',
-        url: 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=mongolian&inputtype=textquery&locationbias=circle%3A2000%4047.6918452%2C-122.2226413&fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&key=AIzaSyDOJpP-lEnakyV5PKJHbSOzKxTUu9oIeh0',
-        headers: {},
-        secure: false
-      }
-
-      axios(config)
-        .then(() => {
-          console.log('hai masuk')
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-      // console.log(response)
     },
     async fetchEvents (context, payload) {
       const response = await server({
@@ -126,9 +108,9 @@ export default new Vuex.Store({
     async attendEvent (_, payload) {
       const response = await server({
         method: 'POST',
-        url: '/events/' + payload.eventId,
+        url: '/events/' + payload,
         headers: {
-          access_token: 'token'
+          access_token: localStorage.getItem('access_token')
         }
       })
 
@@ -141,7 +123,7 @@ export default new Vuex.Store({
         data: payload
       })
     },
-    async loginUser (_, payload) {
+    async loginUser (context, payload) {
       const response = await server({
         method: 'POST',
         url: '/users/login',
@@ -151,6 +133,8 @@ export default new Vuex.Store({
       const token = response.data.access_token
 
       localStorage.setItem('access_token', token)
+
+      context.commit('SET_IS_LOGIN', true)
     },
     async createEvent (_, payload) {
       await server({

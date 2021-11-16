@@ -7,7 +7,7 @@
       <ul>
         <li v-if="!isLogin" @click="showLoginModal" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Sign In</li>
         <li v-if="!isLogin" @click="showRegisterModal" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Sign Up</li>
-        <li v-if="isLogin" @click="showCreateModal" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Create Event</li>
+        <router-link to="/event/create" v-if="isLogin" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Create Event</router-link>
         <router-link to="/myevent" v-if="isLogin" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">My Event</router-link>
         <li v-if="isLogin" @click="logout" class="cursor-pointer font-medium inline-block text-basic text-white hover:text-gray-200 mr-3 ml-3">Logout</li>
       </ul>
@@ -16,25 +16,31 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex'
+
 export default {
   name: 'Navbar',
   computed: {
-    isLogin () {
-      return this.$store.state.isLogin
-    }
+    ...mapState(['isLogin'])
   },
   methods: {
+    ...mapMutations({
+      mutateIsLogin: 'SET_IS_LOGIN'
+    }),
     showLoginModal () {
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
+      this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
     },
     showRegisterModal () {
+      this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', true)
     },
-    showCreateModal () {
-      this.$router.push({ name: 'Create' })
-    },
     logout () {
-      this.$store.commit('SET_IS_LOGIN', false)
+      localStorage.clear()
+
+      this.mutateIsLogin(false)
+
+      this.$router.push({ name: 'Home' })
     }
   }
 }

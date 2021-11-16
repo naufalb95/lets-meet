@@ -40,8 +40,10 @@
                 <h3 class="block text-gray-800">{{ eventDetail.event.location }}</h3>
               </div>
             </div>
-            <div class="w-full flex justify-center mt-4 px-6">
-              <button class="bg-blue-700 text-white p-3 rounded w-full mt-8 text-xl font-semibold hover:bg-blue-800">Attend</button>
+            <div class="w-full flex items-center flex-col mt-12 px-6">
+              <button @click="attendHandler" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">Attend</button>
+              <button @click="attendHandler" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">Join Meet</button>
+              <button @click="attendHandler" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">Leave Event</button>
             </div>
           </div>
           <div id="maps" ref="googleMap" class="bg-gray-700 rounded-b-lg shadow-2xl" v-if="eventDetail.event.location !== 'Online'"></div>
@@ -62,6 +64,7 @@ export default {
   data () {
     return {
       isLoading: true,
+      isAttending: false,
       google: null,
       map: null,
       mapContainer: null,
@@ -73,7 +76,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['eventDetail']),
+    ...mapState(['eventDetail', 'isLogin']),
     date () {
       const timeZone = 'Asia/Jakarta'
       if (this.eventDetail.event?.dateAndTime) return format(utcToZonedTime(new Date(this.eventDetail.event.dateAndTime), timeZone), 'dd MMMM yyyy')
@@ -87,9 +90,6 @@ export default {
   },
   methods: {
     ...mapActions(['fetchEventDetail', 'attendEvent']),
-    async attendHandler () {
-      await this.attendEvent(this.eventDetail.id)
-    },
     initializeMap () {
       this.mapContainer = this.$refs.googleMap
     },
@@ -105,6 +105,13 @@ export default {
         position: this.coords,
         map: this.map
       })
+    },
+    async attendHandler () {
+      if (!this.isLogin) {
+        this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
+      } else {
+        await this.attendEvent(this.$route.params.id)
+      }
     }
   },
   async mounted () {
