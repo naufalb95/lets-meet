@@ -25,7 +25,7 @@ export default {
       return format(utcToZonedTime(new Date(this.event.event.dateAndTime), timeZone), 'dd MMMM yyyy @ HH:mm')
     },
     attendees () {
-      return this.event.event.participants.length + 1
+      return this.event.event.participants?.length + 1
     }
   }
 }
