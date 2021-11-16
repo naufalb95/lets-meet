@@ -873,7 +873,7 @@ describe('Event fiture', () => {
             })
     })
 
-    test("[500 - Error] Catch error rating find One by userId & courseId", async () => {
+    test("Error 500 When Get My Event", async () => {
         jest.spyOn(Event, "findAll").mockRejectedValue("Error");
     
         return request(app)
