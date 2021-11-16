@@ -15,19 +15,29 @@
           <div id='local_video' class='participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden'></div>
         </div>
       </div>
-      <div id='part_chat' class='flex-grow-0 h-full p-2'>
+       <div id='part_chat' class='flex-grow-0 h-full p-2'>
         <div class='bg-white h-full rounded-lg text-black'>
-          <div class='p-3 h-5/6'>
-            Chat Participants
+          <div class='p-3 overflow-auto' style="height: 87.5%">
+            <div class="border-b-2 border-black mb-2">
+              Chat Participants
+            </div>
+            <div v-for="index in 100" :key="index" class="my-2">
+              <div><span class="font-semibold text-sm">Damar,</span> <span class="italic text-xs text-gray-400">19:08</span></div>
+              <div class="text-sm">Alhamdulillah...</div>
+            </div>
           </div>
-          <div class='p-3 h-1/6'>
-            <textarea id='chat_message' placeholder='Start talking with everyone!' class='border border-gray-300 w-full h-full rounded-md p-1 outline-none'>asd</textarea>
+          <div class="flex p-3" style="height: 12.5%">
+            <div class='w-5/6'>
+              <textarea id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-gray-300 w-full h-full rounded-l-md outline-none'>Hello Damar</textarea>
+            </div>
+            <div class='w-1/6'>
+              <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none'><i class="fab fa-telegram-plane"></i></button>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div id='bottom_row' class='text-white pl-5 flex items-center'>
-      <button @click='shareScreenHandler' class='mx-3' v-if='!isScreenShare && isHost'>Screen Share</button>
       <button @click='stopScreenShareHandler' class='mx-3' v-if='isScreenShare && isHost'>Stop Screen Share</button>
       <button @click='openCamHandler' class='mx-3' v-if='!isOpenCam'>Open Cam</button>
       <button @click='closeCamHandler' class='mx-3' v-if='isOpenCam'>Close Cam</button>
@@ -60,7 +70,7 @@ export default {
   name: 'VideoConference',
   data () {
     return {
-      isJoined: false,
+      isJoined: true,
       isMuted: true,
       isOpenCam: false,
       isHost: false,
