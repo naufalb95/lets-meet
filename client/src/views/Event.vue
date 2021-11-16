@@ -1,10 +1,12 @@
 <template>
   <div class="flex flex-col mt-24">
     <div class="mt-14 w-screen flex justify-center">
-      <input type="text" v-model="eventName" placeholder="e.g. Yoga Event" class="w-2/6 px-3 py-3 placeholder-gray-400 rounded-l-lg text-sm border border-gray-300 shadow focus:outline-none"/>
-      <button type="text" class="text-center border border-blue-600 px-8 py-3 rounded-r-lg text-white shadow focus:outline-none bg-blue-600 hover:bg-blue-700 hover:border-blue-700">
+      <form @submit.prevent="submitHandler" class="w-full flex justify-center">
+        <input type="text" v-model="eventName" placeholder="e.g. Yoga Event" class="w-2/6 px-3 py-3 placeholder-gray-400 rounded-l-lg text-sm border border-gray-300 shadow focus:outline-none"/>
+        <button type="text" class="text-center border border-blue-600 px-8 py-3 rounded-r-lg text-white shadow focus:outline-none bg-blue-600 hover:bg-blue-700 hover:border-blue-700">
         <font-awesome-icon icon="search" class="text-xl"/>
       </button>
+      </form>
     </div>
     <div class="mt-4 w-screen flex justify-center mb-8">
       <select name="day" v-model="day" @change="dropdownFilterHandler" class="text-center mx-4 py-3 px-6 text-gray-800 shadow-lg rounded-xl focus:outline-none bg-gray-200 hover:bg-gray-300 font-semibold cursor-pointer">
@@ -72,6 +74,9 @@ export default {
     dropdownFilterHandler (e) {
       const { name, value } = e.target
       console.log(name, value)
+    },
+    submitHandler () {
+      console.log(this.eventName)
     }
   },
   async created () {
