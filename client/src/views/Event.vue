@@ -60,7 +60,8 @@ export default {
       distance: '',
       category: '',
       latitude: 0,
-      longitude: 0
+      longitude: 0,
+      filter: {}
     }
   },
   components: {
@@ -71,8 +72,23 @@ export default {
   },
   methods: {
     ...mapActions(['fetchEvents']),
-    dropdownFilterHandler (e) {
-      // const { name, value } = e.target
+    async dropdownFilterHandler (e) {
+      let { name, value } = e.target
+
+      if (!value) delete this.filter[name]
+      else if (name === 'type') name = 'location'
+      else {
+        this.filter = {
+          ...this.filter,
+          [name]: value
+        }
+      }
+
+      console.log(this.filter)
+
+      const payload = { ...this.filter }
+
+      await this.fetchEvents(payload)
     },
     async submitHandler () {
       const payload = {
