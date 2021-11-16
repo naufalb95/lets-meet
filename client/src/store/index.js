@@ -98,6 +98,17 @@ export default new Vuex.Store({
         url: '/users/register',
         data: payload
       })
+    },
+    async loginUser (context, payload) {
+      const response = await server({
+        method: 'POST',
+        url: '/users/login',
+        data: payload
+      })
+
+      const token = response.data.access_token
+
+      localStorage.setItem('access_token', token)
     }
   },
   modules: {
