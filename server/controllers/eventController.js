@@ -424,20 +424,20 @@ class EventController {
                 include: [
                     {
                     model: Event,
-                    attributes: ["name"],
-                    },
-                    {
-                        model: User,
-                        attributes: ["username", "email"],
-                    },
+                    }
                 ]
             });
 
-            let foundParticipan = foundParticipant.map((item) => {
-
+            let foundMyEvent = await Event.findAll({
+                where: { eventOrganizerId: userId },
             })
+
+            // console.log(foundParticipant);
+            let result = foundParticipant.map(event => {
+                return event.Event
+            }).concat(foundMyEvent)
             
-            res.status(200).json(foundParticipant);
+            res.status(200).json(result);
         } catch (err) {
             next(err);
         }

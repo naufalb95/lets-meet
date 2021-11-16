@@ -21,6 +21,7 @@ const authentication = async (req, res, next) => {
         }
         next()
     } catch (err) {
+        console.log(err.message);
         if(err.message === "invalid signature") {
             res.status(401).json( { message: "Invalid JWT Token" } )
         } else {
