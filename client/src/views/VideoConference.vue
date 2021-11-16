@@ -21,14 +21,14 @@
             <div class="border-b-2 border-black mb-2">
               Chat Participants
             </div>
-            <div v-for="index in 100" :key="index" class="my-2">
-              <div><span class="font-semibold text-sm">Damar,</span> <span class="italic text-xs text-gray-400">19:08</span></div>
-              <div class="text-sm">Alhamdulillah...</div>
+            <div v-for="(data, index) in this.getMessages" :key="index" class="my-2"> // ! dapetin semua message dari Computed
+              <div><span class="font-semibold text-sm">{{ data.name }},</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
+              <div class="text-sm">{{ data.message }}</div>
             </div>
           </div>
-          <div class="flex p-3" style="height: 12.5%">
+          <div class="flex p-3" style="height: 12.5%" @submit.prevent="createNewMessage"> // ! bikin chat/message
             <div class='w-5/6'>
-              <textarea id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-gray-300 w-full h-full rounded-l-md outline-none'>Hello Damar</textarea>
+              <textarea id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-gray-300 w-full h-full rounded-l-md outline-none' v-model="newMessage"></textarea>
             </div>
             <div class='w-1/6'>
               <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none'><i class="fab fa-telegram-plane"></i></button>
@@ -59,12 +59,20 @@
 
 <script>
 import AgoraRTC from 'agora-rtc-sdk-ng'
+import AgoraRTM from 'agora-rtm-sdk'
+import date from 'date-and-time'
 
 // ! Tombol Screen Share hanya ada host saja
 
 // ! options dan rtc dimasukkan ke state data
 
+// ! Login jalan saat pertamakali masuk halaman
+
 // ! KONDISI AWAL MIC MUTED
+
+// ! event handler chat di created
+
+// ! dapetin semua chat di computed
 
 export default {
   name: 'VideoConference',
@@ -94,13 +102,51 @@ export default {
         channel: 'test2',
         token: '006bba821c9f0374c0a86b015c0668097d8IADgTMOAOH7BSLZqBu12dAL35jIyzLd6k2S0wvPHmJK+9FiNuxMAAAAAEABr21wCKaWSYQEAAQAMpZJh',
         uid: 123456
-      }
+      },
+      newMessage: null, // * buat bikin message
+      name: null, // * buat bikin message
+      token: null // * buat token
     }
   },
   methods: {
+    // ! buat pesan / chat baru
+    async createNewMessage () {
+      const channel = this.$store.state.tokenMessage
+      if (channel != null) {
+        await channel.sendMessage({ text: this.newMessage }).then(() => {
+          this.$store.commit('GET_ALL_MESSAGES', { message: this.newMessage, name: this.name, time: date.format(new Date(), 'hh:mm A') }) // ! <---- this.name == nama user yg masuk
+          this.newMessage = null
+        })
+          .catch((err) => { console.log('kirim message ke channel mana lu woi?', err) }) // ! boleh di custom lagi catch nya wkwk
+      }
+    },
+    // ! login buat fitur chat/message
+    login () {
+      this.$store.dispatch('getTokenMessage', { name: this.name, channelName: this.options.channel }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
+        .then(async (data) => {
+          this.token = data.token
+          const appID = 'ffe414caa68c4da0a6b8837b05bc649e'
+          const client = AgoraRTM.createInstance(appID)
+          const options = {
+            uid: this.name, // ! nama user
+            token: this.token // ! token dari server
+          }
+          if (this.name) {
+            await client.login(options)
+            const channel = client.createChannel(this.options.channel) // ! <----------dinamis nama channel
+            await channel.join()
+            this.$store.commit('GET_TOKEN_MESSAGE', channel)
+          } else {
+            this.errorText = 'Please enter your name.'
+          }
+        })
+        .catch((err) => {
+          console.log('masuk sini')
+          console.log(err)
+        })
+    },
     async joinHandler () {
       await this.rtc.client.join(this.options.appId, this.options.channel, this.options.token, +this.options.uid)
-
       this.isJoined = true
       this.isMuted = true
       this.isOpenCam = false
@@ -240,6 +286,22 @@ export default {
   },
   async created () {
     this.$store.commit('SET_IS_VIDEO_CONFERENCE', true)
+    // ! event handler chat
+    const channel = this.$store.state.tokenMessage
+    channel.on('ChannelMessage', (message, memberId) => {
+      const obj = {
+        message: message.text,
+        name: memberId,
+        time: date.format(new Date(), 'hh:mm A')
+      }
+      this.$store.commit('GET_ALL_MESSAGES', obj)
+    })
+  },
+  computed: {
+    // ! dapetin semua pesan
+    getMessages () {
+      return this.$store.state.messages
+    }
   },
   async mounted () {
     window.addEventListener('resize', this.videoResizeHandler)
