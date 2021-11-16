@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   name: 'Register',
   data () {
@@ -36,15 +37,23 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['registerUser']),
     showLoginModal () {
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
     },
-    submitHandler () {
-      // ! Validasi kalau password tidak sama
-
+    async submitHandler () {
       if (this.password !== this.confirmPassword) console.log('salah!')
-      console.log('hai')
+      else {
+        await this.registerUser({
+          username: this.username,
+          email: this.email,
+          password: this.password
+        })
+
+        this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
+        this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
+      }
     }
   }
 }
