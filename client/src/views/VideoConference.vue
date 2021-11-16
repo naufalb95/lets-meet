@@ -64,21 +64,7 @@
 import AgoraRTC from 'agora-rtc-sdk-ng'
 import AgoraRTM from 'agora-rtm-sdk'
 import { mapActions, mapState, mapMutations } from 'vuex'
-// import date from 'date-and-time'
-
-// ! Tombol Screen Share hanya ada host saja
-
-// ! options dan rtc dimasukkan ke state data
-
-// ! Login jalan saat pertamakali masuk halaman
-
-// ! KONDISI AWAL MIC MUTED
-
-// ! event handler chat di created
-
-// ! dapetin semua chat di computed
-
-// ! ganti date and time ke date-fns
+import { utcToZonedTime, format } from 'date-fns-tz'
 
 export default {
   name: 'VideoConference',
@@ -88,12 +74,12 @@ export default {
       isMuted: true,
       isOpenCam: false,
       isHost: false,
-      myId: 1234562, // * Diisi dari localStorage
-      hostId: 123456, //* Diisi dari database
+      myId: null,
+      hostId: null,
       isHostPresent: false,
       screenId: null,
       isScreenShare: false,
-      participantsId: [1, 12345672], //* Diisi dari database
+      participantsId: [],
       hostVideoTrack: null,
       rtc: {
         localAudioTrack: null,
@@ -104,17 +90,17 @@ export default {
         screenClient: null
       },
       options: {
-        appId: 'bba821c9f0374c0a86b015c0668097d8',
-        channel: 'test2',
-        uid: 123452
+        appId: process.env.VUE_APP_AGORA_API_KEY,
+        channel: '',
+        uid: null
       },
       channelChat: null,
       messages: [],
-      message: null // * buat bikin message
+      message: null
     }
   },
   methods: {
-    ...mapActions(['getToken']),
+    ...mapActions(['getToken', 'fetchEventDetail']),
     ...mapMutations({
       setIsVideoConference: 'SET_IS_VIDEO_CONFERENCE'
     }),
@@ -125,14 +111,14 @@ export default {
         this.messages.push({
           message: this.message,
           name: this.options.uid,
-          time: new Date()
+          time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
         })
 
         this.message = ''
       }
     },
     async joinHandler () {
-      // * Chat
+      // ! cek uid
       await this.getToken({ uid: this.options.uid, channelName: this.options.channel })
 
       const appId = this.options.appId
@@ -152,11 +138,12 @@ export default {
         this.messages.push({
           message: message.text,
           name: uid,
-          time: new Date()
+          time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
         })
       })
 
       // * Video
+      // ! cek uid
       // await this.rtc.client.join(this.options.appId, this.options.channel, this.options.token, +this.options.uid)
       this.isJoined = true
       // this.isMuted = true
@@ -187,6 +174,7 @@ export default {
         let container = null
 
         // ! Check localStorage pada userId, kalau dia host maka masuk sini, ganti this.options.uid-nya
+        // ! cek uid
         if (this.hostId === +this.options.uid && !this.screenId) {
           container = document.getElementById('main_video')
           const localVidDiv = document.getElementById('local_video')
@@ -217,6 +205,7 @@ export default {
       const partChatDiv = document.getElementById('part_container')
       const remoteUsers = this.rtc.client.remoteUsers
 
+      // ! cek uid
       if (this.hostId === +this.options.uid) {
         // ! Jika user adalah host, maka localVidDiv ditutup dan partchat div ditutup
         if (this.isScreenShare && remoteUsers.length === 1) {
@@ -297,26 +286,39 @@ export default {
   },
   async created () {
     this.setIsVideoConference(true)
+
+    await this.fetchEventDetail(this.$route.params.id)
+
+    this.hostId = this.eventDetail.event.eventOrganizerId.toString()
+    this.options.channel = this.eventDetail.event.id.toString()
+    this.participantsId = this.eventDetail.participants.map((p) => p.userId)
+
+    if (this.userId === this.hostId) this.options.uid = this.eventDetail.eventOrganizer.username
+    else {
+      const userIdx = this.eventDetail.participants.findIndex((p) => {
+        return p.userId === +this.userId
+      })
+      const uid = this.eventDetail.participants[userIdx]
+
+      this.options.uid = uid.User.username
+      this.myId = uid.userId.toString()
+    }
   },
   computed: {
-    ...mapState(['token'])
+    ...mapState(['token', 'eventDetail', 'userId'])
   },
   async mounted () {
     window.addEventListener('resize', this.videoResizeHandler)
 
     this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
-    // ! Cek apakah user adalah host
-    if (this.hostId === +this.options.uid) this.isHost = true
+    if (this.hostId === this.myId) this.isHost = true
 
-    // ! Check localStorage pada userId, kalau dia host maka masuk sini, ganti this.options.uid-nya
-    if (this.hostId === +this.options.uid) {
-      // * Jika user adalah host
+    if (this.host) {
       const localVidDiv = document.getElementById('local_video')
 
       localVidDiv.className = ''
     } else {
-      // * Jika user adalah participant
       const partChatDiv = document.getElementById('part_container')
 
       partChatDiv.classList.remove('hidden')
@@ -345,11 +347,13 @@ export default {
 
       videoContainer = document.getElementById('video_part')
 
+      // ! cek user.uid
       if (user.uid === this.hostId) this.isHostPresent = true
 
       if (mediaType === 'video') {
         const remoteVideoTrack = user.videoTrack
 
+        // ! cek user.uid
         if (user.uid === this.screenId && this.options.uid !== this.hostId) {
           // * Jika client adalah screen share
           const mainContainer = document.getElementById('main_video')
@@ -368,6 +372,7 @@ export default {
           }
         }
 
+        // ! cek user.uid
         if (user.uid === this.hostId) {
           // * Jika client adalah host
           if (this.screenId) {
@@ -389,6 +394,7 @@ export default {
           }
         }
 
+        // ! cek user.uid
         if (user.uid !== this.screenId && user.uid !== this.hostId) {
           // * Jika client bukanlah screen dan host
           const remotePlayerContainer = document.createElement('div')
@@ -409,6 +415,7 @@ export default {
       this.rtc.client.on('user-unpublished', user => {
         const remotePlayerContainer = document.getElementById(user.uid)
 
+        // ! cek user.uid
         if (user.uid === this.screenId) {
           this.screenId = null
 
@@ -425,7 +432,7 @@ export default {
             hostContainer.classList.add('hidden')
           }
         }
-
+        // ! cek user.uid
         if (user.uid === this.hostId) {
           const hostContainer = document.getElementById('host_video')
 

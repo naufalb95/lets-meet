@@ -95,8 +95,6 @@ export default new Vuex.Store({
         method: 'GET'
       })
 
-      console.log(response.data.token)
-
       context.commit('SET_TOKEN_CHAT', response.data.token)
     },
     async fetchEvents (context, payload) {
