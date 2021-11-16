@@ -306,7 +306,7 @@ export default {
     }
   },
   async mounted () {
-    // ! coba login test
+    // ! coba login test token chat
     this.$store.dispatch('getTokenMessage', { uid: this.name, channelName: this.options.channel }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
       .then(async (data) => {
         this.token = data.token
@@ -322,6 +322,16 @@ export default {
           await channel.join()
           this.$store.commit('GET_TOKEN_MESSAGE', channel)
         }
+      })
+      .catch((err) => {
+        console.log('masuk sini')
+        console.log(err)
+      })
+
+    // ! coba login test token video
+    this.$store.dispatch('getTokenVideo', { uid: 'cobaTokenVideo', channelName: 'cobaTokenVideo' }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
+      .then(async (data) => {
+        console.log(data, '<--- dari mounted')
       })
       .catch((err) => {
         console.log('masuk sini')
