@@ -17,7 +17,7 @@ export default {
   name: 'MyEventCard',
   methods: {
     showEditModal () {
-      this.$store.commit('SET_IS_MODAL_SHOW_EDIT', true)
+      this.$router.push({ name: 'Edit' })
     }
   }
 }

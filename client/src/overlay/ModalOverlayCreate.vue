@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Create from '../components/Create.vue'
+import Create from '../views/Create.vue'
 export default {
   name: 'ModalCreate',
   components: {

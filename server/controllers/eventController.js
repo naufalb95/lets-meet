@@ -67,118 +67,136 @@ class EventController {
     }
   }
 
-  static async findAll(req, res, next) {
-    try {
-      const { eventName, day, location, distance, category } = req.query;
-      let condition = {};
-      if (eventName) {
-        condition.name = { [Op.iLike]: `%${eventName}%` };
-      }
+    static async findAll(req, res, next) {
+        try {
+            const { eventName, day, location, distance, category, latitude, longitude } = req.query;
+            let condition = {};
+            
+            if (eventName) {
+                condition.name = { [Op.iLike]: `%${eventName}%` };
+            }
 
-      if (category) {
-        condition.categoryId = category;
-      }
+            if (category) {
+                condition.categoryId = category;
+            }
 
-      if (location) {
-        if (location === "Online") {
-          condition.location = "Online";
-        } else {
-          condition.location = { [Op.iLike]: `%${location}%` };
-        }
-      }
-
-      if (day) {
-        if (day == "tomorrow") {
-          let today = new Date();
-          let tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          tomorrow.setHours(23, 59, 59, 59);
-          condition.dateAndTime = {
-            [Op.between]: [today, tomorrow],
-          };
-        }
-        if (day == "today") {
-          let today = new Date();
-          condition.dateAndTime = {
-            [Op.between]: [
-              today.setHours(0, 0, 0, 0),
-              today.setHours(23, 59, 59, 0),
-            ],
-          };
-        }
-        if (day == "thisWeek") {
-          let today = new Date();
-          let sunday = new Date();
-          sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
-          sunday.setHours(23, 59, 59, 59);
-          condition.dateAndTime = {
-            [Op.between]: [today, sunday],
-          };
-        }
-        if (day == "nextWeek") {
-          let sundayFirst = new Date();
-
-          sundayFirst.setDate(
-            sundayFirst.getDate() + (7 - sundayFirst.getDay())
-          );
-
-          sundayFirst.setHours(23, 59, 59, 59);
-
-          let sundayLast = new Date();
-
-          sundayLast.setDate(sundayLast.getDate() + (14 - sundayLast.getDay()));
-
-          sundayLast.setHours(23, 59, 59, 59);
-
-          condition.dateAndTime = {
-            [Op.between]: [sundayFirst, sundayLast],
-          };
-        }
-      }
-      const result = await Event.findAll({
-        where: condition,
-        include: [
-          {
-            model: Category,
-            attributes: ["name"],
-          },
-        ],
-        order: [["id", "ASC"]],
-        attributes: {
-          exclude: ["createdAt", "updatedAt"],
-        },
-      });
-
-        let container = result
-
-        for(let i = 0; i < container.length; i++) {
-            const foundParticipant = await Participant.findAll({ where: { eventId: +result[i].id } });
-            let participantsContainer = []
-
-            let objUser = {}
-            if (foundParticipant.length > 0) {
-                for (let j = 0; j < foundParticipant.length; j++) {
-                    const userId = foundParticipant[j].dataValues.userId;
-                    const foundUser = await User.findByPk(userId);
-                    
-                    objUser = {
-                        userId: foundUser.id,
-                        username: foundUser.username,
-                        email: foundUser.email,
-                    }
-                    participantsContainer.push(objUser);
+            if (location) {
+                if (location === "Online") {
+                    condition.location = "Online";
+                } else {
+                    condition.location = { [Op.iLike]: `%${location}%` };
                 }
             }
-            container[i].dataValues.participants = participantsContainer
+
+            if (day) {
+                if (day == "tomorrow") {
+                    let today = new Date();
+                    let tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(23, 59, 59, 59);
+                    condition.dateAndTime = {
+                        [Op.between]: [today, tomorrow],
+                    };
+                }
+                if (day == "today") {
+                    let today = new Date();
+                    condition.dateAndTime = {
+                        [Op.between]: [
+                        today.setHours(0, 0, 0, 0),
+                        today.setHours(23, 59, 59, 0),
+                        ],
+                    };
+                }
+                if (day == "thisWeek") {
+                    let today = new Date();
+                    let sunday = new Date();
+                    sunday.setDate(sunday.getDate() + (7 - sunday.getDay()));
+                    sunday.setHours(23, 59, 59, 59);
+                    condition.dateAndTime = {
+                        [Op.between]: [today, sunday],
+                    };
+                }
+                if (day == "nextWeek") {
+                    let sundayFirst = new Date();
+                    sundayFirst.setDate(
+                        sundayFirst.getDate() + (7 - sundayFirst.getDay())
+                    );
+                    sundayFirst.setHours(23, 59, 59, 59);
+                    let sundayLast = new Date();
+                    sundayLast.setDate(sundayLast.getDate() + (14 - sundayLast.getDay()));
+                    sundayLast.setHours(23, 59, 59, 59);
+                    condition.dateAndTime = {
+                        [Op.between]: [sundayFirst, sundayLast],
+                    };
+                }
+            }
+            const result = await Event.findAll({
+                where: condition,
+                include: [
+                {
+                    model: Category,
+                    attributes: ["name"],
+                },
+                ],
+                order: [["id", "ASC"]],
+                attributes: {
+                    exclude: ["createdAt", "updatedAt"],
+                },
+            });
+
+            if (distance) {
+                result.filter((item) => {
+                    const lon1 = longitude * Math.PI / 180;
+                    const lon2 = r.longitude * Math.PI / 180;
+                    const lat1 = latitude * Math.PI / 180;
+                    const lat2 = r.latitude * Math.PI / 180;
+                
+                    // Haversine formula
+                    let dlon = lon2 - lon1;
+                    let dlat = lat2 - lat1;
+                    let a = Math.pow(Math.sin(dlat / 2), 2)
+                    + Math.cos(lat1) * Math.cos(lat2)
+                    * Math.pow(Math.sin(dlon / 2),2);
+                
+                    let c = 2 * Math.asin(Math.sqrt(a));
+                
+                    // Radius of earth in kilometers. Use 3956
+                    // for miles
+                    let r = 6371;
+                
+                    // calculate the result
+                    return(c * r) <= distance;
+                });
+            }   
+
+            let container = result
+
+            for(let i = 0; i < container.length; i++) {
+                const foundParticipant = await Participant.findAll({ where: { eventId: +result[i].id } });
+                let participantsContainer = []
+
+                let objUser = {}
+                if (foundParticipant.length > 0) {
+                    for (let j = 0; j < foundParticipant.length; j++) {
+                        const userId = foundParticipant[j].dataValues.userId;
+                        const foundUser = await User.findByPk(userId);
+                        
+                        objUser = {
+                            userId: foundUser.id,
+                            username: foundUser.username,
+                            email: foundUser.email,
+                        }
+                        participantsContainer.push(objUser);
+                    }
+                }
+                container[i].dataValues.participants = participantsContainer
+            }
+
+            res.status(200).json(container);
+        } catch (err) {
+            next(err);
         }
-
-        console.log(container, "<=== container");
-
-        res.status(200).json(container);
-    } catch (err) {
-        next(err);
     }
-  }
 
   static async userJoinEvent(req, res, next) {
     const userId = req.user.id;
