@@ -19,27 +19,9 @@
         <div class="w-full mb-4">
           <label id="category" class="text-center text-lg font-normal">Category</label>
           <select name="category" v-model="categoryId" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none">
-            <option value="1">Art & Culture</option>
-            <option value="2">Career & Business</option>
-            <option value="3">Community & Environent</option>
-            <option value="4">Dancing</option>
-            <option value="5">Games</option>
-            <option value="6">Health & Wellbeing</option>
-            <option value="7">Hobbies & Wellbeing</option>
-            <option value="8">Hobbies & Passions</option>
-            <option value="9">Identity & Language</option>
-            <option value="10">Movements & Politics</option>
-            <option value="11">Music</option>
-            <option value="12">Parents & Family</option>
-            <option value="13">Pets & Animals</option>
-            <option value="14">Religion & Spirituality</option>
-            <option value="15">Science & Education</option>
-            <option value="16">Social Activities</option>
-            <option value="17">Sports & Fitness</option>
-            <option value="18">Support & Coaching</option>
-            <option value="19">Technology</option>
-            <option value="20">Travel & Outdoor</option>
-            <option value="21">Writing</option>
+            <option :value="category.id"  v-for="category in categories" :key="category.id">
+              {{ category.name }}
+            </option>
           </select>
         </div>
         <div class="w-full mb-4">
@@ -100,6 +82,7 @@ export default {
   },
   async mounted () {
     await this.fetchEventDetail(this.$route.params.id)
+    await this.fetchCategories()
 
     const googleMapApi = await GoogleMapsApiLoader({
       apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
@@ -140,7 +123,7 @@ export default {
     this.showPosition()
   },
   methods: {
-    ...mapActions(['fetchEventDetail', 'editEvent']),
+    ...mapActions(['fetchEventDetail', 'editEvent', 'fetchCategories']),
     async submitHandler () {
       const date = new Date(this.date)
       const time = this.time.split(':')
