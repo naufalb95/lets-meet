@@ -44,19 +44,19 @@
               <button @click="attendHandler" v-if="!isHost && !isAttending && !isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
                 Attend
               </button>
-              <button @click="attendHandler" v-if="isAttending && isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
+              <button @click="joinMeetHandler" v-if="(isAttending || isHost) && isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
                 Join Meet
               </button>
               <button @click="leaveEventHandler" v-if="!isHost && isAttending && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
                 Leave Event
               </button>
-              <button @click="attendHandler" v-if="isHost && !isStart && !isDone" class="bg-yellow-500 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-yellow-600">
+              <button @click="editEventHandler" v-if="isHost && !isStart && !isDone" class="bg-yellow-500 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-yellow-600">
                 Edit Event
               </button>
-              <button @click="attendHandler" v-if="isHost && isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
+              <button @click="doneEventHandler" v-if="isHost && isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
                 End Event
               </button>
-              <button @click="attendHandler" v-if="isHost && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
+              <button @click="deleteEventHandler" v-if="isHost && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
                 Delete Event
               </button>
               <h3 class="font-semibold" v-if="isDone">Event already ended</h3>
@@ -110,7 +110,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchEventDetail', 'attendEvent', 'userLeaveEvent']),
+    ...mapActions(['fetchEventDetail', 'attendEvent', 'userLeaveEvent', 'deleteEvent', 'doneEvent']),
     initializeMap () {
       this.mapContainer = this.$refs.googleMap
     },
@@ -133,12 +133,28 @@ export default {
         this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
       } else {
         await this.attendEvent(this.$route.params.id)
+
+        this.isAttending = true
       }
     },
     async leaveEventHandler () {
       await this.userLeaveEvent(this.$route.params.id)
 
       this.isAttending = false
+    },
+    async deleteEventHandler () {
+      await this.deleteEvent(this.$route.params.id)
+
+      this.$router.push({ name: 'MyEvent' })
+    },
+    async doneEventHandler () {
+      await this.doneEvent(this.$route.params.id)
+    },
+    joinMeetHandler () {
+      console.log('join')
+    },
+    editEventHandler () {
+      this.$router.push({ name: 'Edit', params: { id: this.$route.params.id } })
     }
   },
   async mounted () {

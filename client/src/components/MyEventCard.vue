@@ -1,24 +1,91 @@
 <template>
   <div class="w-5/12 px-10 py-8 bg-white rounded-xl mb-3 shadow-lg border border-white">
     <div class="w-2/3">
-      <h1 class="text-gray-700 text-md font-medium">Sun, Nov 14 @ 14.00 WIB</h1>
-      <h1 class="text-blue-900 font-semibold text-3xl filter drop-shadow-lg">Event Name</h1>
+      <h1 class="text-gray-700 text-md font-medium">{{ dateAndTime }}</h1>
+      <h1 class="text-blue-900 font-semibold text-3xl filter drop-shadow-lg">{{ event.event.name }}</h1>
     </div>
     <div class="mt-6">
-      <button @click.prevent="showEditModal" style="width: 100px" class="text-white py-1 font-semibold border border-blue-500 bg-blue-500 rounded hover:bg-blue-600 mr-2">Detail</button>
-      <button @click.prevent="showEditModal" style="width: 100px" class="text-white py-1 font-semibold border border-yellow-500 bg-yellow-500 rounded hover:bg-yellow-600 mr-2">Edit</button>
-      <button @click.prevent="showEditModal" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">Delete</button>
+      <button @click.prevent="detailHandler" style="width: 100px" class="text-white py-1 font-semibold border border-blue-500 bg-blue-500 rounded hover:bg-blue-600 mr-2">
+        Detail
+      </button>
+      <button @click.prevent="joinMeetHandler" v-if="(isAttending || isHost) && isStart && !isDone" style="width: 100px" class="text-white py-1 font-semibold border border-blue-500 bg-blue-500 rounded hover:bg-blue-600 mr-2">
+        Join Meet
+      </button>
+      <button @click.prevent="leaveEventHandler" v-if="!isHost && isAttending && !isStart && !isDone" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
+        Leave
+      </button>
+      <button @click.prevent="editEventHandler" v-if="isHost && !isStart && !isDone" style="width: 100px" class="text-white py-1 font-semibold border border-yellow-500 bg-yellow-500 rounded hover:bg-yellow-600 mr-2">
+        Edit
+      </button>
+      <button @click.prevent="doneEventHandler" v-if="isHost && isStart && !isDone" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
+        End Event
+      </button>
+      <button @click.prevent="deleteEventHandler" v-if="isHost && !isStart && !isDone" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
+        Delete
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import { format } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
+import { mapState, mapActions } from 'vuex'
+
 export default {
   name: 'MyEventCard',
-  methods: {
-    showEditModal () {
-      this.$router.push({ name: 'Edit', params: { id: 2 } })
+  data () {
+    return {
+      isAttending: false,
+      isHost: false,
+      isStart: false
     }
+  },
+  props: ['event'],
+  methods: {
+    ...mapActions(['fetchMyEvents', 'userLeaveEvent', 'deleteEvent', 'doneEvent']),
+    detailHandler () {
+      this.$router.push({ name: 'Detail', params: { id: this.event.event.id } })
+    },
+    async leaveEventHandler () {
+      await this.userLeaveEvent(this.event.event.id)
+
+      await this.fetchMyEvents()
+    },
+    async deleteEventHandler () {
+      await this.deleteEvent(this.event.event.id)
+
+      await this.fetchMyEvents()
+    },
+    async doneEventHandler () {
+      await this.doneEvent(this.event.event.id)
+    },
+    joinMeetHandler () {
+      console.log('join')
+    },
+    editEventHandler () {
+      this.$router.push({ name: 'Edit', params: { id: this.event.event.id } })
+    }
+  },
+  computed: {
+    ...mapState(['userId']),
+    dateAndTime () {
+      const timeZone = 'Asia/Jakarta'
+      return format(utcToZonedTime(new Date(this.event.event.dateAndTime), timeZone), 'dd MMMM yyyy @ HH:mm')
+    },
+    isDone () {
+      return this.event.event.isDone
+    }
+  },
+  mounted () {
+    if (+this.userId === this.event.event.eventOrganizerId) this.isHost = true
+
+    if (!this.isHost) this.isAttending = true
+
+    const startDate = new Date(this.event.event.dateAndTime)
+    const nowDate = new Date()
+
+    if ((nowDate > startDate) && !this.event.event.isDone) this.isStart = true
   }
 }
 </script>

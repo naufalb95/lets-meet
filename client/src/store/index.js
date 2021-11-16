@@ -109,6 +109,17 @@ export default new Vuex.Store({
 
       context.commit('SET_EVENT_DETAIL', response.data)
     },
+    async fetchMyEvents (context) {
+      const response = await server({
+        method: 'GET',
+        url: '/myevent',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+
+      context.commit('SET_EVENTS', response.data)
+    },
     async attendEvent (_, payload) {
       const response = await server({
         method: 'POST',
@@ -167,6 +178,25 @@ export default new Vuex.Store({
       await server({
         method: 'DELETE',
         url: '/events/' + payload + '/participants',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+    },
+    async deleteEvent (_, payload) {
+      await server({
+        method: 'DELETE',
+        url: '/events/' + payload,
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+    },
+    async doneEvent (_, payload) {
+      console.log(payload)
+      await server({
+        method: 'PATCH',
+        url: '/events/' + payload,
         headers: {
           access_token: localStorage.getItem('access_token')
         }
