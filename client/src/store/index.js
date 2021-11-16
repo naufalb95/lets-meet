@@ -35,10 +35,18 @@ export default new Vuex.Store({
         id: 0,
         username: ''
       },
-      participants: []
+      participants: [],
+      tokenMessage: '',
+      messages: []
     }
   },
   mutations: {
+    GET_TOKEN_MESSAGE (state, payload) {
+      state.tokenMessage = payload
+    },
+    GET_ALL_MESSAGES (state, payload) {
+      state.messages.push(payload)
+    },
     SET_IS_MODAL_SHOW_LOGIN (state, payload) {
       state.isModalLogin = payload
     },
@@ -65,6 +73,39 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    getTokenMessage (context, payload) {
+      return new Promise((resolve, reject) => {
+        axios({
+          url: `/access_token?channelName=${payload.channelName}&uid=${payload.uid}`,
+          method: 'GET'
+        })
+          .then(({ data }) => {
+            resolve(data)
+          })
+          .catch((err) => {
+            console.log('fail')
+            reject(err)
+          })
+      })
+    },
+    async findGooglePlaces () {
+      const config = {
+        method: 'get',
+        url: 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=mongolian&inputtype=textquery&locationbias=circle%3A2000%4047.6918452%2C-122.2226413&fields=formatted_address%2Cname%2Crating%2Copening_hours%2Cgeometry&key=AIzaSyDOJpP-lEnakyV5PKJHbSOzKxTUu9oIeh0',
+        headers: {},
+        secure: false
+      }
+
+      axios(config)
+        .then(() => {
+          console.log('hai masuk')
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      // console.log(response)
+    },
     async fetchEvents (context, payload) {
       const response = await server({
         method: 'GET',
