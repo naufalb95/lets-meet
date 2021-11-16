@@ -65,10 +65,11 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async fetchEvents (context) {
+    async fetchEvents (context, payload) {
       const response = await server({
         method: 'GET',
-        url: '/events'
+        url: '/events',
+        params: payload
       })
 
       context.commit('SET_EVENTS', response.data)

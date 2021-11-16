@@ -72,17 +72,18 @@ export default {
   methods: {
     ...mapActions(['fetchEvents']),
     dropdownFilterHandler (e) {
-      const { name, value } = e.target
-      console.log(name, value)
+      // const { name, value } = e.target
     },
-    submitHandler () {
-      console.log(this.eventName)
+    async submitHandler () {
+      const payload = {
+        eventName: this.eventName
+      }
+
+      await this.fetchEvents(payload)
     }
   },
   async created () {
     await this.fetchEvents()
-
-    console.log(this.events)
   }
 }
 </script>
