@@ -988,7 +988,7 @@ describe('Event fiture', () => {
     //         })
     // })
 
-    test('Create New Event With Image Kit', (done) => {
+    test.only('Create New Event With Image Kit', (done) => {
         const filePath = "assets/image.png";
         const buffer = Buffer.from(filePath);
         request(app)
