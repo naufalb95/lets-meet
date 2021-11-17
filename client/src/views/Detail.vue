@@ -1,5 +1,5 @@
 <template>
-  <div class="flex mt-16 flex-col">
+  <div class="flex mt-16 flex-col mb-64">
     <div class="text-center" v-if="isLoading">
       <h1>Loading...</h1>
     </div>
@@ -174,7 +174,7 @@ export default {
       }
     },
     joinMeetHandler () {
-      console.log('join')
+      this.$router.push({ name: 'VideoConference', params: { id: this.$route.params.id } })
     },
     editEventHandler () {
       this.$router.push({ name: 'Edit', params: { id: this.$route.params.id } })

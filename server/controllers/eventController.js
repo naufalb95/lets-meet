@@ -274,7 +274,6 @@ class EventController {
                 categoryId,
             } = req.body;
 
-          
 
             const id = req.params.eventId;
             const userId = +req.user.id;
@@ -284,7 +283,7 @@ class EventController {
             if (!foundEvent) {
                 throw { name: "Event Not Found" };
             }
-
+            console.log(foundEvent.eventOrganizerId === userId, id)
             if (foundEvent.eventOrganizerId === userId) {
                 const responseFromSeq = await Event.update(
                     {

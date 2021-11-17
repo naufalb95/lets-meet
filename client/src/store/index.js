@@ -15,7 +15,7 @@ export default new Vuex.Store({
     isModalCreate: false,
     isModalEdit: false,
     isLogin: false,
-    isVideoConference: false,
+    isVideoConference: true,
     userId: null,
     events: [],
     eventDetail: {
@@ -43,7 +43,8 @@ export default new Vuex.Store({
       video: '',
       screen
     },
-    messages: []
+    messages: [],
+    categories: null
   },
   mutations: {
     GET_TOKEN_MESSAGE (state, payload) {

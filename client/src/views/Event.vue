@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col mt-24">
+  <div class="flex flex-col mt-24 mb-64">
     <div class="mt-14 w-screen flex justify-center">
       <form @submit.prevent="submitHandler" class="w-full flex justify-center">
         <input type="text" v-model="eventName" placeholder="e.g. Yoga Event" class="w-2/6 px-3 py-3 placeholder-gray-400 rounded-l-lg text-sm border border-gray-300 shadow focus:outline-none"/>
