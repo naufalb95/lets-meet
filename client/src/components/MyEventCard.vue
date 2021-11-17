@@ -1,9 +1,11 @@
 <template>
   <div class="w-5/12 px-10 py-8 bg-white rounded-xl mb-3 shadow-lg border border-white flex items-center">
-    <div id="image" class="bg-gray-100 shadow-md border border-gray-300 rounded-lg">
-      <img :src="event.event.imgUrl" :alt="event.event.name" class="object-contain w-full h-full"/>
+    <div class="w-3/12">
+      <div id="image" class="bg-gray-100 shadow-md border border-gray-300 rounded-lg">
+        <img :src="event.event.imgUrl" :alt="event.event.name" class="object-contain w-full h-full"/>
+      </div>
     </div>
-    <div class="pl-4">
+    <div class="w-9/12">
       <div class="w-2/3">
         <h1 class="text-gray-700 text-md font-medium">{{ dateAndTime }}</h1>
         <h1 class="text-blue-900 font-semibold text-3xl filter drop-shadow-lg">{{ event.event.name }}</h1>

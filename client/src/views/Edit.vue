@@ -1,5 +1,5 @@
 <template>
-  <div v-on:click.stop class="flex justify-center items-center min-h-screen w-full my-28">
+  <div v-on:click.stop class="flex justify-center items-center min-h-screen w-full my-28 mb-64">
     <form @submit.prevent="submitHandler" class="bg-white overflow-y-auto overflow-x-hidden shadow-md rounded px-12 py-12 w-1/2">
         <h1 class="text-center text-3xl text-blue-800 font-bold mb-12">Edit Event</h1>
         <div class="w-full mb-4">

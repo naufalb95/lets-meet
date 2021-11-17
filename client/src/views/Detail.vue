@@ -1,5 +1,5 @@
 <template>
-  <div class="flex mt-16 flex-col">
+  <div class="flex mt-16 flex-col mb-64">
     <div class="text-center" v-if="isLoading">
       <h1>Loading...</h1>
     </div>
