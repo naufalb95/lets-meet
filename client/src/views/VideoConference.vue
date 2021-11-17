@@ -102,8 +102,9 @@ export default {
         audio: null,
         screen: null
       },
-      inMeetParticipants: [],
-      screenClient: null
+      hostId: null,
+      screenId: null,
+      inMeetParticipants: []
     }
   },
   computed: {
@@ -113,7 +114,6 @@ export default {
     ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
     leaveHandler () {
       this.inMeetParticipants.push({ userId: this.inMeetParticipants.length + 2 })
-      console.log('masuk')
     },
     async initializeChat () {
       // ! Get Chat Token
@@ -154,99 +154,159 @@ export default {
 
       await this.video.client.join(this.options.appId, this.settings.channelName, this.token.video, this.settings.uid)
 
+      // ! Enable Volume Indicator
+      this.video.client.enableAudioVolumeIndicator()
+      this.video.client.on('volume-indicator', volumes => {
+        volumes.forEach((volume, index) => {
+          console.log(`${index} UID ${volume.uid} Level ${volume.level}`)
+        })
+      })
       // ! Video Call Event Handler
       // ! When user join channel
       this.video.client.on('user-joined', async (user) => {
-        const remoteUser = {
-          id: user.uid
-        }
+        if (this.eventDetail.participants.some(p => p.userId === user.uid) || this.hostId === user.uid) {
+          const remoteUser = {
+            id: user.uid
+          }
 
-        this.inMeetParticipants.push(remoteUser)
+          this.inMeetParticipants.push(remoteUser)
+        } else {
+          if (this.screenId) {
+            await this.video.screen.unpublish(this.local.screen)
+
+            this.local.screen.close(true)
+
+            await this.video.screen.leave()
+          }
+
+          this.screenId = user.uid
+        }
       })
 
       // ! When a user activating video or audio
       this.video.client.on('user-published', async (user, mediaType) => {
         await this.video.client.subscribe(user, mediaType)
 
-        const userIdx = this.inMeetParticipants.findIndex(participant => participant.id === user.uid)
+        if (this.screenId === user.uid) {
+          if (mediaType === 'video') {
+            const videoTrack = user.videoTrack
 
-        const participant = this.inMeetParticipants[userIdx]
+            videoTrack.play('main_video', {
+              fit: 'contain'
+            })
+          }
+        } else {
+          const userIdx = this.inMeetParticipants.findIndex(participant => participant.id === user.uid)
 
-        if (mediaType === 'video') {
-          participant.videoTrack = user.videoTrack
+          const participant = this.inMeetParticipants[userIdx]
+
+          if (mediaType === 'video') {
+            participant.videoTrack = user.videoTrack
+          }
+
+          if (mediaType === 'audio') {
+            participant.audioTrack = user.audioTrack
+          }
+
+          if (participant.audioTrack && participant.videoTrack) {
+            participant.videoTrack.play(user.uid.toString(), {
+              fit: 'contain'
+            })
+            participant.audioTrack.play()
+          }
         }
+      })
 
-        if (mediaType === 'audio') {
-          participant.audioTrack = user.audioTrack
-        }
-
-        if (participant.audioTrack && participant.videoTrack) {
-          participant.videoTrack.play(user.uid.toString())
-          participant.audioTrack.play()
+      this.video.client.on('user-unpublished', (user) => {
+        if (user.uid === this.screenId) {
+          console.log('hai')
+          this.screenId = null
         }
       })
 
       // ! When a user left video call
       this.video.client.on('user-left', async (user) => {
-        this.inMeetParticipants = this.inMeetParticipants.filter(participant => participant.id !== user.uid)
+        if (user.uid === this.screenId) {
+          console.log('hai')
+          this.screenId = null
+        } else {
+          this.inMeetParticipants = this.inMeetParticipants.filter(participant => participant.id !== user.uid)
+        }
       })
     },
     async openCamHandler () {
-      if (!this.local.video) {
-        this.local.video = await AgoraRTC.createCameraVideoTrack()
+      if (!this.inMeetParticipants[0].videoTrack) {
+        this.inMeetParticipants[0].videoTrack = await AgoraRTC.createCameraVideoTrack()
 
-        await this.video.client.publish(this.local.video)
+        await this.video.client.publish(this.inMeetParticipants[0].videoTrack)
 
-        this.local.video.play('main_video')
+        this.inMeetParticipants[0].videoTrack.play(this.inMeetParticipants[0].id.toString(), {
+          fit: 'contain'
+        })
       } else {
-        this.local.video.setEnabled(true)
+        this.inMeetParticipants[0].videoTrack.setEnabled(true)
       }
     },
     async closeCamHandler () {
-      this.local.video.setEnabled(false)
+      this.inMeetParticipants[0].videoTrack.setEnabled(false)
     },
     async unmuteHandler () {
-      if (!this.local.audio) {
-        this.local.audio = await AgoraRTC.createMicrophoneAudioTrack()
+      if (!this.inMeetParticipants[0].audioTrack) {
+        this.inMeetParticipants[0].audioTrack = await AgoraRTC.createMicrophoneAudioTrack()
 
-        await this.video.client.publish(this.local.audio)
+        await this.video.client.publish(this.inMeetParticipants[0].audioTrack)
       } else {
-        this.local.audio.setEnabled(true)
+        this.inMeetParticipants[0].audioTrack.setEnabled(true)
       }
     },
     async muteHandler () {
-      this.local.audio.setEnabled(false)
+      this.inMeetParticipants[0].audioTrack.setEnabled(false)
     },
     async shareScreenHandler () {
-      await this.getScreenToken({ channelName: this.settings.channelName })
+      if (!this.screenId) {
+        await this.getScreenToken({ channelName: this.settings.channelName })
 
-      this.video.screen = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
+        this.video.screen = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
-      await this.video.screen.join(this.options.appId, this.settings.channelName, this.token.screen)
+        await this.video.screen.join(this.options.appId, this.settings.channelName, this.token.screen)
 
-      this.local.screen = await AgoraRTC.createScreenVideoTrack({
-        encoderConfig: '1080p_1',
-        optimizationMode: 'detail'
-      })
+        this.local.screen = await AgoraRTC.createScreenVideoTrack({
+          encoderConfig: '1080p_1',
+          optimizationMode: 'detail'
+        })
 
-      await this.video.screen.publish(this.local.screen)
+        await this.video.screen.publish(this.local.screen)
 
-      this.local.screen.play('main_video')
+        // this.local.screen.play('main_video', {
+        //   fit: 'contain'
+        // })
+      }
     },
     async stopScreenShareHandler () {
-      this.local.screen.setEnabled(false)
+      await this.video.screen.unpublish(this.local.screen)
+
+      this.local.screen.close(true)
+
+      await this.video.screen.leave()
+
+      this.screenId = null
     }
   },
   async created () {
     // ! Get Event Detail
     this.eventId = +this.$route.params.id
-
     await this.fetchEventDetail(this.eventId)
+
+    this.hostId = this.eventDetail.event.eventOrganizerId
 
     // ! Set App ID, Channel Name, and uid
     this.options.appId = process.env.VUE_APP_AGORA_API_KEY
     this.settings.channelName = this.eventDetail.event.id.toString()
     this.settings.uid = +localStorage.getItem('user_id')
+
+    this.inMeetParticipants.push({
+      id: this.settings.uid
+    })
 
     // ! Initialize Chat RTM
     await this.initializeChat()
