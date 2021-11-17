@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1637175106526" clover="3.2.0">
-  <project timestamp="1637175106526" name="All files">
-    <metrics statements="381" coveredstatements="376" conditionals="98" coveredconditionals="92" methods="39" coveredmethods="38" elements="518" coveredelements="506" complexity="0" loc="381" ncloc="381" packages="6" files="18" classes="18"/>
+<coverage generated="1637178397138" clover="3.2.0">
+  <project timestamp="1637178397138" name="All files">
+    <metrics statements="380" coveredstatements="375" conditionals="96" coveredconditionals="90" methods="39" coveredmethods="38" elements="515" coveredelements="503" complexity="0" loc="380" ncloc="380" packages="6" files="18" classes="18"/>
     <package name="server">
       <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="app.js" path="D:\Hacktiv8\Phase3\lets-meet\server\app.js">
@@ -18,7 +18,7 @@
       </file>
     </package>
     <package name="server.controllers">
-      <metrics statements="206" coveredstatements="203" conditionals="64" coveredconditionals="62" methods="16" coveredmethods="15"/>
+      <metrics statements="205" coveredstatements="202" conditionals="62" coveredconditionals="60" methods="16" coveredmethods="15"/>
       <file name="categoryController.js" path="D:\Hacktiv8\Phase3\lets-meet\server\controllers\categoryController.js">
         <metrics statements="6" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
@@ -29,7 +29,7 @@
         <line num="18" count="2" type="stmt"/>
       </file>
       <file name="eventController.js" path="D:\Hacktiv8\Phase3\lets-meet\server\controllers\eventController.js">
-        <metrics statements="181" coveredstatements="179" conditionals="60" coveredconditionals="58" methods="13" coveredmethods="12"/>
+        <metrics statements="180" coveredstatements="178" conditionals="58" coveredconditionals="56" methods="13" coveredmethods="12"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="4" count="2" type="stmt"/>
@@ -51,8 +51,7 @@
         <line num="73" count="1" type="stmt"/>
         <line num="76" count="8" type="cond" truecount="2" falsecount="0"/>
         <line num="77" count="1" type="stmt"/>
-        <line num="78" count="7" type="cond" truecount="2" falsecount="0"/>
-        <line num="79" count="1" type="stmt"/>
+        <line num="79" count="7" type="stmt"/>
         <line num="82" count="8" type="cond" truecount="2" falsecount="0"/>
         <line num="83" count="4" type="cond" truecount="2" falsecount="0"/>
         <line num="84" count="1" type="stmt"/>
@@ -92,16 +91,16 @@
         <line num="160" count="1" type="stmt"/>
         <line num="164" count="8" type="stmt"/>
         <line num="166" count="8" type="stmt"/>
-        <line num="167" count="10" type="stmt"/>
-        <line num="168" count="10" type="stmt"/>
-        <line num="170" count="10" type="stmt"/>
-        <line num="171" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="167" count="6" type="stmt"/>
+        <line num="168" count="6" type="stmt"/>
+        <line num="170" count="6" type="stmt"/>
+        <line num="171" count="6" type="cond" truecount="2" falsecount="0"/>
         <line num="172" count="4" type="stmt"/>
         <line num="173" count="4" type="stmt"/>
         <line num="174" count="4" type="stmt"/>
         <line num="176" count="4" type="stmt"/>
         <line num="181" count="4" type="stmt"/>
-        <line num="184" count="10" type="stmt"/>
+        <line num="184" count="6" type="stmt"/>
         <line num="187" count="8" type="stmt"/>
         <line num="189" count="0" type="stmt"/>
         <line num="194" count="4" type="stmt"/>

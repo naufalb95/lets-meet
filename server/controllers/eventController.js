@@ -75,8 +75,8 @@ class EventController {
 
             if (location === "Online") {
                 condition.location = "Online";
-            } else if (location === "Offline") {
-                condition.location = "Offline";
+            } else {
+                condition.location = { [Op.notLike]: `Online` };
             }
 
             if (day) {
