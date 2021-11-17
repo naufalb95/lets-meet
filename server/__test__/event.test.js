@@ -888,11 +888,11 @@ describe('Event fiture', () => {
           })
     })
 
-    test('Get Token Video and Token Chat', (done) => {
+    test('Suucessfully Get Token Chat', (done) => {
         request(app)
-            .get('/access_token?channelName=test&uid=damar')
+            .get('/create_chat_token?channelName=test&uid=damar')
             .then((res) => {
-                expect(res.status).toBe(201);
+                expect(res.status).toBe(200);
                 expect(res.body).toEqual(expect.any(Object));
                 done();
             })
@@ -901,13 +901,40 @@ describe('Event fiture', () => {
             })
     })
 
-    test('Get Token Video and Token Chat Failed Because Empty channelName', (done) => {
+    test('Get Chat Token Failed Because Empty channelName', (done) => {
         request(app)
-            .get('/access_token?uid=damar')
+            .get('/create_chat_token?uid=damar')
             .then((res) => {
                 expect(res.status).toBe(400);
                 expect(res.body).toEqual(expect.any(Object));
-                expect(res.body).toEqual({message: 'channel is required'});
+                expect(res.body).toEqual({error: 'channel is required'});
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Suucessfully Get Video Token', (done) => {
+        request(app)
+            .get('/create_video_token?channelName=test&uid=damar')
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Object));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Get Video Token Failed Because Empty channelName', (done) => {
+        request(app)
+            .get('/create_video_token?uid=damar')
+            .then((res) => {
+                expect(res.status).toBe(400);
+                expect(res.body).toEqual(expect.any(Object));
+                expect(res.body).toEqual({error: 'channel is required'});
                 done();
             })
             .catch((err) => {
