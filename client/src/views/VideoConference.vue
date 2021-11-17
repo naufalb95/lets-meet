@@ -1,8 +1,5 @@
 <template>
   <div id='app' class='min-h-screen w-screen bg-gray-900 relative'>
-    <div id='back_row' class='text-white pl-5 flex items-center'>
-      <button>Home</button>
-    </div>
     <div id='content' class='text-white pl-5 flex items-center'>
       <div id='video_container' class='flex-grow h-full p-2'>
         <div class='bg-gray-800 bg-opacity-80 w-full h-full rounded-lg text-black flex items-center justify-center relative'>
@@ -33,7 +30,7 @@
             </div>
             <form class="flex flex-grow-0" @submit.prevent="createNewMessage">
               <div class='w-5/6'>
-                <textarea type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="message" rows="2">
+                <textarea type="text" @keydown="createNewMessage" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="message" rows="2">
                 </textarea>
               </div>
               <div class='w-1/6'>
@@ -103,7 +100,7 @@ export default {
       },
       channelChat: null,
       messages: [],
-      message: null
+      message: ''
     }
   },
   methods: {
@@ -111,8 +108,9 @@ export default {
     ...mapMutations({
       setIsVideoConference: 'SET_IS_VIDEO_CONFERENCE'
     }),
-    async createNewMessage () {
-      if (this.channelChat != null) {
+    async createNewMessage (e) {
+      const checkEmptyMsg = this.message.trim()
+      if (this.channelChat != null && (e.type === 'submit' || (e.type === 'keydown' && e.keyCode === 13)) && checkEmptyMsg) {
         await this.channelChat.sendMessage({ text: this.message })
 
         this.messages.push({
@@ -474,12 +472,8 @@ export default {
 </script>
 
 <style scoped>
-  #back_row {
-    height: 50px;
-  }
-
   #content {
-    height: calc(100vh - 110px);
+    height: calc(100vh - 60px);
   }
 
   #bottom_row {
