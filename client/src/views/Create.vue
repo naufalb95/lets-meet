@@ -6,6 +6,10 @@
           <label id="name" class="text-center text-lg font-normal">Event Name</label>
           <input name="name" v-model="name" type="text" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none" placeholder="Yoga Training"/>
         </div>
+        <div class="w-full mb-4">
+          <label id="photo" class="text-center text-lg font-normal">Event Photo</label>
+          <input @change="photoInputHandler" name="photo" type="file" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
+        </div>
         <div class="mt-1 mb-2 flex">
           <div class="w-3/4 mr-3 mb-4">
             <label id="date" class="text-center text-lg font-normal">Date</label>
@@ -74,7 +78,8 @@ export default {
       description: '',
       maxParticipants: 1,
       categoryId: '1',
-      eventType: 'Offline'
+      eventType: 'Offline',
+      photo: null
     }
   },
   computed: {
@@ -111,6 +116,7 @@ export default {
   methods: {
     ...mapActions(['createEvent', 'fetchCategories']),
     async submitHandler () {
+      console.log(this.photo)
       const date = new Date(this.date)
       const time = this.time.split(':')
       const eventHours = time[0]
@@ -123,7 +129,8 @@ export default {
         dateAndTime: this.dateAndTime,
         description: this.description,
         maxParticipants: +this.maxParticipants,
-        categoryId: +this.categoryId
+        categoryId: +this.categoryId,
+        imgUrl: this.photo
       }
 
       if (this.eventType === 'Offline') {
@@ -133,6 +140,8 @@ export default {
       } else {
         payload.location = this.eventType
       }
+
+      console.log(payload)
 
       await this.createEvent(payload)
 
@@ -183,6 +192,11 @@ export default {
     eventTypeHandler () {
       if (this.eventType === 'Online') this.$refs.location.classList.add('hidden')
       if (this.eventType === 'Offline') this.$refs.location.classList.remove('hidden')
+    },
+    photoInputHandler (e) {
+      this.photo = e.target.files[0]
+
+      console.log(this.photo)
     }
   }
 }

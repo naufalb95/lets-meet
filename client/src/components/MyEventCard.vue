@@ -26,7 +26,7 @@
         <button @click.prevent="doneEventHandler" v-if="isHost && isStart && !isDone" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
           End Event
         </button>
-        <button @click.prevent="deleteEventHandler" v-if="isHost && !isStart && !isDone" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
+        <button @click.prevent="deleteEventHandler" v-if="isHost && !isStart" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
           Delete
         </button>
       </div>
