@@ -25,7 +25,11 @@ export default {
     ...mapActions(['fetchMyEvents'])
   },
   async created () {
-    await this.fetchMyEvents()
+    try {
+      await this.fetchMyEvents()
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 </script>

@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.88% </span>
+                <span class="strong">94.44% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/18</span>
+                <span class='fraction'>17/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/4</span>
+                <span class='fraction'>3/4</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.88% </span>
+                <span class="strong">94.44% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/18</span>
+                <span class='fraction'>17/18</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -98,28 +98,28 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -136,14 +136,14 @@ const imageKit = async (req, res, next) =&gt; {
     try {
         if (!req.file) {
             next()
-        } else <span class="missing-if-branch" title="else path not taken" >E</span>{
-            const form = <span class="cstat-no" title="statement not covered" >new FormData()</span>
-            const privateKey = <span class="cstat-no" title="statement not covered" >'private_y7tUK9sj4RjIKwAqLBOn0UZLtLs=' + ':';</span>
-            const convertedKey = <span class="cstat-no" title="statement not covered" >Buffer.from(privateKey).toString('base64');</span>
-            const convertedFile = <span class="cstat-no" title="statement not covered" >Buffer.from(req.file.buffer).toString('base64');</span>
-<span class="cstat-no" title="statement not covered" >            form.append('file', convertedFile)</span>
-<span class="cstat-no" title="statement not covered" >            form.append('fileName', req.file.originalname)</span>
-            const response = <span class="cstat-no" title="statement not covered" >await axios({</span>
+        } else {
+            const form = new FormData()
+            const privateKey = 'private_y7tUK9sj4RjIKwAqLBOn0UZLtLs=' + ':';
+            const convertedKey = Buffer.from(privateKey).toString('base64');
+            const convertedFile = Buffer.from(req.file.buffer).toString('base64');
+            form.append('file', convertedFile)
+            form.append('fileName', req.file.originalname)
+            const response = await axios({
                 url: "https://upload.imagekit.io/api/v1/files/upload",
                 method: "POST",
                 headers: {
@@ -152,9 +152,9 @@ const imageKit = async (req, res, next) =&gt; {
                 },
                 data: form,
             })
-<span class="cstat-no" title="statement not covered" >            if (response) {</span>
-<span class="cstat-no" title="statement not covered" >                req.body.imgUrl = response.data.url</span>
-<span class="cstat-no" title="statement not covered" >                next();</span>
+            if (response) {
+                req.body.imgUrl = response.data.url
+                next();
             }
         }
     } catch (err) {
@@ -169,7 +169,7 @@ module.exports = imageKit</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Wed Nov 17 2021 15:58:56 GMT+0700 (Indochina Time)
+                at Thu Nov 18 2021 01:37:40 GMT+0700 (Western Indonesia Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

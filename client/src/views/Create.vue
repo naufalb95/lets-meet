@@ -37,7 +37,16 @@
         </div>
         <div class="w-full mb-4">
           <label id="description" class="text-center text-lg font-normal">Description</label>
-          <textarea name="description" v-model="description" class="overflow-y-auto mb-2 px-2 py-2 rounded text-xs border shadow focus:outline-none block w-full" rows="8" placeholder="Type your event description here"/>
+          <textarea name="description" v-model="description" class="overflow-y-auto mb-2 px-2 py-2 rounded text-s border shadow focus:outline-none block w-full" rows="8" placeholder="Type your event description here"/>
+        </div>
+        <div class="w-full mb-4">
+          <label id="description" class="text-center text-lg font-normal">Add Picture</label><br>
+          <p class="text-s font-normal pb-3">File: <span v-if="imgUrl">{{ imgUrl.name }}</span></p>
+          <label class="w-64 flex flex-col items-center px-4 py-6 bg-white rounded-md shadow-md tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue-400 hover:text-white text-blue-400 ease-linear transition-all duration-150">
+          <i class="fas fa-cloud-upload-alt fa-3x"></i>
+          <span class="mt-2 text-base leading-normal">Select a file</span>
+          <input @change="getPicture($event)" type="file" class="hidden" />
+          </label>
         </div>
         <div class="w-full mb-4">
           <label id="photo" class="text-center text-lg font-normal">Event Photo</label>
@@ -73,6 +82,7 @@ export default {
       },
       name: '',
       date: '',
+      imgUrl: '',
       time: '',
       location: '',
       description: '',
@@ -86,65 +96,69 @@ export default {
     ...mapState(['categories'])
   },
   async created () {
-    const date = new Date()
-    const years = date.getFullYear()
-    let months = date.getMonth() + 1
-    let day = date.getDate()
-    let hours = date.getHours()
-    let minutes = date.getMinutes()
-
-    if (months < 10) months = '0' + months
-    if (day < 10) day = '0' + day
-    if (hours < 10) hours = '0' + hours
-    if (minutes < 10) minutes = '0' + minutes
-
-    this.time = hours + ':' + minutes
-    this.date = years + '-' + months + '-' + day
+    try {
+      await this.fetchCategories()
+      const date = new Date()
+      const years = date.getFullYear()
+      let months = date.getMonth() + 1
+      let day = date.getDate()
+      let hours = date.getHours()
+      let minutes = date.getMinutes()
+      if (months < 10) months = '0' + months
+      if (day < 10) day = '0' + day
+      if (hours < 10) hours = '0' + hours
+      if (minutes < 10) minutes = '0' + minutes
+      this.time = hours + ':' + minutes
+      this.date = years + '-' + months + '-' + day
+    } catch (error) {
+      console.log(error)
+    }
   },
   async mounted () {
-    const googleMapApi = await GoogleMapsApiLoader({
-      apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
-      libraries: ['places']
-    })
-
-    navigator.geolocation.getCurrentPosition(this.showPosition)
-
-    this.google = googleMapApi
-    this.initializeMap()
+    try {
+      const googleMapApi = await GoogleMapsApiLoader({
+        apiKey: '',
+        libraries: ['places']
+      })
+      navigator.geolocation.getCurrentPosition(this.showPosition)
+      this.google = googleMapApi
+      this.initializeMap()
+    } catch (error) {
+      console.log(error)
+    }
   },
   methods: {
     ...mapActions(['createEvent', 'fetchCategories']),
     async submitHandler () {
-      console.log(this.photo)
-      const date = new Date(this.date)
-      const time = this.time.split(':')
-      const eventHours = time[0]
-      const eventMinutes = time[1]
-
-      this.dateAndTime = new Date(date.setHours(eventHours, eventMinutes))
-
-      const payload = {
-        name: this.name,
-        dateAndTime: this.dateAndTime,
-        description: this.description,
-        maxParticipants: +this.maxParticipants,
-        categoryId: +this.categoryId,
-        imgUrl: this.photo
+      try {
+        const date = new Date(this.date)
+        const time = this.time.split(':')
+        const eventHours = time[0]
+        const eventMinutes = time[1]
+        this.dateAndTime = new Date(date.setHours(eventHours, eventMinutes))
+        const payload = {
+          name: this.name,
+          imgUrl: this.imgUrl,
+          dateAndTime: this.dateAndTime,
+          description: this.description,
+          maxParticipants: +this.maxParticipants,
+          categoryId: +this.categoryId
+        }
+        if (this.eventType === 'Offline') {
+          payload.location = this.location
+          payload.latitude = this.coords.lat
+          payload.longitude = this.coords.lng
+        } else {
+          payload.location = this.eventType
+        }
+        await this.createEvent(payload)
+        this.$router.push({ name: 'MyEvent' })
+      } catch (error) {
+        console.log(error)
       }
-
-      if (this.eventType === 'Offline') {
-        payload.location = this.location
-        payload.latitude = this.coords.lat
-        payload.longitude = this.coords.lng
-      } else {
-        payload.location = this.eventType
-      }
-
-      console.log(payload)
-
-      await this.createEvent(payload)
-
-      this.$router.push({ name: 'MyEvent' })
+    },
+    getPicture (event) {
+      this.imgUrl = event.target.files[0]
     },
     initializeMap () {
       this.mapContainer = this.$refs.googleMap
@@ -152,14 +166,12 @@ export default {
     showPosition (position) {
       this.coords.lat = position.coords.latitude
       this.coords.lng = position.coords.longitude
-
       this.map = new this.google.maps.Map(
         this.mapContainer, {
           center: { lat: this.coords.lat, lng: this.coords.lng },
           zoom: 18
         }
       )
-
       this.marker = new this.google.maps.Marker({
         position: this.coords,
         map: this.map
@@ -170,14 +182,11 @@ export default {
         query: this.location,
         fields: ['name', 'geometry']
       }
-
       const service = new this.google.maps.places.PlacesService(this.map)
-
       service.findPlaceFromQuery(request, (res) => {
         const result = res[0]
         this.coords.lat = result.geometry.location.lat()
         this.coords.lng = result.geometry.location.lng()
-
         this.map.setCenter((new this.google.maps.LatLng(this.coords.lat, this.coords.lng)), 13)
         this.marker = new this.google.maps.Marker({
           position: {
