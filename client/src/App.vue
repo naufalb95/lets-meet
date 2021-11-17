@@ -5,7 +5,7 @@
     <div class="bottom-0 absolute">
       <Footer id="footer" v-if="!isVideoConference" />
     </div>
-    <ModalOverlay v-if="isModalLogin || isModalRegister" />
+    <ModalOverlay v-if="isModalLogin || isModalRegister || isModalLeave || isModalDelete" />
   </div>
 </template>
 
@@ -26,6 +26,12 @@ export default {
     },
     isVideoConference () {
       return this.$store.state.isVideoConference
+    },
+    isModalLeave () {
+      return this.$store.state.isModalLeave
+    },
+    isModalDelete () {
+      return this.$store.state.isModalDelete
     }
   },
   components: {
