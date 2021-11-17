@@ -287,7 +287,7 @@ class EventController {
             }
 
             if (foundEvent.eventOrganizerId === userId) {
-                const result = await Event.update(
+                await Event.update(
                 {
                     name,
                     dateAndTime,
