@@ -5,14 +5,18 @@
     </div>
     <div id='content' class='text-white pl-5 flex items-center'>
       <div id='video_container' class='flex-grow h-full p-2'>
-        <div class='bg-black bg-opacity-80 w-full h-full rounded-lg text-black flex items-center justify-center'>
-          <div id='main_video' class='w-full'></div>
+        <div class='bg-gray-800 bg-opacity-80 w-full h-full rounded-lg text-black flex items-center justify-center relative'>
+          <div id='main_video' class='w-full relative z-10'></div>
+          <div class="absolute top-0 left-0 h-full w-full flex justify-center items-center text-gray-300">Waiting for host to share their screen or cam</div>
         </div>
       </div>
       <div id='part_container' class='flex-grow-0 h-full p-2 hidden'>
-        <div id='video_part' class='flex-grow-0 h-full overflow-x-hidden overflow-y-scroll part_video_container'>
+        <div id='video_part' class='flex-grow-0 h-full overflow-x-hidden overflow-y-scroll part_video_container relative'>
           <div id='host_video' class='participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden hidden'></div>
-          <div id='local_video' class='participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden'></div>
+          <div id='local_video' class='participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'>
+            <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300">{{ this.options.uid }}</div>
+            <div class="absolute top-0 left-0 pl-4 pb-2 filter drop-shadow-lg z-20 w-full h-full flex justify-start items-end text-gray-300 hidden" ref="local_video_username">{{ this.options.uid }}</div>
+          </div>
         </div>
       </div>
        <div id='part_chat' class='flex-grow-0 h-full p-2'>
@@ -21,23 +25,27 @@
             <div class="border-b-2 border-black mb-2">
               Chat Participants
             </div>
-            <div v-for="(data, index) in this.getMessages" :key="index" class="my-2">
+            <div v-for="(data, index) in messages" :key="index" class="my-2">
               <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
               <div class="text-sm">{{ data.message }}</div>
             </div>
           </div>
-          <form class="flex p-3" style="height: 12.5%" @submit.prevent="createNewMessage">
+          <form class="flex p-3" @submit.prevent="createNewMessage">
             <div class='w-5/6'>
-              <input type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-gray-300 w-full h-full rounded-l-md outline-none' v-model="newMessage">
+              <textarea type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="message" rows="4">
+              </textarea>
             </div>
             <div class='w-1/6'>
-              <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none'><i class="fab fa-telegram-plane"></i></button>
+              <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0 bg-white'>
+                <font-awesome-icon :icon="['fas', 'paper-plane']" class="mr-2 text-2xl text-gray-600"/>
+              </button>
             </div>
           </form>
         </div>
       </div>
     </div>
     <div id='bottom_row' class='text-white pl-5 flex items-center'>
+      <button @click='shareScreenHandler' class='mx-3' v-if='!isScreenShare && isHost'>Screen Share</button>
       <button @click='stopScreenShareHandler' class='mx-3' v-if='isScreenShare && isHost'>Stop Screen Share</button>
       <button @click='openCamHandler' class='mx-3' v-if='!isOpenCam'>Open Cam</button>
       <button @click='closeCamHandler' class='mx-3' v-if='isOpenCam'>Close Cam</button>
@@ -60,36 +68,23 @@
 <script>
 import AgoraRTC from 'agora-rtc-sdk-ng'
 import AgoraRTM from 'agora-rtm-sdk'
-import date from 'date-and-time'
-
-// ! Tombol Screen Share hanya ada host saja
-
-// ! options dan rtc dimasukkan ke state data
-
-// ! Login jalan saat pertamakali masuk halaman
-
-// ! KONDISI AWAL MIC MUTED
-
-// ! event handler chat di created
-
-// ! dapetin semua chat di computed
-
-// ! ganti date and time ke date-fns
+import { mapActions, mapState, mapMutations } from 'vuex'
+import { utcToZonedTime, format } from 'date-fns-tz'
 
 export default {
   name: 'VideoConference',
   data () {
     return {
-      isJoined: true,
+      isJoined: false,
       isMuted: true,
       isOpenCam: false,
       isHost: false,
-      myId: 1234562, // * Diisi dari localStorage
-      hostId: 123456, //* Diisi dari database
+      myId: null,
+      hostId: null,
       isHostPresent: false,
       screenId: null,
       isScreenShare: false,
-      participantsId: [1, 12345672], //* Diisi dari database
+      participantsId: [],
       hostVideoTrack: null,
       rtc: {
         localAudioTrack: null,
@@ -100,55 +95,61 @@ export default {
         screenClient: null
       },
       options: {
-        appId: 'bba821c9f0374c0a86b015c0668097d8',
-        channel: 'test2',
-        token: '006bba821c9f0374c0a86b015c0668097d8IADgTMOAOH7BSLZqBu12dAL35jIyzLd6k2S0wvPHmJK+9FiNuxMAAAAAEABr21wCKaWSYQEAAQAMpZJh',
-        uid: 123456
+        appId: process.env.VUE_APP_AGORA_API_KEY,
+        channel: '',
+        uid: null
       },
-      newMessage: null, // * buat bikin message
-      name: 'damar', // ! buat bikin message dummy
-      token: null // * buat token
+      channelChat: null,
+      messages: [],
+      message: null
     }
   },
   methods: {
-    // ! buat pesan / chat baru
+    ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
+    ...mapMutations({
+      setIsVideoConference: 'SET_IS_VIDEO_CONFERENCE'
+    }),
     async createNewMessage () {
-      const channel = this.$store.state.tokenMessage
-      // console.log(channel)
-      if (channel != null) {
-        await channel.sendMessage({ text: this.newMessage }).then(() => {
-          this.$store.commit('GET_ALL_MESSAGES', { message: this.newMessage, name: this.name, time: date.format(new Date(), 'hh:mm A') }) // ! <---- this.name == nama user yg masuk
-          this.newMessage = null
-          console.log('masuk sini')
+      if (this.channelChat != null) {
+        await this.channelChat.sendMessage({ text: this.message })
+
+        this.messages.push({
+          message: this.message,
+          name: this.options.uid,
+          time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
         })
-          .catch((err) => { console.log('kirim message ke channel mana lu woi?', err) }) // ! boleh di custom lagi catch nya wkwk
+
+        this.message = ''
       }
     },
-    // ! login buat fitur chat/message
-    login () {
-      this.$store.dispatch('getTokenMessage', { name: this.name, channelName: this.options.channel }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
-        .then(async (data) => {
-          this.token = data.token
-          const appID = 'ffe414caa68c4da0a6b8837b05bc649e'
-          const client = AgoraRTM.createInstance(appID)
-          const options = {
-            uid: this.name, // ! nama user
-            token: this.token // ! token dari server
-          }
-          if (this.name) {
-            await client.login(options)
-            const channel = client.createChannel(this.options.channel) // ! <----------dinamis nama channel
-            await channel.join()
-            this.$store.commit('GET_TOKEN_MESSAGE', channel)
-          }
-        })
-        .catch((err) => {
-          console.log('masuk sini')
-          console.log(err)
-        })
-    },
     async joinHandler () {
-      await this.rtc.client.join(this.options.appId, this.options.channel, this.options.token, +this.options.uid)
+      await this.getChatToken({ uid: this.options.uid, channelName: this.options.channel })
+
+      const appId = this.options.appId
+      const client = AgoraRTM.createInstance(appId)
+      const options = {
+        uid: this.options.uid,
+        token: this.token.chat
+      }
+
+      await client.login(options)
+
+      this.channelChat = client.createChannel(this.options.channel)
+
+      await this.channelChat.join()
+
+      this.channelChat.on('ChannelMessage', (message, uid) => {
+        this.messages.push({
+          message: message.text,
+          name: this.options.uid,
+          time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
+        })
+      })
+
+      // * Video
+      await this.getVideoToken({ uid: +this.myId, channelName: this.options.channel })
+
+      await this.rtc.client.join(appId, this.options.channel, this.token.video, +this.myId)
       this.isJoined = true
       this.isMuted = true
       this.isOpenCam = false
@@ -177,11 +178,11 @@ export default {
 
         let container = null
 
-        // ! Check localStorage pada userId, kalau dia host maka masuk sini, ganti this.options.uid-nya
-        if (this.hostId === +this.options.uid && !this.screenId) {
+        if (this.hostId === this.options.uid && !this.screenId) {
           container = document.getElementById('main_video')
           const localVidDiv = document.getElementById('local_video')
           localVidDiv.className = ''
+          this.$refs.local_video_username.classList.add('hidden')
 
           container.style.height = `${container.offsetWidth / 16 * 9}px`
         } else {
@@ -189,8 +190,9 @@ export default {
           container = document.getElementById('local_video')
           const partChatDiv = document.getElementById('part_container')
           partChatDiv.classList.remove('hidden')
+          this.$refs.local_video_username.classList.remove('hidden')
 
-          container.className = 'participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden'
+          container.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
         }
 
         this.rtc.localVideoTrack.play(container)
@@ -208,8 +210,7 @@ export default {
       const partChatDiv = document.getElementById('part_container')
       const remoteUsers = this.rtc.client.remoteUsers
 
-      if (this.hostId === +this.options.uid) {
-        // ! Jika user adalah host, maka localVidDiv ditutup dan partchat div ditutup
+      if (this.hostId === this.options.uid) {
         if (this.isScreenShare && remoteUsers.length === 1) {
           partChatDiv.classList.add('hidden')
         }
@@ -217,6 +218,7 @@ export default {
 
       this.rtc.localVideoTrack = null
       this.isOpenCam = false
+      this.$refs.local_video_username.classList.add('hidden')
     },
     async unmuteHandler () {
       if (!this.rtc.localAudioTrack) {
@@ -233,10 +235,13 @@ export default {
       this.isMuted = true
     },
     async shareScreenHandler () {
+      await this.getScreenToken({ channelName: this.options.channel })
+
       let container = null
 
       this.rtc.screenClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
-      await this.rtc.screenClient.join(this.options.appId, this.options.channel, this.options.token)
+
+      await this.rtc.screenClient.join(this.options.appId, this.options.channel, this.token.screen)
 
       this.rtc.localScreenTrack = await AgoraRTC.createScreenVideoTrack({
         encoderConfig: '1080p_1',
@@ -260,7 +265,8 @@ export default {
       if (this.rtc.localVideoTrack) {
         container = document.getElementById('local_video')
 
-        container.className = 'participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden'
+        container.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
+        this.$refs.local_video_username.classList.remove('hidden')
 
         this.rtc.localVideoTrack.play(container)
       }
@@ -281,78 +287,53 @@ export default {
         container = document.getElementById('main_video')
         const localVidDiv = document.getElementById('local_video')
         localVidDiv.className = ''
+        this.$refs.local_video_username.classList.add('hidden')
 
         this.rtc.localVideoTrack.play(container)
       }
     }
   },
   async created () {
-    this.$store.commit('SET_IS_VIDEO_CONFERENCE', true)
-    // ! event handler chat
-    const channel = this.$store.state.tokenMessage
-    channel.on('ChannelMessage', (message, memberId) => {
-      const obj = {
-        message: message.text,
-        name: memberId,
-        time: date.format(new Date(), 'hh:mm A')
-      }
-      this.$store.commit('GET_ALL_MESSAGES', obj)
-    })
-  },
-  computed: {
-    // ! dapetin semua pesan
-    getMessages () {
-      return this.$store.state.messages
+    this.setIsVideoConference(true)
+
+    await this.fetchEventDetail(this.$route.params.id)
+
+    this.hostId = this.eventDetail.event.eventOrganizerId.toString()
+    this.options.channel = this.eventDetail.event.id.toString()
+    this.participantsId = this.eventDetail.participants.map((p) => p.userId)
+
+    if (this.userId === this.hostId) {
+      this.options.uid = this.eventDetail.eventOrganizer.username
+      this.myId = this.eventDetail.eventOrganizer.id.toString()
+    } else {
+      const userIdx = this.eventDetail.participants.findIndex((p) => {
+        return p.userId === +this.userId
+      })
+      const uid = this.eventDetail.participants[userIdx]
+
+      this.options.uid = uid.User.username
+      this.myId = uid.userId.toString()
+    }
+
+    if (this.hostId === this.myId) {
+      this.isHost = true
+      this.isHostPresent = true
     }
   },
+  computed: {
+    ...mapState(['token', 'eventDetail', 'userId'])
+  },
   async mounted () {
-    // ! coba login test token chat
-    this.$store.dispatch('getTokenMessage', { uid: this.name, channelName: this.options.channel }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
-      .then(async (data) => {
-        this.token = data.token
-        const appID = 'ffe414caa68c4da0a6b8837b05bc649e'
-        const client = AgoraRTM.createInstance(appID)
-        const options = {
-          uid: this.name, // ! nama user
-          token: this.token // ! token dari server
-        }
-        if (this.name) {
-          await client.login(options)
-          const channel = client.createChannel(this.options.channel) // ! <----------dinamis nama channel
-          await channel.join()
-          this.$store.commit('GET_TOKEN_MESSAGE', channel)
-        }
-      })
-      .catch((err) => {
-        console.log('masuk sini')
-        console.log(err)
-      })
-
-    // ! coba login test token video
-    this.$store.dispatch('getTokenVideo', { uid: 'cobaTokenVideo', channelName: 'cobaTokenVideo' }) // ! this.name == nama user yg masuk, masukin nama channel di channelName
-      .then(async (data) => {
-        console.log(data, '<--- dari mounted')
-      })
-      .catch((err) => {
-        console.log('masuk sini')
-        console.log(err)
-      })
-
     window.addEventListener('resize', this.videoResizeHandler)
+    //  this.$refs.local_video_username.classList.remove('hidden')
 
     this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
-    // ! Cek apakah user adalah host
-    if (this.hostId === +this.options.uid) this.isHost = true
-
-    // ! Check localStorage pada userId, kalau dia host maka masuk sini, ganti this.options.uid-nya
-    if (this.hostId === +this.options.uid) {
-      // * Jika user adalah host
+    if (this.host) {
       const localVidDiv = document.getElementById('local_video')
 
       localVidDiv.className = ''
     } else {
-      // * Jika user adalah participant
       const partChatDiv = document.getElementById('part_container')
 
       partChatDiv.classList.remove('hidden')
@@ -386,7 +367,7 @@ export default {
       if (mediaType === 'video') {
         const remoteVideoTrack = user.videoTrack
 
-        if (user.uid === this.screenId && this.options.uid !== this.hostId) {
+        if (user.uid === this.screenId && !this.isHost) {
           // * Jika client adalah screen share
           const mainContainer = document.getElementById('main_video')
 
@@ -426,12 +407,17 @@ export default {
         }
 
         if (user.uid !== this.screenId && user.uid !== this.hostId) {
-          // * Jika client bukanlah screen dan host
+          // * Jika client bukanlah screen dan host, melainkan participants
           const remotePlayerContainer = document.createElement('div')
           remotePlayerContainer.id = user.uid.toString()
           remotePlayerContainer.style.width = '100%'
           remotePlayerContainer.style.height = '168.76px'
-          remotePlayerContainer.className = 'bg-white h-full rounded-lg text-black mb-3 overflow-hidden'
+          remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
+          const remotePlayerUsername = document.createElement('div')
+          remotePlayerUsername.className = 'absolute top-0 left-0 pl-4 pb-2 z-20 w-full h-full flex justify-start items-end text-gray-300'
+          const idx = this.eventDetail.participants.findIndex(p => p.userId === user.uid)
+          remotePlayerUsername.innerText = this.eventDetail.participants[idx].User.username
+          remotePlayerContainer.append(remotePlayerUsername)
           videoContainer.append(remotePlayerContainer)
           remoteVideoTrack.play(remotePlayerContainer)
         }
@@ -527,8 +513,14 @@ export default {
     height: 168.75px;
   }
 
-  #chat_message{
+  #chat_message {
     resize: none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  #chat_message::-webkit-scrollbar {
+    display: none;
   }
 
   .btn {

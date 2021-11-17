@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="flex min-h-screen min-w-screen bg-gray-50 relative font-base overflow-x-hidden">
     <Navbar id="navbar" v-if="!isVideoConference" class="absolute z-10" />
-    <router-view id="content" class="w-screen mb-64" />
+    <router-view id="content" class="w-screen" />
     <div class="bottom-0 absolute">
       <Footer id="footer" v-if="!isVideoConference" />
     </div>
