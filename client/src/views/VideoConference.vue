@@ -50,8 +50,8 @@
       </div>
     </div>
     <div id='bottom_row' class='text-white pl-5 flex items-center'>
-      <button class='mx-3'>Screen Share</button>
-      <button class='mx-3'>Stop Screen Share</button>
+      <button class='mx-3' @click="shareScreenHandler">Screen Share</button>
+      <button class='mx-3' @click="stopScreenShareHandler">Stop Screen Share</button>
       <button class='mx-3' @click="openCamHandler">Open Cam</button>
       <button class='mx-3' @click="closeCamHandler">Close Cam</button>
       <button class='mx-3' @click="muteHandler">Mute</button>
@@ -94,7 +94,8 @@ export default {
         messages: []
       },
       video: {
-        client: null
+        client: null,
+        screen: null
       },
       local: {
         video: null,
@@ -109,7 +110,7 @@ export default {
     ...mapState(['eventDetail', 'token'])
   },
   methods: {
-    ...mapActions(['getChatToken', 'getVideoToken', 'fetchEventDetail']),
+    ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
     leaveHandler () {
       this.inMeetParticipants.push({ userId: this.inMeetParticipants.length + 2 })
       console.log('masuk')
@@ -154,21 +155,20 @@ export default {
       await this.video.client.join(this.options.appId, this.settings.channelName, this.token.video, this.settings.uid)
 
       // ! Video Call Event Handler
-      // ! When a user join video call
+      // ! When user join channel
+      this.video.client.on('user-joined', async (user) => {
+        const remoteUser = {
+          id: user.uid
+        }
+
+        this.inMeetParticipants.push(remoteUser)
+      })
+
+      // ! When a user activating video or audio
       this.video.client.on('user-published', async (user, mediaType) => {
         await this.video.client.subscribe(user, mediaType)
 
-        let userIdx = this.inMeetParticipants.findIndex(participant => participant.id === user.uid)
-
-        if (userIdx === -1) {
-          const remoteUser = {
-            id: user.uid
-          }
-
-          this.inMeetParticipants.push(remoteUser)
-
-          userIdx = this.inMeetParticipants.findIndex(participant => participant.id === user.uid)
-        }
+        const userIdx = this.inMeetParticipants.findIndex(participant => participant.id === user.uid)
 
         const participant = this.inMeetParticipants[userIdx]
 
@@ -187,7 +187,7 @@ export default {
       })
 
       // ! When a user left video call
-      this.video.client.on('user-unpublished', async (user) => {
+      this.video.client.on('user-left', async (user) => {
         this.inMeetParticipants = this.inMeetParticipants.filter(participant => participant.id !== user.uid)
       })
     },
@@ -216,6 +216,25 @@ export default {
     },
     async muteHandler () {
       this.local.audio.setEnabled(false)
+    },
+    async shareScreenHandler () {
+      await this.getScreenToken({ channelName: this.settings.channelName })
+
+      this.video.screen = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
+
+      await this.video.screen.join(this.options.appId, this.settings.channelName, this.token.screen)
+
+      this.local.screen = await AgoraRTC.createScreenVideoTrack({
+        encoderConfig: '1080p_1',
+        optimizationMode: 'detail'
+      })
+
+      await this.video.screen.publish(this.local.screen)
+
+      this.local.screen.play('main_video')
+    },
+    async stopScreenShareHandler () {
+      this.local.screen.setEnabled(false)
     }
   },
   async created () {
