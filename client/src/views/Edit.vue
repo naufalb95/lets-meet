@@ -170,7 +170,6 @@ export default {
         this.$router.push({ name: 'MyEvent' })
       } catch (error) {
         console.log(error)
-
       }
     },
     initializeMap () {
