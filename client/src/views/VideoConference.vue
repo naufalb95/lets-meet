@@ -104,7 +104,8 @@ export default {
       },
       hostId: null,
       screenId: null,
-      inMeetParticipants: []
+      inMeetParticipants: [],
+      participantVolumeId: null
     }
   },
   computed: {
@@ -154,13 +155,6 @@ export default {
 
       await this.video.client.join(this.options.appId, this.settings.channelName, this.token.video, this.settings.uid)
 
-      // ! Enable Volume Indicator
-      this.video.client.enableAudioVolumeIndicator()
-      this.video.client.on('volume-indicator', volumes => {
-        volumes.forEach((volume, index) => {
-          console.log(`${index} UID ${volume.uid} Level ${volume.level}`)
-        })
-      })
       // ! Video Call Event Handler
       // ! When user join channel
       this.video.client.on('user-joined', async (user) => {
