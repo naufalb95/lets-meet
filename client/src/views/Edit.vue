@@ -1,5 +1,5 @@
 <template>
-  <div v-on:click.stop class="flex justify-center items-center min-h-screen w-full my-28">
+  <div v-on:click.stop class="flex justify-center items-center min-h-screen w-full my-28 mb-64">
     <form @submit.prevent="submitHandler" class="bg-white overflow-y-auto overflow-x-hidden shadow-md rounded px-12 py-12 w-1/2">
         <h1 class="text-center text-3xl text-blue-800 font-bold mb-12">Edit Event</h1>
         <div class="w-full mb-4">
@@ -86,11 +86,15 @@ export default {
       description: '',
       maxParticipants: 0,
       categoryId: 1,
-      eventType: 'offline'
+      eventType: 'offline',
+      photo: null
     }
   },
   computed: {
     ...mapState(['eventDetail', 'categories'])
+  },
+  async created () {
+    await this.fetchCategories()
   },
   async mounted () {
     try {
@@ -167,6 +171,7 @@ export default {
         this.$router.push({ name: 'MyEvent' })
       } catch (error) {
         console.log(error)
+
       }
     },
     initializeMap () {
@@ -207,6 +212,9 @@ export default {
     eventTypeHandler () {
       if (this.eventType === 'Online') this.$refs.location.classList.add('hidden')
       if (this.eventType === 'Offline') this.$refs.location.classList.remove('hidden')
+    },
+    photoInputHandler (e) {
+      this.photo = e.target.files[0]
     }
   }
 }

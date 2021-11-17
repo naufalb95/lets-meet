@@ -1,5 +1,5 @@
 <template>
-  <div class="relative mb-48">
+  <div class="relative mb-96">
     <div class="relative">
       <div class="w-2/3 py-48 bg-gray-100 rounded-r-xl shadow-xl mt-48 relative">
         <h1 class="text-4xl text-center mx-10 text-gray-800 w-5/6">

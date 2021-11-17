@@ -1,5 +1,5 @@
 <template>
-  <div v-on:click.stop class="flex justify-center items-center min-h-screen w-full my-28">
+  <div v-on:click.stop class="flex justify-center items-center min-h-screen w-full my-28 mb-64">
     <form @submit.prevent="submitHandler" class="bg-white overflow-y-auto overflow-x-hidden shadow-md rounded px-12 py-12 w-1/2">
         <h1 class="text-center text-3xl text-blue-800 font-bold mb-12">Create Event</h1>
         <div class="w-full mb-4">
@@ -48,6 +48,10 @@
           <input @change="getPicture($event)" type="file" class="hidden" />
           </label>
         </div>
+        <div class="w-full mb-4">
+          <label id="photo" class="text-center text-lg font-normal">Event Photo</label>
+          <input @change="photoInputHandler" name="photo" type="file" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
+        </div>
         <div class="w-full mb-4" ref="location">
           <label id="location" class="text-center text-lg font-normal">Location</label>
           <form @submit.prevent="changeLocationHandler">
@@ -84,7 +88,8 @@ export default {
       description: '',
       maxParticipants: 1,
       categoryId: '1',
-      eventType: 'Offline'
+      eventType: 'Offline',
+      photo: null
     }
   },
   computed: {
@@ -195,6 +200,9 @@ export default {
     eventTypeHandler () {
       if (this.eventType === 'Online') this.$refs.location.classList.add('hidden')
       if (this.eventType === 'Offline') this.$refs.location.classList.remove('hidden')
+    },
+    photoInputHandler (e) {
+      this.photo = e.target.files[0]
     }
   }
 }
