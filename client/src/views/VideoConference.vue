@@ -325,7 +325,6 @@ export default {
   },
   async mounted () {
     window.addEventListener('resize', this.videoResizeHandler)
-    //  this.$refs.local_video_username.classList.remove('hidden')
 
     this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
@@ -361,6 +360,18 @@ export default {
       let videoContainer = null
 
       videoContainer = document.getElementById('video_part')
+
+      const remotePlayerContainer = document.createElement('div')
+      remotePlayerContainer.id = user.uid.toString()
+      remotePlayerContainer.style.width = '100%'
+      remotePlayerContainer.style.height = '168.76px'
+      remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
+
+      const remotePlayerUserBackground = document.createElement('div')
+      remotePlayerUserBackground.className = 'absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300'
+      remotePlayerUserBackground.innerText = this.options.uid
+
+      remotePlayerContainer.append(remotePlayerUserBackground)
 
       if (user.uid === this.hostId) this.isHostPresent = true
 
@@ -410,11 +421,11 @@ export default {
 
         if (user.uid !== this.screenId && user.uid !== this.hostId) {
           // * Jika client bukanlah screen dan host, melainkan participants
-          const remotePlayerContainer = document.createElement('div')
-          remotePlayerContainer.id = user.uid.toString()
-          remotePlayerContainer.style.width = '100%'
-          remotePlayerContainer.style.height = '168.76px'
-          remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
+          // const remotePlayerContainer = document.createElement('div')
+          // remotePlayerContainer.id = user.uid.toString()
+          // remotePlayerContainer.style.width = '100%'
+          // remotePlayerContainer.style.height = '168.76px'
+          // remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
           const remotePlayerUsername = document.createElement('div')
           remotePlayerUsername.className = 'absolute top-0 left-0 pl-4 pb-2 z-20 w-full h-full flex justify-start items-end text-gray-300'
           const idx = this.eventDetail.participants.findIndex(p => p.userId === user.uid)
