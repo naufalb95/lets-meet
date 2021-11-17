@@ -1,7 +1,7 @@
 const { Event, Category, User, Participant } = require("../models");
 const { Op } = require("sequelize");
 // const cron = require("node-cron");
-const {RtmTokenBuilder, RtmRole, RtcRole, RtcTokenBuilder} = require('agora-access-token');
+const { RtmTokenBuilder, RtmRole, RtcRole, RtcTokenBuilder } = require('agora-access-token');
 const APP_ID = "bba821c9f0374c0a86b015c0668097d8";
 const APP_CERTIFICATE = "07331de6cdcb4a3ebe1686214c79921c";
 
@@ -10,14 +10,14 @@ const APP_CERTIFICATE = "07331de6cdcb4a3ebe1686214c79921c";
 class EventController {
     static async create(req, res, next) {
         const {
-        name,
-        dateAndTime,
-        location,
-        description,
-        maxParticipants,
-        categoryId,
-        longitude,
-        latitude,
+            name,
+            dateAndTime,
+            location,
+            description,
+            maxParticipants,
+            categoryId,
+            longitude,
+            latitude,
         } = req.body;
 
         const imgUrl = req.body.imgUrl ? req.body.imgUrl : "https://www.belfercenter.org/themes/belfer/images/event-default-img-med.png";
@@ -37,27 +37,27 @@ class EventController {
                 latitude,
             });
 
-        // if (location === "Online") {
-        //     let dateInput = req.body.dateAndTime;
+            // if (location === "Online") {
+            //     let dateInput = req.body.dateAndTime;
 
-        //     let minute = dateInput.slice(14, 16);
-        //     let hour = dateInput.slice(11, 13);
-        //     let day = dateInput.slice(8, 10);
-        //     let month = dateInput.slice(5, 7);
+            //     let minute = dateInput.slice(14, 16);
+            //     let hour = dateInput.slice(11, 13);
+            //     let day = dateInput.slice(8, 10);
+            //     let month = dateInput.slice(5, 7);
 
-        //     CRON_SCHEDULER[result.id] = cron.schedule(
-        //     `${minute} ${hour} ${day} ${month} *`,
-        //     () => {
-        //         console.log("Running on");
-        //     },
-        //     {
-        //         scheduled: false,
-        //         timezone: "Asia/Jakarta",
-        //     }
-        //     );
+            //     CRON_SCHEDULER[result.id] = cron.schedule(
+            //     `${minute} ${hour} ${day} ${month} *`,
+            //     () => {
+            //         console.log("Running on");
+            //     },
+            //     {
+            //         scheduled: false,
+            //         timezone: "Asia/Jakarta",
+            //     }
+            //     );
 
-        //     CRON_SCHEDULER[result.id].start();
-        // }
+            //     CRON_SCHEDULER[result.id].start();
+            // }
 
             res.status(201).json(result);
         } catch (err) {
@@ -69,7 +69,7 @@ class EventController {
         try {
             const { eventName, day, location, distance, category, latitude, longitude } = req.query;
             let condition = {};
-            
+
             if (eventName) {
                 condition.name = { [Op.iLike]: `%${eventName}%` };
             }
@@ -98,8 +98,8 @@ class EventController {
                     let today = new Date();
                     condition.dateAndTime = {
                         [Op.between]: [
-                        today.setHours(0, 0, 0, 0),
-                        today.setHours(23, 59, 59, 0),
+                            today.setHours(0, 0, 0, 0),
+                            today.setHours(23, 59, 59, 0),
                         ],
                     };
                 }
@@ -130,10 +130,10 @@ class EventController {
             let result = await Event.findAll({
                 where: condition,
                 include: [
-                {
-                    model: Category,
-                    attributes: ["name"],
-                },
+                    {
+                        model: Category,
+                        attributes: ["name"],
+                    },
                 ],
                 order: [["id", "ASC"]],
                 attributes: {
@@ -141,34 +141,34 @@ class EventController {
                 },
             });
 
-            if (distance && location !== 'Online') {    
+            if (distance && location !== 'Online') {
                 result = result.filter((item) => {
                     const lon1 = longitude * Math.PI / 180;
                     const lon2 = item.longitude * Math.PI / 180;
                     const lat1 = latitude * Math.PI / 180;
                     const lat2 = item.latitude * Math.PI / 180;
-                
+
                     // Haversine formula
                     let dlon = lon2 - lon1;
                     let dlat = lat2 - lat1;
                     let a = Math.pow(Math.sin(dlat / 2), 2)
-                    + Math.cos(lat1) * Math.cos(lat2)
-                    * Math.pow(Math.sin(dlon / 2),2);
-                
+                        + Math.cos(lat1) * Math.cos(lat2)
+                        * Math.pow(Math.sin(dlon / 2), 2);
+
                     let c = 2 * Math.asin(Math.sqrt(a));
-                
+
                     // Radius of earth in kilometers. Use 3956
                     // for miles
                     let r = 6371;
-                
+
                     // calculate the result
-                    return(c * r) <= +distance;
+                    return (c * r) <= +distance;
                 });
             }
 
             let container = result
 
-            for(let i = 0; i < container.length; i++) {
+            for (let i = 0; i < container.length; i++) {
                 const foundParticipant = await Participant.findAll({ where: { eventId: +result[i].id } });
                 let participantsContainer = []
 
@@ -177,7 +177,7 @@ class EventController {
                     for (let j = 0; j < foundParticipant.length; j++) {
                         const userId = foundParticipant[j].dataValues.userId;
                         const foundUser = await User.findByPk(userId);
-                        
+
                         objUser = {
                             userId: foundUser.id,
                             username: foundUser.username,
@@ -203,18 +203,18 @@ class EventController {
             const foundEvent = await Event.findByPk(eventId);
             const foundParticipant = await Participant.findOne({
                 where: {
-                userId,
-                eventId,
+                    userId,
+                    eventId,
                 },
             });
             const numberOfParticipants = await Participant.count({
                 where: {
-                eventId,
+                    eventId,
                 },
             });
 
             if (!foundEvent) {
-                throw { name: "Event Not Found" };          
+                throw { name: "Event Not Found" };
             }
             if (foundEvent.maxParticipants > numberOfParticipants) {
                 if (foundEvent && !foundParticipant) {
@@ -234,33 +234,35 @@ class EventController {
 
     static async detailEvent(req, res, next) {
         try {
-        const { eventId } = req.params;
-        const event = await Event.findByPk(eventId, {
-            attributes: {
-            exclude: ["createdAt", "updatedAt"],
-            },
-        });
-
-        if (event) {
-            const eventOrganizer = await User.findByPk(event.eventOrganizerId, {
-            attributes: {
-                exclude: ["createdAt", "updatedAt", "password"],
-            }});
-            const participants = await Participant.findAll({
-            where: { eventId: event.id },
-            attributes: {
-                exclude: ["createdAt", "updatedAt"],
-            },
-            include: [
-                {
-                model: User,
-                attributes: ["username"],
+            const { eventId } = req.params;
+            const event = await Event.findByPk(eventId, {
+                attributes: {
+                    exclude: ["createdAt", "updatedAt"],
                 },
-            ]});
-            res.status(200).json({ event, eventOrganizer, participants });
-        } else {
-            throw { name: "Event Not Found" };
-        }
+            });
+
+            if (event) {
+                const eventOrganizer = await User.findByPk(event.eventOrganizerId, {
+                    attributes: {
+                        exclude: ["createdAt", "updatedAt", "password"],
+                    }
+                });
+                const participants = await Participant.findAll({
+                    where: { eventId: event.id },
+                    attributes: {
+                        exclude: ["createdAt", "updatedAt"],
+                    },
+                    include: [
+                        {
+                            model: User,
+                            attributes: ["username"],
+                        },
+                    ]
+                });
+                res.status(200).json({ event, eventOrganizer, participants });
+            } else {
+                throw { name: "Event Not Found" };
+            }
         } catch (err) {
             next(err);
         }
@@ -277,6 +279,8 @@ class EventController {
                 categoryId,
             } = req.body;
 
+          
+
             const id = req.params.eventId;
             const userId = +req.user.id;
 
@@ -287,53 +291,23 @@ class EventController {
             }
 
             if (foundEvent.eventOrganizerId === userId) {
-                const result = await Event.update(
-                {
-                    name,
-                    dateAndTime,
-                    description,
-                    maxParticipants,
-                    imgUrl,
-                    categoryId,
-                },
-                {
-                    where: { id },
-                    returning: true,
-                }
+                const responseFromSeq = await Event.update(
+                    {
+                        name,
+                        dateAndTime,
+                        description,
+                        maxParticipants,
+                        imgUrl,
+                        categoryId,
+                    },
+                    {
+                        where: { id },
+                        returning: true,
+                    }
                 );
+                console.log({responseFromSeq});
+                res.status(200).json({ message: 'Success Update' });
 
-                const eventResult = result[1][0];
-
-                // if (foundEvent.location === "Online") {
-                //   CRON_SCHEDULER[id].stop();
-
-                //   delete CRON_SCHEDULER[id];
-
-                //   let dateInput = req.body.dateAndTime;
-
-                //   let minute = dateInput.slice(14, 16);
-                //   let hour = dateInput.slice(11, 13);
-                //   let day = dateInput.slice(8, 10);
-                //   let month = dateInput.slice(5, 7);
-
-                //   console.log(minute, " ", hour, " ", day, " ", month, " ");
-
-                //   CRON_SCHEDULER[id] = cron.schedule(
-                //     `${minute} ${hour} ${day} ${month} *`,
-                //     () => {
-                //       console.log("Running a job (edit)");
-                //     //   await Event.update(
-                //     },
-                //     {
-                //       scheduled: false,
-                //       timezone: "Asia/Jakarta",
-                //     }
-                //   );
-
-                //   CRON_SCHEDULER[id].start();
-                // }
-
-                res.status(200).json(eventResult);
             } else {
                 throw { name: "Access Denied" };
             }
@@ -362,7 +336,7 @@ class EventController {
                 throw { name: "Access Denied" };
             }
         } catch (err) {
-           next(err);
+            next(err);
         }
     }
 
@@ -370,24 +344,24 @@ class EventController {
         const userId = req.user.id;
         const { eventId } = req.params;
         try {
-        const foundUser = await User.findByPk(userId);
-        const foundEvent = await Event.findByPk(eventId);
-        const foundPartipant = await Participant.findOne({
-            where: { userId, eventId },
-        });
-
-        if (foundPartipant) {
-            await Participant.destroy({ where: { userId, eventId } });
-            res
-            .status(200)
-            .json({
-                message: `${foundUser.username} Succes Left ${foundEvent.name} Event`,
+            const foundUser = await User.findByPk(userId);
+            const foundEvent = await Event.findByPk(eventId);
+            const foundPartipant = await Participant.findOne({
+                where: { userId, eventId },
             });
-        } else {
-            throw { name: "You never joined this event" };
-        }
+
+            if (foundPartipant) {
+                await Participant.destroy({ where: { userId, eventId } });
+                res
+                    .status(200)
+                    .json({
+                        message: `${foundUser.username} Succes Left ${foundEvent.name} Event`,
+                    });
+            } else {
+                throw { name: "You never joined this event" };
+            }
         } catch (err) {
-        next(err);
+            next(err);
         }
     }
 
@@ -407,13 +381,13 @@ class EventController {
             if (foundEvent.eventOrganizerId === userId) {
                 await Event.update(
                     isDone, {
-                        where: {
-                            id: eventId
-                        },
-                        returning: true,
-                    }
+                    where: {
+                        id: eventId
+                    },
+                    returning: true,
+                }
                 )
-                res.status(200).json({message: 'event ended.'});
+                res.status(200).json({ message: 'event ended.' });
             } else {
                 throw { name: "Access Denied" };
             }
@@ -429,7 +403,7 @@ class EventController {
                 where: { userId },
                 include: [
                     {
-                    model: Event,
+                        model: Event,
                     }
                 ]
             });
@@ -439,8 +413,8 @@ class EventController {
             })
 
             // console.log(foundParticipant);
-            let result = foundParticipant.map(event => {return event.Event}).concat(foundMyEvent)
-            
+            let result = foundParticipant.map(event => { return event.Event }).concat(foundMyEvent)
+
             res.status(200).json(result);
         } catch (err) {
             next(err);
@@ -458,7 +432,7 @@ class EventController {
 
         let uid = req.query.uid;
 
-        if(!uid || uid == '') {
+        if (!uid || uid == '') {
             uid = 0;
         }
 
@@ -486,7 +460,7 @@ class EventController {
 
         const currentTime = Math.floor(Date.now() / 1000);
         const privilegeExpireTime = currentTime + expireTime;
-        
+
         const token = RtmTokenBuilder.buildToken(APP_ID, APP_CERTIFICATE, uid, role, privilegeExpireTime);
 
         res.status(200).json({ token })
