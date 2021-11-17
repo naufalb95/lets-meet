@@ -54,4 +54,13 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  const at = localStorage.getItem('access_token')
+  if ((to.name === 'Create' && !at) || (to.name === 'Edit' && !at) || (to.name === 'VideoConference' && !at) || (to.name === 'MyEvent' && !at)) {
+    next({ name: 'Home' })
+  } else {
+    next()
+  }
+})
+
 export default router
