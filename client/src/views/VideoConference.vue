@@ -372,6 +372,7 @@ export default {
       remotePlayerUserBackground.innerText = this.options.uid
 
       remotePlayerContainer.append(remotePlayerUserBackground)
+      videoContainer.append(remotePlayerContainer)
 
       if (user.uid === this.hostId) this.isHostPresent = true
 
@@ -431,7 +432,7 @@ export default {
           const idx = this.eventDetail.participants.findIndex(p => p.userId === user.uid)
           remotePlayerUsername.innerText = this.eventDetail.participants[idx].User.username
           remotePlayerContainer.append(remotePlayerUsername)
-          videoContainer.append(remotePlayerContainer)
+          // videoContainer.append(remotePlayerContainer)
           remoteVideoTrack.play(remotePlayerContainer)
         }
       }
