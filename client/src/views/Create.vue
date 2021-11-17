@@ -40,7 +40,7 @@
           <textarea name="description" v-model="description" class="overflow-y-auto mb-2 px-2 py-2 rounded text-s border shadow focus:outline-none block w-full" rows="8" placeholder="Type your event description here"/>
         </div>
         <div class="w-full mb-4">
-          <label id="description" class="text-center text-lg font-normal">Add Picture</label><br>
+          <label id="description" class="text-center text-lg font-normal">Event Photo</label><br>
           <p class="text-s font-normal pb-3">File: <span v-if="imgUrl">{{ imgUrl.name }}</span></p>
           <label class="w-64 flex flex-col items-center px-4 py-6 bg-white rounded-md shadow-md tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue-400 hover:text-white text-blue-400 ease-linear transition-all duration-150">
           <i class="fas fa-cloud-upload-alt fa-3x"></i>
@@ -48,10 +48,10 @@
           <input @change="getPicture($event)" type="file" class="hidden" />
           </label>
         </div>
-        <div class="w-full mb-4">
+        <!-- <div class="w-full mb-4">
           <label id="photo" class="text-center text-lg font-normal">Event Photo</label>
           <input @change="photoInputHandler" name="photo" type="file" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
-        </div>
+        </div> -->
         <div class="w-full mb-4" ref="location">
           <label id="location" class="text-center text-lg font-normal">Location</label>
           <form @submit.prevent="changeLocationHandler">
@@ -200,10 +200,10 @@ export default {
     eventTypeHandler () {
       if (this.eventType === 'Online') this.$refs.location.classList.add('hidden')
       if (this.eventType === 'Offline') this.$refs.location.classList.remove('hidden')
-    },
-    photoInputHandler (e) {
-      this.photo = e.target.files[0]
     }
+    // photoInputHandler (e) {
+    //   this.photo = e.target.files[0]
+    // }
   }
 }
 </script>

@@ -7,7 +7,7 @@
   </div>
   <div class="w-9/12">
     <h1 class="text-gray-900 font-semibold text-lg">{{ dateAndTime }} WIB</h1>
-    <h1 class="text-blue-800 font-bold text-2xl">{{ event.event.name }}</h1>
+    <v-clamp autoresize :max-lines="2" class="text-blue-800 font-bold text-3xl">{{ event.event.name }}</v-clamp>
     <h1 class="text-gray-900">{{ event.event.location }}</h1>
     <h1 class="text-gray-700 text-sm mt-3">{{ attendees }}/{{ event.event.maxParticipants }} Attendees</h1>
   </div>
@@ -15,12 +15,16 @@
 </template>
 
 <script>
+import VClamp from 'vue-clamp'
 import { format } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 
 export default {
   name: 'EventCard',
   props: ['event'],
+  components: {
+    VClamp
+  },
   computed: {
     dateAndTime () {
       const timeZone = 'Asia/Jakarta'

@@ -1,14 +1,14 @@
 {
   "development": {
     "username": "postgres",
-    "password": "apinrega19",
+    "password": "postgres",
     "database": "Let's-meet",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
-    "password": "apinrega19",
+    "password": "postgres",
     "database": "Let's-meet Test",
     "host": "127.0.0.1",
     "dialect": "postgres"
