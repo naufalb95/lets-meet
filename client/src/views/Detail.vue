@@ -153,19 +153,21 @@ export default {
           disableDefaultUI: true
         }
       )
-
       this.marker = new this.google.maps.Marker({
         position: this.coords,
         map: this.map
       })
     },
     async attendHandler () {
-      if (!this.isLogin) {
-        this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
-      } else {
-        await this.attendEvent(this.$route.params.id)
-
-        this.isAttending = true
+      try {
+        if (!this.isLogin) {
+          this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
+        } else {
+          await this.attendEvent(this.$route.params.id)
+          this.isAttending = true
+        }
+      } catch (error) {
+        console.log(error)
       }
     },
     async leaveEventHandler () {
@@ -181,48 +183,47 @@ export default {
       // this.$router.push({ name: 'MyEvent' })
     },
     async doneEventHandler () {
-      await this.doneEvent(this.$route.params.id)
+      try {
+        await this.doneEvent(this.$route.params.id)
+      } catch (error) {
+        console.log(error)
+      }
     },
     joinMeetHandler () {
-      console.log('join')
+      this.$router.push({ name: 'VideoConference', params: { id: this.$route.params.id } })
     },
     editEventHandler () {
       this.$router.push({ name: 'Edit', params: { id: this.$route.params.id } })
     }
   },
   async mounted () {
-    await this.fetchEventDetail(this.$route.params.id)
-
-    this.isLoading = false
-
-    if (+this.userId === this.eventDetail.eventOrganizer.id) this.isHost = true
-
-    const participantIdx = this.eventDetail.participants.findIndex(p => p.userId === +this.userId)
-
-    if (participantIdx !== -1) this.isAttending = true
-
-    const startDate = new Date(this.eventDetail.event.dateAndTime)
-    const nowDate = new Date()
-
-    if ((nowDate > startDate) && !this.eventDetail.event.isDone) this.isStart = true
-
-    if (this.eventDetail.event.location === 'Online') {
-      this.eventType = this.eventDetail.event.location
-      this.$refs.detail.classList.add('rounded-b-lg')
-    } else {
-      const googleMapApi = await GoogleMapsApiLoader({
-        apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
-        libraries: ['places']
-      })
-
-      this.location = this.eventDetail.event.location
-      this.eventType = 'offline'
-      this.coords.lat = +this.eventDetail.event.latitude
-      this.coords.lng = +this.eventDetail.event.longitude
-
-      this.google = googleMapApi
-      this.initializeMap()
-      this.showPosition()
+    try {
+      await this.fetchEventDetail(this.$route.params.id)
+      this.isLoading = false
+      if (+this.userId === this.eventDetail.eventOrganizer.id) this.isHost = true
+      const participantIdx = this.eventDetail.participants.findIndex(p => p.userId === +this.userId)
+      if (participantIdx !== -1) this.isAttending = true
+      const startDate = new Date(this.eventDetail.event.dateAndTime)
+      const nowDate = new Date()
+      if ((nowDate > startDate) && !this.eventDetail.event.isDone) this.isStart = true
+      if (this.eventDetail.event.location === 'Online') {
+        this.eventType = this.eventDetail.event.location
+        this.$refs.detail.classList.add('rounded-b-lg')
+      } else {
+        const googleMapApi = await GoogleMapsApiLoader({
+          apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
+          libraries: ['places']
+        })
+        this.location = this.eventDetail.event.location
+        this.eventType = 'offline'
+        this.coords.lat = +this.eventDetail.event.latitude
+        this.coords.lng = +this.eventDetail.event.longitude
+        this.google = googleMapApi
+        this.initializeMap()
+        this.showPosition()
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 }

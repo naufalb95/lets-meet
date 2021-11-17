@@ -47,18 +47,20 @@ export default {
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
     },
     async submitHandler () {
-      if (this.password !== this.confirmPassword) console.log('salah!')
-      else {
-        const payload = {
-          username: this.username,
-          email: this.email,
-          password: this.password
+      try {
+        if (this.password !== this.confirmPassword) console.log('salah!')
+        else {
+          const payload = {
+            username: this.username,
+            email: this.email,
+            password: this.password
+          }
+          await this.registerUser(payload)
+          this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
+          this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
         }
-
-        await this.registerUser(payload)
-
-        this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
-        this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
+      } catch (error) {
+        console.log(error)
       }
     },
     signInHandler () {

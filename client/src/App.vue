@@ -13,7 +13,7 @@
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 import ModalOverlay from './components/ModalOverlay.vue'
-import { mapMutations } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'App',
@@ -43,9 +43,11 @@ export default {
     ...mapMutations({
       mutateIsLogin: 'SET_IS_LOGIN',
       mutateUserId: 'SET_USER_ID'
-    })
+    }),
+    ...mapActions(['fetchCategories'])
   },
-  mounted () {
+  async mounted () {
+    await this.fetchCategories()
     const token = localStorage.getItem('access_token')
     const userId = localStorage.getItem('user_id')
 

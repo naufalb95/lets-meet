@@ -1,9 +1,11 @@
 <template>
   <div class="w-5/12 px-10 py-8 bg-white rounded-xl mb-3 shadow-lg border border-white flex items-center">
-    <div id="image" class="bg-gray-100 shadow-md border border-gray-300 rounded-lg">
-      <img :src="event.event.imgUrl" :alt="event.event.name" class="object-contain w-full h-full"/>
+    <div class="w-3/12">
+      <div id="image" class="bg-gray-100 shadow-md border border-gray-300 rounded-lg">
+        <img :src="event.event.imgUrl" :alt="event.event.name" class="object-contain w-full h-full"/>
+      </div>
     </div>
-    <div class="pl-4">
+    <div class="w-9/12">
       <div class="w-2/3">
         <h1 class="text-gray-700 text-md font-medium">{{ dateAndTime }}</h1>
         <h1 class="text-blue-900 font-semibold text-3xl filter drop-shadow-lg">{{ event.event.name }}</h1>
@@ -24,7 +26,7 @@
         <button @click.prevent="doneEventHandler" v-if="isHost && isStart && !isDone" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
           End Event
         </button>
-        <button @click.prevent="deleteEventHandler" v-if="isHost && !isStart && !isDone" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
+        <button @click.prevent="deleteEventHandler" v-if="isHost && !isStart" style="width: 100px" class="text-red-500 py-1 font-semibold border border-red-500 bg-white rounded hover:bg-red-500 hover:text-white mr-2">
           Delete
         </button>
       </div>
@@ -68,7 +70,7 @@ export default {
       await this.doneEvent(this.event.event.id)
     },
     joinMeetHandler () {
-      console.log('join')
+      this.$router.push('/event/' + this.event.event.id + '/meet')
     },
     editEventHandler () {
       this.$router.push({ name: 'Edit', params: { id: this.event.event.id } })
@@ -105,7 +107,7 @@ export default {
     }
   },
   mounted () {
-    if (+this.userId === this.event.event.eventOrganizerId) this.isHost = true
+    if (+localStorage.getItem('user_id') === this.event.event.eventOrganizerId) this.isHost = true
 
     if (!this.isHost) this.isAttending = true
 

@@ -39,6 +39,16 @@
           <label id="description" class="text-center text-lg font-normal">Description</label>
           <textarea name="description" v-model="description" class="overflow-y-auto mb-2 px-2 py-2 rounded text-xs border shadow focus:outline-none block w-full" rows="8" placeholder="Type your event description here"/>
         </div>
+         <div class="w-full mb-4">
+          <label id="description" class="text-center text-lg font-normal">Add Picture</label><br>
+          <img :src="imgUrlDisplay" :alt="name" class="object-contain w-6/12 h-6/12 pb-3"/>
+          <p class="text-s font-normal pb-3">Edit Image File: <span v-if="imgUrl">{{ imgUrl.name }}</span></p>
+          <label class="w-64 flex flex-col items-center px-4 py-6 bg-white rounded-md shadow-md tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue-400 hover:text-white text-blue-400 ease-linear transition-all duration-150">
+          <i class="fas fa-cloud-upload-alt fa-3x"></i>
+          <span class="mt-2 text-base leading-normal">Select a file</span>
+          <input @change="getPicture($event)" type="file" class="hidden" />
+          </label>
+        </div>
         <div class="w-full mb-4" ref="location">
           <label id="location" class="text-center text-lg font-normal">Location</label>
           <form @submit.prevent="changeLocationHandler">
@@ -70,92 +80,98 @@ export default {
       name: '',
       date: '',
       time: '',
+      imgUrl: '',
+      imgUrlDisplay: '',
       location: '',
       description: '',
       maxParticipants: 0,
       categoryId: 1,
-      eventType: 'offline'
+      eventType: 'offline',
+      photo: null
     }
   },
   computed: {
     ...mapState(['eventDetail', 'categories'])
   },
-  async mounted () {
-    await this.fetchEventDetail(this.$route.params.id)
+  async created () {
     await this.fetchCategories()
-
-    const googleMapApi = await GoogleMapsApiLoader({
-      apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
-      libraries: ['places']
-    })
-
-    const date = new Date(this.eventDetail.event.dateAndTime)
-    const years = date.getFullYear()
-    let months = date.getMonth() + 1
-    let day = date.getDate()
-    let hours = date.getHours()
-    let minutes = date.getMinutes()
-
-    if (months < 10) months = '0' + months
-    if (day < 10) day = '0' + day
-    if (hours < 10) hours = '0' + hours
-    if (minutes < 10) minutes = '0' + minutes
-
-    this.name = this.eventDetail.event.name
-    this.time = hours + ':' + minutes
-    this.date = years + '-' + months + '-' + day
-
-    this.description = this.eventDetail.event.description
-    this.maxParticipants = this.eventDetail.event.maxParticipants
-    this.categoryId = this.eventDetail.event.categoryId
-
-    if (this.eventDetail.event.location === 'Online') {
-      this.eventType = this.eventDetail.event.location
-    } else {
-      this.location = this.eventDetail.event.location
-      this.eventType = 'Offline'
-      this.coords.lat = +this.eventDetail.event.latitude
-      this.coords.lng = +this.eventDetail.event.longitude
+  },
+  async mounted () {
+    try {
+      await this.fetchEventDetail(this.$route.params.id)
+      await this.fetchCategories()
+      const googleMapApi = await GoogleMapsApiLoader({
+        apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
+        libraries: ['places']
+      })
+      const date = new Date(this.eventDetail.event.dateAndTime)
+      const years = date.getFullYear()
+      let months = date.getMonth() + 1
+      let day = date.getDate()
+      let hours = date.getHours()
+      let minutes = date.getMinutes()
+      if (months < 10) months = '0' + months
+      if (day < 10) day = '0' + day
+      if (hours < 10) hours = '0' + hours
+      if (minutes < 10) minutes = '0' + minutes
+      this.name = this.eventDetail.event.name
+      this.imgUrlDisplay = this.eventDetail.event.imgUrl
+      this.time = hours + ':' + minutes
+      this.date = years + '-' + months + '-' + day
+      this.description = this.eventDetail.event.description
+      this.maxParticipants = this.eventDetail.event.maxParticipants
+      this.categoryId = this.eventDetail.event.categoryId
+      if (this.eventDetail.event.location === 'Online') {
+        this.eventType = this.eventDetail.event.location
+      } else {
+        this.location = this.eventDetail.event.location
+        this.eventType = 'Offline'
+        this.coords.lat = +this.eventDetail.event.latitude
+        this.coords.lng = +this.eventDetail.event.longitude
+      }
+      this.google = googleMapApi
+      this.initializeMap()
+      this.showPosition()
+    } catch (error) {
+      console.log(error)
     }
-
-    this.google = googleMapApi
-    this.initializeMap()
-    this.showPosition()
   },
   methods: {
     ...mapActions(['fetchEventDetail', 'editEvent', 'fetchCategories']),
+    getPicture (event) {
+      this.imgUrl = event.target.files[0]
+    },
     async submitHandler () {
-      const date = new Date(this.date)
-      const time = this.time.split(':')
-      const eventHours = time[0]
-      const eventMinutes = time[1]
+      try {
+        const date = new Date(this.date)
+        const time = this.time.split(':')
+        const eventHours = time[0]
+        const eventMinutes = time[1]
+        this.dateAndTime = new Date(date.setHours(eventHours, eventMinutes))
+        const form = {
+          name: this.name,
+          dateAndTime: this.dateAndTime,
+          description: this.description,
+          maxParticipants: +this.maxParticipants,
+          categoryId: +this.categoryId
+        }
+        if (this.eventType === 'Offline') {
+          form.location = this.location
+          form.latitude = this.coords.lat
+          form.longitude = this.coords.lng
+        } else {
+          form.location = this.eventType
+        }
+        const payload = {
+          form,
+          eventId: this.$route.params.id
+        }
+        await this.editEvent(payload)
+        this.$router.push({ name: 'MyEvent' })
+      } catch (error) {
+        console.log(error)
 
-      this.dateAndTime = new Date(date.setHours(eventHours, eventMinutes))
-
-      const form = {
-        name: this.name,
-        dateAndTime: this.dateAndTime,
-        description: this.description,
-        maxParticipants: +this.maxParticipants,
-        categoryId: +this.categoryId
       }
-
-      if (this.eventType === 'Offline') {
-        form.location = this.location
-        form.latitude = this.coords.lat
-        form.longitude = this.coords.lng
-      } else {
-        form.location = this.eventType
-      }
-
-      const payload = {
-        form,
-        eventId: this.$route.params.id
-      }
-
-      await this.editEvent(payload)
-
-      this.$router.push({ name: 'MyEvent' })
     },
     initializeMap () {
       this.mapContainer = this.$refs.googleMap
@@ -167,7 +183,6 @@ export default {
           zoom: 18
         }
       )
-
       this.marker = new this.google.maps.Marker({
         position: this.coords,
         map: this.map
@@ -178,14 +193,11 @@ export default {
         query: this.location,
         fields: ['name', 'geometry']
       }
-
       const service = new this.google.maps.places.PlacesService(this.map)
-
       service.findPlaceFromQuery(request, (res) => {
         const result = res[0]
         this.coords.lat = result.geometry.location.lat()
         this.coords.lng = result.geometry.location.lng()
-
         this.map.setCenter((new this.google.maps.LatLng(this.coords.lat, this.coords.lng)), 13)
         this.marker = new this.google.maps.Marker({
           position: {
@@ -199,6 +211,9 @@ export default {
     eventTypeHandler () {
       if (this.eventType === 'Online') this.$refs.location.classList.add('hidden')
       if (this.eventType === 'Offline') this.$refs.location.classList.remove('hidden')
+    },
+    photoInputHandler (e) {
+      this.photo = e.target.files[0]
     }
   }
 }

@@ -36,29 +36,24 @@ class EventController {
                 longitude,
                 latitude,
             });
-
-            // if (location === "Online") {
-            //     let dateInput = req.body.dateAndTime;
-
-            //     let minute = dateInput.slice(14, 16);
-            //     let hour = dateInput.slice(11, 13);
-            //     let day = dateInput.slice(8, 10);
-            //     let month = dateInput.slice(5, 7);
-
-            //     CRON_SCHEDULER[result.id] = cron.schedule(
-            //     `${minute} ${hour} ${day} ${month} *`,
-            //     () => {
-            //         console.log("Running on");
-            //     },
-            //     {
-            //         scheduled: false,
-            //         timezone: "Asia/Jakarta",
-            //     }
-            //     );
-
-            //     CRON_SCHEDULER[result.id].start();
-            // }
-
+        // if (location === "Online") {
+        //     let dateInput = req.body.dateAndTime;
+        //     let minute = dateInput.slice(14, 16);
+        //     let hour = dateInput.slice(11, 13);
+        //     let day = dateInput.slice(8, 10);
+        //     let month = dateInput.slice(5, 7);
+        //     CRON_SCHEDULER[result.id] = cron.schedule(
+        //     `${minute} ${hour} ${day} ${month} *`,
+        //     () => {
+        //         console.log("Running on");
+        //     },
+        //     {
+        //         scheduled: false,
+        //         timezone: "Asia/Jakarta",
+        //     }
+        //     );
+        //     CRON_SCHEDULER[result.id].start();
+        // }
             res.status(201).json(result);
         } catch (err) {
             next(err);
@@ -279,7 +274,6 @@ class EventController {
                 categoryId,
             } = req.body;
 
-          
 
             const id = req.params.eventId;
             const userId = +req.user.id;
@@ -289,7 +283,7 @@ class EventController {
             if (!foundEvent) {
                 throw { name: "Event Not Found" };
             }
-
+            console.log(foundEvent.eventOrganizerId === userId, id)
             if (foundEvent.eventOrganizerId === userId) {
                 const responseFromSeq = await Event.update(
                     {
