@@ -21,26 +21,28 @@
       </div>
        <div id='part_chat' class='flex-grow-0 h-full p-2'>
         <div class='bg-white h-full rounded-lg text-black'>
-          <div class='p-3 overflow-auto' style="height: 87.5%">
-            <div class="border-b-2 border-black mb-2">
+          <div class='p-3 overflow-auto flex flex-col h-full'>
+            <div class="border-b border-gray-400 pb-2 font-semibold text-gray-700">
               Chat Participants
             </div>
-            <div v-for="(data, index) in messages" :key="index" class="my-2">
-              <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
-              <div class="text-sm">{{ data.message }}</div>
+            <div class="flex-grow h-full">
+              <div v-for="(data, index) in messages" :key="index" class="my-2">
+                <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
+                <div class="text-sm">{{ data.message }}</div>
+              </div>
             </div>
+            <form class="flex flex-grow-0" @submit.prevent="createNewMessage">
+              <div class='w-5/6'>
+                <textarea type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="message" rows="2">
+                </textarea>
+              </div>
+              <div class='w-1/6'>
+                <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0 bg-white'>
+                  <font-awesome-icon :icon="['fas', 'paper-plane']" class="mr-2 text-2xl text-gray-600"/>
+                </button>
+              </div>
+            </form>
           </div>
-          <form class="flex p-3" @submit.prevent="createNewMessage">
-            <div class='w-5/6'>
-              <textarea type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="message" rows="4">
-              </textarea>
-            </div>
-            <div class='w-1/6'>
-              <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0 bg-white'>
-                <font-awesome-icon :icon="['fas', 'paper-plane']" class="mr-2 text-2xl text-gray-600"/>
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     </div>
