@@ -447,7 +447,7 @@ class EventController {
         }
     }
 
-    static generateTokenChat(req, res, next) {
+    static generateToken(req, res, next) {
       const channelName = req.query.channelName;
       res.header('Access-Control-Allow-Origin', '*');
       if (!channelName) {
@@ -470,20 +470,15 @@ class EventController {
       const currentTime = Math.floor(Date.now() / 1000);
       const privilegeExpireTime = currentTime + expireTime;
       const tokenChat = RtmTokenBuilder.buildToken(APP_ID, APP_CERTIFICATE, uid, role, privilegeExpireTime);
-      res.status(200).json({ tokenChat });
-    }
-
-    static generateTokenVideo(req, res, next) {
+      // buat video token
       const appID = "3ef3371d43e04d80a1656a7bf535aedf";
       const appCertificate = "e66eb9de2f544b60a863b22dc7561f13";
       const expirationTimeInSeconds = 3600;
-      const uid = req.query.uid;
-      const role = RtcRole.SUBSCRIBER;
-      const channel = req.query.channelName;
+      const roleRtc = RtcRole.SUBSCRIBER;
       const currentTimestamp = Math.floor(Date.now() / 1000);
       const expirationTimestamp = currentTimestamp + expirationTimeInSeconds;
-      const tokenVideo = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channel, uid, role, expirationTimestamp);
-      res.status(200).json({ uid, tokenVideo });
+      const tokenVideo = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, uid, roleRtc, expirationTimestamp);
+      res.status(201).json({ tokenChat, tokenVideo });
     }
 }
 
