@@ -302,7 +302,7 @@ class EventController {
                 }
                 );
 
-                const eventResult = result[1][0];
+                // const eventResult = result[1][0];
 
                 // if (foundEvent.location === "Online") {
                 //   CRON_SCHEDULER[id].stop();
@@ -333,7 +333,8 @@ class EventController {
                 //   CRON_SCHEDULER[id].start();
                 // }
 
-                res.status(200).json(eventResult);
+                res.status(200).json({message: 'Success Update'});
+
             } else {
                 throw { name: "Access Denied" };
             }
