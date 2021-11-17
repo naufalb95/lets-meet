@@ -50,19 +50,19 @@
       </div>
     </div>
     <div id='bottom_row' class='text-white pl-5 flex items-center'>
-      <button class='mx-3' @click="shareScreenHandler">Screen Share</button>
-      <button class='mx-3' @click="stopScreenShareHandler">Stop Screen Share</button>
+      <button class='mx-3' @click="shareScreenHandler" v-if="isHostPresent">Screen Share</button>
+      <button class='mx-3' @click="stopScreenShareHandler" v-if="isHostPresent">Stop Screen Share</button>
       <button class='mx-3' @click="openCamHandler">Open Cam</button>
       <button class='mx-3' @click="closeCamHandler">Close Cam</button>
       <button class='mx-3' @click="muteHandler">Mute</button>
       <button class='mx-3' @click="unmuteHandler">Unmute</button>
       <button class='mx-3' @click="leaveHandler">Leave Room</button>
     </div>
-    <div class='absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80 flex justify-center items-center hidden' v-if='false'>
+    <div class='absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80 flex justify-center items-center z-40' v-if='!isJoined'>
       <div class='bg-white rounded w-3/12 py-12 px-8 flex justify-center items-center flex-col'>
         <h1 class='text-2xl text-center'>Already well dressed? Let's join by clicking the button!</h1>
         <div>
-          <button class='bg-blue-800 text-white px-6 py-2 rounded-md mt-6 mr-3 btn hover:bg-blue-900' >Join</button>
+          <button class='bg-blue-800 text-white px-6 py-2 rounded-md mt-6 mr-3 btn hover:bg-blue-900' @click="joinHandler">Join</button>
           <button class='border border-red-800 text-red-800 px-6 py-2 rounded-md mt-6 hover:bg-red-800 hover:text-white btn'>Leave</button>
         </div>
       </div>
@@ -103,9 +103,13 @@ export default {
         screen: null
       },
       hostId: null,
+      isHostPresent: false,
+      host: {},
       screenId: null,
       inMeetParticipants: [],
-      participantVolumeId: null
+      participantVolumeId: null,
+      volumeCounter: 0,
+      isJoined: false
     }
   },
   computed: {
@@ -114,7 +118,13 @@ export default {
   methods: {
     ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
     leaveHandler () {
-      this.inMeetParticipants.push({ userId: this.inMeetParticipants.length + 2 })
+      console.log('eave')
+    },
+    async joinHandler () {
+      await this.chat.channel.join()
+      await this.video.client.join(this.options.appId, this.settings.channelName, this.token.video, this.settings.uid)
+
+      this.isJoined = true
     },
     async initializeChat () {
       // ! Get Chat Token
@@ -131,7 +141,7 @@ export default {
 
       this.chat.channel = this.chat.client.createChannel(this.settings.channelName)
 
-      await this.chat.channel.join()
+      // await this.chat.channel.join()
 
       // ! Chat Event Handler
       // * If there is a new message handler
@@ -153,27 +163,71 @@ export default {
       // ! Get Video Call Token
       await this.getVideoToken(payload)
 
-      await this.video.client.join(this.options.appId, this.settings.channelName, this.token.video, this.settings.uid)
-
       // ! Video Call Event Handler
-      // ! When user join channel
-      this.video.client.on('user-joined', async (user) => {
-        if (this.eventDetail.participants.some(p => p.userId === user.uid) || this.hostId === user.uid) {
+
+      // ! Volume Indicator Handler
+      // this.video.client.enableAudioVolumeIndicator()
+      // this.video.client.on('volume-indicator', (result) => {
+      //   const sortArr = []
+
+      //   result.forEach((vol, idx) => {
+      //     console.log(idx, vol.level, vol.uid)
+      //     this.volumeCounter += 1
+
+      //     if (this.volumeCounter === 20) {
+      //       this.volumeCounter = 0
+
+      //       sortArr.push({ uid: vol.uid, level: vol.level })
+      //       sortArr.sort((a, b) => a.level - b.level)
+
+      //       const userIdx = this.inMeetParticipants.findIndex(user => user.id === sortArr[0].uid)
+
+      //       const volUser = { ...this.inMeetParticipants[userIdx] }
+
+      //       volUser.videoTrack.play('main_video', {
+      //         fit: 'contain'
+      //       })
+      //     }
+      //   })
+      // })
+
+      // result.forEach((vol, idx) => {
+      //   console.log(idx, vol.level, vol.uid)
+      //   this.volumeCounter += 1
+
+      //   if (this.volumeCounter === 20) {
+      //     this.volumeCounter = 0
+
+      //     sortArr.push({ uid: vol.uid, level: vol.level})
+
+      //     sortArr.sort((a, b) => a.level - b.level)
+
+      //     const userIdx = this.inMeetParticipants.findIndex(user => user.id === sortArr[0].uid)
+
+      //     const volUser = { ...this.inMeetParticipants[userIdx] }
+
+      //     volUser.videoTrack.play('main_video', {
+      //       fit: 'contain'
+      //     })
+      //   }
+      // })
+      // result.forEach((vol, idx) => {
+
+      // })
+
+      this.video.client.on('user-joined', (user) => {
+        const checkParticipant = this.inMeetParticipants.some(el => el.id === user.uid)
+
+        const checkScreenShareId = this.eventDetail.participants.some(el => el.userId === user.uid)
+
+        if (!checkParticipant) {
+          if (!checkScreenShareId) this.screenId = user.uid
+
           const remoteUser = {
             id: user.uid
           }
 
           this.inMeetParticipants.push(remoteUser)
-        } else {
-          if (this.screenId) {
-            await this.video.screen.unpublish(this.local.screen)
-
-            this.local.screen.close(true)
-
-            await this.video.screen.leave()
-          }
-
-          this.screenId = user.uid
         }
       })
 
@@ -181,39 +235,28 @@ export default {
       this.video.client.on('user-published', async (user, mediaType) => {
         await this.video.client.subscribe(user, mediaType)
 
-        if (this.screenId === user.uid) {
-          if (mediaType === 'video') {
+        if (mediaType === 'video') {
+          if (this.hostId === user.uid || this.screenId === user.uid) {
             const videoTrack = user.videoTrack
-
             videoTrack.play('main_video', {
               fit: 'contain'
             })
-          }
-        } else {
-          const userIdx = this.inMeetParticipants.findIndex(participant => participant.id === user.uid)
-
-          const participant = this.inMeetParticipants[userIdx]
-
-          if (mediaType === 'video') {
-            participant.videoTrack = user.videoTrack
-          }
-
-          if (mediaType === 'audio') {
-            participant.audioTrack = user.audioTrack
-          }
-
-          if (participant.audioTrack && participant.videoTrack) {
-            participant.videoTrack.play(user.uid.toString(), {
+          } else {
+            user.videoTrack.play(user.uid.toString(), {
               fit: 'contain'
             })
-            participant.audioTrack.play()
           }
+        }
+
+        if (mediaType === 'audio') {
+          const audioTrack = user.audioTrack
+          audioTrack.play()
         }
       })
 
       this.video.client.on('user-unpublished', (user) => {
         if (user.uid === this.screenId) {
-          console.log('hai')
+          // ! Clear screen share ID if it is unpublished
           this.screenId = null
         }
       })
@@ -297,6 +340,7 @@ export default {
     this.options.appId = process.env.VUE_APP_AGORA_API_KEY
     this.settings.channelName = this.eventDetail.event.id.toString()
     this.settings.uid = +localStorage.getItem('user_id')
+    this.isHostPresent = this.eventDetail.event.eventOrganizerId === this.settings.uid
 
     this.inMeetParticipants.push({
       id: this.settings.uid
