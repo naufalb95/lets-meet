@@ -942,78 +942,83 @@ describe('Event fiture', () => {
             })
     })
 
-    // test("Add Event Success with Image Kit", async () => {
-    //     const filePath = "assets/image.png";
-    //     const buffer = Buffer.from(filePath);
-
-    //     const { status, body } = await request(app)
-    //       .post("events")
-    //       .set({access_token})
-
-
-    //     expect(status).toBe(201);
-    //     expect(body).toEqual(expect.any(Object));
-    //     expect(body).toHaveProperty("name");
-    //     expect(body).toHaveProperty("dateAndTime");
-    //     expect(body).toHaveProperty("location");
-    //     expect(body).toHaveProperty("description");
-    //     expect(body).toHaveProperty("maxParticipants");
-    //     expect(body).toHaveProperty("eventOrganizerId");
-    //     expect(body).toHaveProperty("isDone");
-    //   })
-
-    // test('Create New Event With Image Kit', (done) => {
-    //     const filePath = "assets/image.png";
-    //     const buffer = Buffer.from(filePath);
-
-    //     request(app)
-    //         .post('/events')
-    //         .set({ access_token })
-    //         .attach("imgUrl", buffer, "image.png")
-    //         .then((res) => {
-    //             expect(res.status).toBe(201);
-    //             expect(res.body).toEqual(expect.any(Object));
-    //             expect(body).toHaveProperty("name");
-    //             expect(body).toHaveProperty("dateAndTime");
-    //             expect(body).toHaveProperty("location");
-    //             expect(body).toHaveProperty("description");
-    //             expect(body).toHaveProperty("maxParticipants");
-    //             expect(body).toHaveProperty("eventOrganizerId");
-    //             expect(body).toHaveProperty("isDone");
-    //             done();
-    //         })
-
-    //         .catch((err) => {
-    //             done(err)
-    //         })
-    // })
-
     test('Create New Event With Image Kit', (done) => {
         const filePath = "assets/image.png";
         const buffer = Buffer.from(filePath);
         request(app)
             .post('/events')
             .set({ access_token })
-            .attach({
+            .field({
                 name: 'Test Create Event Offline',
                 dateAndTime: '2022-01-01 16:00:00.000 +0700',
                 location: 'Offline',
                 description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.',
                 maxParticipants: 5,
-                imgUrl: buffer,
                 categoryId: 1,
                 isDone: false,
                 "tokenChat": "",
                 "longitude": "106.8492431375419",
                 "latitude": "-6.16070502742932"
             })
+            .attach("imgUrl", buffer, "image.png")
             .then((res) => {
+                console.log(res.body, "ini body");
                 expect(res.status).toBe(201);
                 expect(res.body).toEqual(expect.any(Object));
                 done();
             })
             .catch((err) => {
+                console.log(err, "<<<<<<<<<<<");
                 done(err)
             })
     })
+
+    test('Create New Event But Upload Wrong Image', (done) => {
+        const filePath = "assets/REACT_JS.TXT";
+        const buffer = Buffer.from(filePath);
+        request(app)
+            .post('/events')
+            .set({ access_token })
+            .field({
+                name: 'Test Create Event Offline',
+                dateAndTime: '2022-01-01 16:00:00.000 +0700',
+                location: 'Offline',
+                description: 'Welcome tech lovers far and wide! We’re an online and in-person tech-enthusiast group hosting live speaking events on a range of tech topics. You can join us in person if possible or on one of our live streams. Look out for our virtual happy hours and other networking events.',
+                maxParticipants: 5,
+                categoryId: 1,
+                isDone: false,
+                "tokenChat": "",
+                "longitude": "106.8492431375419",
+                "latitude": "-6.16070502742932"
+            })
+            .attach("imgUrl", buffer, "REACT_JS.TXT")
+            .then((res) => {
+                console.log(res.body, "ini body");
+                expect(res.status).toBe(400);
+                expect(res.body).toEqual({ error: 'The format besides jpg, jpeg and png is not acceptable' });
+                done();
+            })
+            .catch((err) => {
+                console.log(err, "<<<<<<<<<<<");
+                done(err)
+            })
+    })
+
+    test("Error Image Kit", async () => {
+        jest.spyOn(Event, "create").mockRejectedValue("Error");
+
+        return request(app)
+            .post("/events")
+            .set({ access_token })
+            
+
+            .then((res) => {
+                const { body, status } = res
+                expect(status).toBe(500)
+                expect(body).toEqual(expect.any(Object));
+                expect(res.body).toEqual({ "message": "Internal server error." });
+            })
+    })
+
+
 })
