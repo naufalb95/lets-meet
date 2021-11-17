@@ -8,7 +8,7 @@
     <div class="w-9/12">
       <div class="w-2/3">
         <h1 class="text-gray-700 text-md font-medium">{{ dateAndTime }}</h1>
-        <h1 class="text-blue-900 font-semibold text-3xl filter drop-shadow-lg">{{ event.event.name }}</h1>
+        <v-clamp autoresize :max-lines="2" class="text-blue-900 font-semibold text-3xl filter drop-shadow-lg">{{ event.event.name }}</v-clamp>
       </div>
       <div class="mt-6">
         <button @click.prevent="detailHandler" style="width: 100px" class="text-white py-1 font-semibold border border-blue-500 bg-blue-500 rounded hover:bg-blue-600 mr-2">
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import VClamp from 'vue-clamp'
 import { format } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import { mapState, mapActions } from 'vuex'
@@ -49,6 +50,9 @@ export default {
     }
   },
   props: ['event'],
+  components: {
+    VClamp
+  },
   methods: {
     ...mapActions(['fetchMyEvents', 'userLeaveEvent', 'deleteEvent', 'doneEvent']),
     detailHandler () {
@@ -56,15 +60,15 @@ export default {
     },
     async leaveEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', true)
-      // await this.userLeaveEvent(this.event.event.id)
+      await this.userLeaveEvent(this.event.event.id)
 
-      // await this.fetchMyEvents()
+      await this.fetchMyEvents()
     },
     async deleteEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_DELETE', true)
-      // await this.deleteEvent(this.event.event.id)
+      await this.deleteEvent(this.event.event.id)
 
-      // await this.fetchMyEvents()
+      await this.fetchMyEvents()
     },
     async doneEventHandler () {
       await this.doneEvent(this.event.event.id)
@@ -100,6 +104,7 @@ export default {
       await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
     },
     deletezEvent: async function (newVal, oldVal) {
+      console.log(this.event.event.id)
       await this.deleteEvent(this.event.event.id)
       await this.fetchMyEvents()
       await this.$store.commit('SET_DELETE_EVENT', false)

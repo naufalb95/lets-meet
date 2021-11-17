@@ -121,9 +121,7 @@ export default {
       const payload = { ...this.settings }
 
       await this.getChatToken(payload)
-
       this.chat.client = AgoraRTM.createInstance(this.options.appId)
-
       await this.chat.client.login({
         uid: this.settings.uid.toString(),
         token: this.token.chat
