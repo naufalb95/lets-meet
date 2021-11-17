@@ -277,7 +277,9 @@ class EventController {
                 categoryId,
             } = req.body;
 
-            const id = req.params.eventId;
+            console.log(req.body)
+
+            const id = +req.params.eventId;
             const userId = +req.user.id;
 
             const foundEvent = await Event.findByPk(id);
@@ -285,8 +287,9 @@ class EventController {
             if (!foundEvent) {
                 throw { name: "Event Not Found" };
             }
-
+            console.log(foundEvent.eventOrganizerId === userId, id)
             if (foundEvent.eventOrganizerId === userId) {
+                console.log('sini')
                 await Event.update(
                 {
                     name,
@@ -297,10 +300,11 @@ class EventController {
                     categoryId,
                 },
                 {
-                    where: { id },
+                    where: { id: 4 },
                     returning: true,
                 }
                 );
+                console.log('sana')
 
                 // const eventResult = result[1][0];
 

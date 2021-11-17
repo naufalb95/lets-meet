@@ -162,7 +162,7 @@ export default {
       await this.doneEvent(this.$route.params.id)
     },
     joinMeetHandler () {
-      console.log('join')
+      this.$router.push({ name: 'VideoConference', params: { id: this.$route.params.id } })
     },
     editEventHandler () {
       this.$router.push({ name: 'Edit', params: { id: this.$route.params.id } })

@@ -15,7 +15,7 @@ export default new Vuex.Store({
     isModalCreate: false,
     isModalEdit: false,
     isLogin: false,
-    isVideoConference: false,
+    isVideoConference: true,
     userId: null,
     events: [],
     eventDetail: {
@@ -98,6 +98,7 @@ export default new Vuex.Store({
   },
   actions: {
     async getChatToken (context, payload) {
+      console.log(payload)
       const response = await server({
         url: `/create_chat_token?channelName=${payload.channelName}&uid=${payload.uid}`,
         method: 'GET'
@@ -200,7 +201,7 @@ export default new Vuex.Store({
     async editEvent (_, payload) {
       const formData = new FormData()
 
-      for (const key in payload) {
+      for (const key in payload.form) {
         formData.append(key, payload[key])
       }
 

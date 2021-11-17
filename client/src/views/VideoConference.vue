@@ -7,12 +7,18 @@
           <div class="absolute top-0 left-0 h-full w-full flex justify-center items-center text-gray-300">Waiting for host to share their screen or cam</div>
         </div>
       </div>
-      <div id='part_container' class='flex-grow-0 h-full p-2 hidden'>
-        <div id='video_part' class='flex-grow-0 h-full overflow-x-hidden overflow-y-scroll part_video_container relative'>
-          <div id='host_video' class='participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden hidden'></div>
-          <div id='local_video' class='participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'>
-            <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300">{{ this.options.uid }}</div>
-            <div class="absolute top-0 left-0 pl-4 pb-2 filter drop-shadow-lg z-20 w-full h-full flex justify-start items-end text-gray-300 hidden" ref="local_video_username">{{ this.options.uid }}</div>
+      <div id='part_container' class='flex-grow-0 h-full p-2 overflow-y-scroll overflow-x-hidden'>
+        <div id='video_part' class='flex-grow-0 relative' v-for="user of inMeetParticipants" :key="user.id">
+          <div :id="user.id" class='participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'>
+            <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300">asd</div>
+            <div class="absolute top-0 right-0 z-10 w-full h-full flex justify-end items-start  text-gray-300 pr-2 pt-3">
+              <font-awesome-icon :icon="['fas', 'microphone-alt-slash']" class="mr-2 text-red-500"/>
+            </div>
+            <div class="absolute top-0 left-0 z-20 w-full h-full flex justify-start items-end text-gray-300">
+              <div class="px-4 bg-black bg-opacity-50 w-full overflow-hidden truncate">
+                <span class="text-sm">{{ user.id }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -23,14 +29,14 @@
               Chat Participants
             </div>
             <div class="flex-grow h-full">
-              <div v-for="(data, index) in messages" :key="index" class="my-2">
-                <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
-                <div class="text-sm">{{ data.message }}</div>
+              <div class="my-2">
+                <div><span class="font-semibold text-sm">asd</span> <span class="italic text-xs text-gray-400">asd</span></div>
+                <div class="text-sm">ASd</div>
               </div>
             </div>
-            <form class="flex flex-grow-0" @submit.prevent="createNewMessage">
+            <form class="flex flex-grow-0">
               <div class='w-5/6'>
-                <textarea type="text" @keydown="createNewMessage" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="message" rows="2">
+                <textarea type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' rows="2">
                 </textarea>
               </div>
               <div class='w-1/6'>
@@ -44,19 +50,19 @@
       </div>
     </div>
     <div id='bottom_row' class='text-white pl-5 flex items-center'>
-      <button @click='shareScreenHandler' class='mx-3' v-if='!isScreenShare && isHost'>Screen Share</button>
-      <button @click='stopScreenShareHandler' class='mx-3' v-if='isScreenShare && isHost'>Stop Screen Share</button>
-      <button @click='openCamHandler' class='mx-3' v-if='!isOpenCam'>Open Cam</button>
-      <button @click='closeCamHandler' class='mx-3' v-if='isOpenCam'>Close Cam</button>
-      <button @click='muteHandler' class='mx-3' v-if='!isMuted'>Mute</button>
-      <button @click='unmuteHandler' class='mx-3' v-if='isMuted'>Unmute</button>
-      <button @click='leaveHandler' class='mx-3'>Leave Room</button>
+      <button class='mx-3'>Screen Share</button>
+      <button class='mx-3'>Stop Screen Share</button>
+      <button class='mx-3'>Open Cam</button>
+      <button class='mx-3'>Close Cam</button>
+      <button class='mx-3'>Mute</button>
+      <button class='mx-3'>Unmute</button>
+      <button class='mx-3' @click="leaveHandler">Leave Room</button>
     </div>
-    <div class='absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80 flex justify-center items-center' v-if='!isJoined'>
+    <div class='absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80 flex justify-center items-center hidden' v-if='false'>
       <div class='bg-white rounded w-3/12 py-12 px-8 flex justify-center items-center flex-col'>
         <h1 class='text-2xl text-center'>Already well dressed? Let's join by clicking the button!</h1>
         <div>
-          <button class='bg-blue-800 text-white px-6 py-2 rounded-md mt-6 mr-3 btn hover:bg-blue-900' @click='joinHandler'>Join</button>
+          <button class='bg-blue-800 text-white px-6 py-2 rounded-md mt-6 mr-3 btn hover:bg-blue-900' >Join</button>
           <button class='border border-red-800 text-red-800 px-6 py-2 rounded-md mt-6 hover:bg-red-800 hover:text-white btn'>Leave</button>
         </div>
       </div>
@@ -67,418 +73,136 @@
 <script>
 import AgoraRTC from 'agora-rtc-sdk-ng'
 import AgoraRTM from 'agora-rtm-sdk'
-import { mapActions, mapState, mapMutations } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import { utcToZonedTime, format } from 'date-fns-tz'
 
 export default {
   name: 'VideoConference',
   data () {
     return {
-      isJoined: false,
-      isMuted: true,
-      isOpenCam: false,
-      isHost: false,
-      myId: null,
-      hostId: null,
-      isHostPresent: false,
-      screenId: null,
-      isScreenShare: false,
-      participantsId: [],
-      hostVideoTrack: null,
-      rtc: {
-        localAudioTrack: null,
-        localVideoTrack: null,
-        localScreenTrack: null,
-        client: null,
-        camClient: null,
-        screenClient: null
-      },
+      eventId: null,
       options: {
-        appId: process.env.VUE_APP_AGORA_API_KEY,
-        channel: '',
+        appId: ''
+      },
+      settings: {
+        channelName: '',
         uid: null
       },
-      channelChat: null,
-      messages: [],
-      message: ''
-    }
-  },
-  methods: {
-    ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
-    ...mapMutations({
-      setIsVideoConference: 'SET_IS_VIDEO_CONFERENCE'
-    }),
-    async createNewMessage (e) {
-      const checkEmptyMsg = this.message.trim()
-      if (this.channelChat != null && (e.type === 'submit' || (e.type === 'keydown' && e.keyCode === 13)) && checkEmptyMsg) {
-        await this.channelChat.sendMessage({ text: this.message })
-
-        this.messages.push({
-          message: this.message,
-          name: this.options.uid,
-          time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
-        })
-
-        this.message = ''
-      }
-    },
-    async joinHandler () {
-      await this.getChatToken({ uid: this.options.uid, channelName: this.options.channel })
-
-      const appId = this.options.appId
-      const client = AgoraRTM.createInstance(appId)
-      const options = {
-        uid: this.options.uid,
-        token: this.token.chat
-      }
-
-      await client.login(options)
-
-      this.channelChat = client.createChannel(this.options.channel)
-
-      await this.channelChat.join()
-
-      this.channelChat.on('ChannelMessage', (message, uid) => {
-        this.messages.push({
-          message: message.text,
-          name: this.options.uid,
-          time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
-        })
-      })
-
-      // * Video
-      await this.getVideoToken({ uid: +this.myId, channelName: this.options.channel })
-
-      await this.rtc.client.join(appId, this.options.channel, this.token.video, +this.myId)
-      this.isJoined = true
-      this.isMuted = true
-      this.isOpenCam = false
-    },
-    videoResizeHandler () {
-      const localVideoContainer = document.getElementById('main_video')
-
-      const playerWidth = localVideoContainer.offsetWidth
-      localVideoContainer.style.height = `${playerWidth / 16 * 9}px`
-    },
-    async leaveHandler () {
-      this.rtc.localAudioTrack.close()
-      this.rtc.localVideoTrack.close()
-
-      this.rtc.client.remoteUsers.forEach(() => {
-        const playerContainer = document.getElementById('video_container')
-        playerContainer && playerContainer.remove()
-      })
-
-      await this.rtc.client.leave()
-    },
-    async openCamHandler () {
-      if (!this.rtc.localVideoTrack) {
-        this.rtc.localVideoTrack = await AgoraRTC.createCameraVideoTrack()
-        await this.rtc.client.publish(this.rtc.localVideoTrack)
-
-        let container = null
-
-        if (this.hostId === this.options.uid && !this.screenId) {
-          container = document.getElementById('main_video')
-          const localVidDiv = document.getElementById('local_video')
-          localVidDiv.className = ''
-          this.$refs.local_video_username.classList.add('hidden')
-
-          container.style.height = `${container.offsetWidth / 16 * 9}px`
-        } else {
-          // * Jika bukan host, cam local masuk ke sini
-          container = document.getElementById('local_video')
-          const partChatDiv = document.getElementById('part_container')
-          partChatDiv.classList.remove('hidden')
-          this.$refs.local_video_username.classList.remove('hidden')
-
-          container.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
-        }
-
-        this.rtc.localVideoTrack.play(container)
-      } else {
-        await this.rtc.client.publish(this.rtc.localVideoTrack)
-        this.rtc.localVideoTrack.setMuted(false)
-      }
-
-      this.isOpenCam = true
-    },
-    async closeCamHandler () {
-      this.rtc.localVideoTrack.close(true)
-      await this.rtc.client.unpublish(this.rtc.localVideoTrack)
-
-      const partChatDiv = document.getElementById('part_container')
-      const remoteUsers = this.rtc.client.remoteUsers
-
-      if (this.hostId === this.options.uid) {
-        if (this.isScreenShare && remoteUsers.length === 1) {
-          partChatDiv.classList.add('hidden')
-        }
-      }
-
-      this.rtc.localVideoTrack = null
-      this.isOpenCam = false
-      this.$refs.local_video_username.classList.add('hidden')
-    },
-    async unmuteHandler () {
-      if (!this.rtc.localAudioTrack) {
-        this.rtc.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack()
-        await this.rtc.client.publish(this.rtc.localAudioTrack)
-      } else {
-        this.rtc.localAudioTrack.setMuted(false)
-      }
-
-      this.isMuted = false
-    },
-    async muteHandler () {
-      this.rtc.localAudioTrack.setMuted(true)
-      this.isMuted = true
-    },
-    async shareScreenHandler () {
-      await this.getScreenToken({ channelName: this.options.channel })
-
-      let container = null
-
-      this.rtc.screenClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
-
-      await this.rtc.screenClient.join(this.options.appId, this.options.channel, this.token.screen)
-
-      this.rtc.localScreenTrack = await AgoraRTC.createScreenVideoTrack({
-        encoderConfig: '1080p_1',
-        optimizationMode: 'detail'
-      })
-
-      await this.rtc.screenClient.publish(this.rtc.localScreenTrack)
-
-      let localVideoContainer = null
-
-      localVideoContainer = document.getElementById('main_video')
-
-      localVideoContainer.style.width = '100%'
-      const playerWidth = localVideoContainer.offsetWidth
-      localVideoContainer.style.height = `${playerWidth / 16 * 9}px`
-
-      this.rtc.localScreenTrack.play(localVideoContainer)
-
-      this.isScreenShare = true
-
-      if (this.rtc.localVideoTrack) {
-        container = document.getElementById('local_video')
-
-        container.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
-        this.$refs.local_video_username.classList.remove('hidden')
-
-        this.rtc.localVideoTrack.play(container)
-      }
-    },
-    async stopScreenShareHandler () {
-      let container = null
-
-      await this.rtc.screenClient.unpublish(this.rtc.localScreenTrack)
-
-      this.rtc.localScreenTrack.close(true)
-
-      this.rtc.localScreenTrack = null
-      await this.rtc.screenClient.leave()
-
-      this.isScreenShare = false
-
-      if (this.rtc.localVideoTrack) {
-        container = document.getElementById('main_video')
-        const localVidDiv = document.getElementById('local_video')
-        localVidDiv.className = ''
-        this.$refs.local_video_username.classList.add('hidden')
-
-        this.rtc.localVideoTrack.play(container)
-      }
-    }
-  },
-  async created () {
-    this.setIsVideoConference(true)
-
-    await this.fetchEventDetail(this.$route.params.id)
-
-    this.hostId = this.eventDetail.event.eventOrganizerId.toString()
-    this.options.channel = this.eventDetail.event.id.toString()
-    this.participantsId = this.eventDetail.participants.map((p) => p.userId)
-
-    if (this.userId === this.hostId) {
-      this.options.uid = this.eventDetail.eventOrganizer.username
-      this.myId = this.eventDetail.eventOrganizer.id.toString()
-    } else {
-      const userIdx = this.eventDetail.participants.findIndex((p) => {
-        return p.userId === +this.userId
-      })
-      const uid = this.eventDetail.participants[userIdx]
-
-      this.options.uid = uid.User.username
-      this.myId = uid.userId.toString()
-    }
-
-    if (this.hostId === this.myId) {
-      this.isHost = true
-      this.isHostPresent = true
+      chat: {
+        client: null,
+        channel: null,
+        messages: []
+      },
+      video: {
+        client: null
+      },
+      inMeetParticipants: [],
+      screenClient: null
     }
   },
   computed: {
-    ...mapState(['token', 'eventDetail', 'userId'])
+    ...mapState(['eventDetail', 'token'])
   },
-  async mounted () {
-    window.addEventListener('resize', this.videoResizeHandler)
+  methods: {
+    ...mapActions(['getChatToken', 'getVideoToken', 'fetchEventDetail']),
+    leaveHandler () {
+      this.inMeetParticipants.push({ userId: this.inMeetParticipants.length + 2 })
+      console.log('masuk')
+    },
+    async initializeChat () {
+      // ! Get Chat Token
+      const payload = { ...this.settings }
 
-    this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
+      await this.getChatToken(payload)
 
-    if (this.host) {
-      const localVidDiv = document.getElementById('local_video')
+      this.chat.client = AgoraRTM.createInstance(this.options.appId)
 
-      localVidDiv.className = ''
-    } else {
-      const partChatDiv = document.getElementById('part_container')
+      await this.chat.client.login({
+        uid: this.settings.uid.toString(),
+        token: this.token.chat
+      })
 
-      partChatDiv.classList.remove('hidden')
+      this.chat.channel = this.chat.client.createChannel(this.settings.channelName)
+
+      await this.chat.channel.join()
+
+      // ! Chat Event Handler
+      // * If there is a new message handler
+      this.chat.channel.on('ChannelMessage', (message, uid) => {
+        this.chat.messages.push({
+          message: message.text,
+          name: uid,
+          time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
+        })
+      })
+    },
+    async initializeVideoCall () {
+      this.video.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
+
+      const payload = {
+        ...this.settings
+      }
+
+      // ! Get Video Call Token
+      await this.getVideoToken(payload)
+
+      await this.video.client.join(this.options.appId, this.settings.channelName, this.token.video, this.settings.uid)
+
+      // ! Video Call Event Handler
+      // ! When a user join video call
+      this.video.client.on('user-published', async (user, mediaType) => {
+        await this.video.client.subscribe(user, mediaType)
+
+        let userIdx = this.inMeetParticipants.findIndex(participant => participant.id === user.uid)
+
+        if (userIdx === -1) {
+          const remoteUser = {
+            id: user.uid
+          }
+
+          this.inMeetParticipants.push(remoteUser)
+
+          userIdx = this.inMeetParticipants.findIndex(participant => participant.id === user.uid)
+        }
+
+        const participant = this.inMeetParticipants[userIdx]
+
+        if (mediaType === 'video') {
+          participant.videoTrack = user.videoTrack
+        }
+
+        if (mediaType === 'audio') {
+          participant.audioTrack = user.audioTrack
+        }
+
+        if (participant.audioTrack && participant.videoTrack) {
+          participant.videoTrack.play(user.uid.toString())
+          participant.audioTrack.play()
+        }
+      })
+
+      // ! When a user left video call
+      this.video.client.on('user-unpublished', async (user) => {
+
+      })
     }
+  },
+  async created () {
+    // ! Get Event Detail
+    this.eventId = +this.$route.params.id
 
-    this.rtc.client.on('user-published', async (user, mediaType) => {
-      await this.rtc.client.subscribe(user, mediaType)
+    await this.fetchEventDetail(this.eventId)
 
-      const userRemotes = this.rtc.client.remoteUsers
+    // ! Set App ID, Channel Name, and uid
+    this.options.appId = process.env.VUE_APP_AGORA_API_KEY
+    this.settings.channelName = this.eventDetail.event.id.toString()
+    this.settings.uid = +localStorage.getItem('user_id')
 
-      const partChatDiv = document.getElementById('part_container')
+    // ! Initialize Chat RTM
+    await this.initializeChat()
 
-      const isParticipant = this.participantsId.includes(user.uid)
-
-      if (!isParticipant && (user.uid !== +this.hostId)) this.screenId = user.uid
-
-      if ((userRemotes.length !== 0 && userRemotes[0].uid !== this.screenId) || (this.screenId && this.rtc.localVideoTrack)) {
-        partChatDiv.classList.remove('hidden')
-      }
-
-      if (userRemotes.length === 0) {
-        partChatDiv.classList.add('hidden')
-      }
-
-      let videoContainer = null
-
-      videoContainer = document.getElementById('video_part')
-
-      const remotePlayerContainer = document.createElement('div')
-      remotePlayerContainer.id = user.uid.toString()
-      remotePlayerContainer.style.width = '100%'
-      remotePlayerContainer.style.height = '168.76px'
-      remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
-
-      const remotePlayerUserBackground = document.createElement('div')
-      remotePlayerUserBackground.className = 'absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300'
-      remotePlayerUserBackground.innerText = this.options.uid
-
-      remotePlayerContainer.append(remotePlayerUserBackground)
-      videoContainer.append(remotePlayerContainer)
-
-      if (user.uid === this.hostId) this.isHostPresent = true
-
-      if (mediaType === 'video') {
-        const remoteVideoTrack = user.videoTrack
-
-        if (user.uid === this.screenId && !this.isHost) {
-          // * Jika client adalah screen share
-          const mainContainer = document.getElementById('main_video')
-          console.log('CEK MASUK SINI HOST')
-
-          mainContainer.style.width = '100%'
-          const playerWidth = mainContainer.offsetWidth
-          mainContainer.style.height = `${playerWidth / 16 * 9}px`
-
-          remoteVideoTrack.play(mainContainer)
-
-          if (this.hostVideoTrack) {
-            const hostContainer = document.getElementById('host_video')
-
-            hostContainer.classList.remove('hidden')
-            this.hostVideoTrack.play(hostContainer)
-          }
-        }
-
-        if (user.uid === +this.hostId) {
-          // * Jika client adalah host
-          if (this.screenId) {
-            console.log('CEK MASUK SINI HOST 2')
-            const hostContainer = document.getElementById('host_video')
-            this.hostVideoTrack = remoteVideoTrack
-
-            hostContainer.classList.remove('hidden')
-
-            this.hostVideoTrack.play(hostContainer)
-          } else {
-            const mainContainer = document.getElementById('main_video')
-            this.hostVideoTrack = remoteVideoTrack
-
-            mainContainer.style.width = '100%'
-            const playerWidth = mainContainer.offsetWidth
-            mainContainer.style.height = `${playerWidth / 16 * 9}px`
-
-            this.hostVideoTrack.play(mainContainer)
-          }
-        }
-
-        if (user.uid !== this.screenId && user.uid !== this.hostId) {
-          // * Jika client bukanlah screen dan host, melainkan participants
-          // const remotePlayerContainer = document.createElement('div')
-          // remotePlayerContainer.id = user.uid.toString()
-          // remotePlayerContainer.style.width = '100%'
-          // remotePlayerContainer.style.height = '168.76px'
-          // remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
-          const remotePlayerUsername = document.createElement('div')
-          remotePlayerUsername.className = 'absolute top-0 left-0 pl-4 pb-2 z-20 w-full h-full flex justify-start items-end text-gray-300'
-          const idx = this.eventDetail.participants.findIndex(p => p.userId === user.uid)
-          remotePlayerUsername.innerText = this.eventDetail.participants[idx].User.username
-          remotePlayerContainer.append(remotePlayerUsername)
-          // videoContainer.append(remotePlayerContainer)
-          remoteVideoTrack.play(remotePlayerContainer)
-        }
-      }
-
-      if (mediaType === 'audio') {
-        const remoteAudioTrack = user.audioTrack
-        remoteAudioTrack.play()
-      }
-
-      this.rtc.client.on('user-unpublished', user => {
-        const remotePlayerContainer = document.getElementById(user.uid)
-
-        if (user.uid === this.screenId) {
-          this.screenId = null
-
-          if (this.hostVideoTrack) {
-            const mainContainer = document.getElementById('main_video')
-
-            mainContainer.style.width = '100%'
-            const playerWidth = mainContainer.offsetWidth
-            mainContainer.style.height = `${playerWidth / 16 * 9}px`
-
-            this.hostVideoTrack.play(mainContainer)
-
-            const hostContainer = document.getElementById('host_video')
-            hostContainer.classList.add('hidden')
-          }
-        }
-
-        if (user.uid === this.hostId) {
-          const hostContainer = document.getElementById('host_video')
-
-          hostContainer.classList.add('hidden')
-        }
-        remotePlayerContainer.remove()
-      })
-
-      this.rtc.client.on('user-left', () => {
-        const userRemotes = this.rtc.client.remoteUsers
-        const partChatDiv = document.getElementById('part_container')
-
-        if (userRemotes.length === 0) {
-          partChatDiv.classList.add('hidden')
-        }
-      })
-    })
+    // ! Initialize Video Call RTC
+    await this.initializeVideoCall()
   }
 }
 </script>

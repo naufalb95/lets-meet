@@ -68,7 +68,7 @@ export default {
       await this.doneEvent(this.event.event.id)
     },
     joinMeetHandler () {
-      console.log('join')
+      this.$router.push('/event/' + this.event.event.id + '/meet')
     },
     editEventHandler () {
       this.$router.push({ name: 'Edit', params: { id: this.event.event.id } })
