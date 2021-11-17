@@ -1,8 +1,5 @@
 <template>
   <div id='app' class='min-h-screen w-screen bg-gray-900 relative'>
-    <div id='back_row' class='text-white pl-5 flex items-center'>
-      <button>Home</button>
-    </div>
     <div id='content' class='text-white pl-5 flex items-center'>
       <div id='video_container' class='flex-grow h-full p-2'>
         <div class='bg-gray-800 bg-opacity-80 w-full h-full rounded-lg text-black flex items-center justify-center relative'>
@@ -21,26 +18,28 @@
       </div>
        <div id='part_chat' class='flex-grow-0 h-full p-2'>
         <div class='bg-white h-full rounded-lg text-black'>
-          <div class='p-3 overflow-auto' style="height: 87.5%">
-            <div class="border-b-2 border-black mb-2">
+          <div class='p-3 overflow-auto flex flex-col h-full'>
+            <div class="border-b border-gray-400 pb-2 font-semibold text-gray-700">
               Chat Participants
             </div>
-            <div v-for="(data, index) in messages" :key="index" class="my-2">
-              <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
-              <div class="text-sm">{{ data.message }}</div>
+            <div class="flex-grow h-full">
+              <div v-for="(data, index) in messages" :key="index" class="my-2">
+                <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
+                <div class="text-sm">{{ data.message }}</div>
+              </div>
             </div>
+            <form class="flex flex-grow-0" @submit.prevent="createNewMessage">
+              <div class='w-5/6'>
+                <textarea type="text" @keydown="createNewMessage" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="message" rows="2">
+                </textarea>
+              </div>
+              <div class='w-1/6'>
+                <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0 bg-white'>
+                  <font-awesome-icon :icon="['fas', 'paper-plane']" class="mr-2 text-2xl text-gray-600"/>
+                </button>
+              </div>
+            </form>
           </div>
-          <form class="flex p-3" @submit.prevent="createNewMessage">
-            <div class='w-5/6'>
-              <textarea type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="message" rows="4">
-              </textarea>
-            </div>
-            <div class='w-1/6'>
-              <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0 bg-white'>
-                <font-awesome-icon :icon="['fas', 'paper-plane']" class="mr-2 text-2xl text-gray-600"/>
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     </div>
@@ -101,7 +100,7 @@ export default {
       },
       channelChat: null,
       messages: [],
-      message: null
+      message: ''
     }
   },
   methods: {
@@ -109,8 +108,9 @@ export default {
     ...mapMutations({
       setIsVideoConference: 'SET_IS_VIDEO_CONFERENCE'
     }),
-    async createNewMessage () {
-      if (this.channelChat != null) {
+    async createNewMessage (e) {
+      const checkEmptyMsg = this.message.trim()
+      if (this.channelChat != null && (e.type === 'submit' || (e.type === 'keydown' && e.keyCode === 13)) && checkEmptyMsg) {
         await this.channelChat.sendMessage({ text: this.message })
 
         this.messages.push({
@@ -325,7 +325,6 @@ export default {
   },
   async mounted () {
     window.addEventListener('resize', this.videoResizeHandler)
-    //  this.$refs.local_video_username.classList.remove('hidden')
 
     this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
 
@@ -361,6 +360,18 @@ export default {
       let videoContainer = null
 
       videoContainer = document.getElementById('video_part')
+
+      const remotePlayerContainer = document.createElement('div')
+      remotePlayerContainer.id = user.uid.toString()
+      remotePlayerContainer.style.width = '100%'
+      remotePlayerContainer.style.height = '168.76px'
+      remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
+
+      const remotePlayerUserBackground = document.createElement('div')
+      remotePlayerUserBackground.className = 'absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300'
+      remotePlayerUserBackground.innerText = this.options.uid
+
+      remotePlayerContainer.append(remotePlayerUserBackground)
 
       if (user.uid === this.hostId) this.isHostPresent = true
 
@@ -410,11 +421,11 @@ export default {
 
         if (user.uid !== this.screenId && user.uid !== this.hostId) {
           // * Jika client bukanlah screen dan host, melainkan participants
-          const remotePlayerContainer = document.createElement('div')
-          remotePlayerContainer.id = user.uid.toString()
-          remotePlayerContainer.style.width = '100%'
-          remotePlayerContainer.style.height = '168.76px'
-          remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
+          // const remotePlayerContainer = document.createElement('div')
+          // remotePlayerContainer.id = user.uid.toString()
+          // remotePlayerContainer.style.width = '100%'
+          // remotePlayerContainer.style.height = '168.76px'
+          // remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
           const remotePlayerUsername = document.createElement('div')
           remotePlayerUsername.className = 'absolute top-0 left-0 pl-4 pb-2 z-20 w-full h-full flex justify-start items-end text-gray-300'
           const idx = this.eventDetail.participants.findIndex(p => p.userId === user.uid)
@@ -472,12 +483,8 @@ export default {
 </script>
 
 <style scoped>
-  #back_row {
-    height: 50px;
-  }
-
   #content {
-    height: calc(100vh - 110px);
+    height: calc(100vh - 60px);
   }
 
   #bottom_row {
