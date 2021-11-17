@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.7% </span>
+                <span class="strong">98.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>157/179</span>
+                <span class='fraction'>177/179</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">78.12% </span>
+                <span class="strong">93.1% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>50/64</span>
+                <span class='fraction'>54/58</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">91.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>10/12</span>
+                <span class='fraction'>11/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.06% </span>
+                <span class="strong">99.43% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>155/176</span>
+                <span class='fraction'>175/176</span>
             </div>
         
             
@@ -537,7 +537,9 @@
 <a name='L478'></a><a href='#L478'>478</a>
 <a name='L479'></a><a href='#L479'>479</a>
 <a name='L480'></a><a href='#L480'>480</a>
-<a name='L481'></a><a href='#L481'>481</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L481'></a><a href='#L481'>481</a>
+<a name='L482'></a><a href='#L482'>482</a>
+<a name='L483'></a><a href='#L483'>483</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -987,40 +989,42 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span></td><td class="text"><pre class="prettyprint lang-js">const { Event, Category, User, Participant } = require("../models");
 const { Op } = require("sequelize");
 // const cron = require("node-cron");
-const {RtmTokenBuilder, RtmRole} = require('agora-access-token');
+const {RtmTokenBuilder, RtmRole, RtcRole, RtcTokenBuilder} = require('agora-access-token');
 const APP_ID = "ffe414caa68c4da0a6b8837b05bc649e";
 const APP_CERTIFICATE = "8ff6c4059a074b0caab9eb9c56e80029";
 &nbsp;
@@ -1466,34 +1470,36 @@ class EventController {
         }
     }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    st</span>atic generateAccessToken(req, res, next) {
-<span class="cstat-no" title="statement not covered" >        try {</span>
-            const channelName = <span class="cstat-no" title="statement not covered" >req.query.channelName;</span>
-<span class="cstat-no" title="statement not covered" >            res.header('Access-Control-Allow-Origin', '*');</span>
-<span class="cstat-no" title="statement not covered" >            if (!channelName) {</span>
-<span class="cstat-no" title="statement not covered" >                return res.status(400).json({ error: 'channel is required' });</span>
-            }
-            let uid = <span class="cstat-no" title="statement not covered" >req.query.uid;</span>
-<span class="cstat-no" title="statement not covered" >            if(!uid || uid == '') {</span>
-<span class="cstat-no" title="statement not covered" >                uid = 0;</span>
-            }
-            let role = <span class="cstat-no" title="statement not covered" >RtmRole.PUBLISHER;</span>
-<span class="cstat-no" title="statement not covered" >            if (req.query.role == 'publisher') {</span>
-<span class="cstat-no" title="statement not covered" >                role = RtmRole.PUBLISHER;</span>
-            }
-            let expireTime = <span class="cstat-no" title="statement not covered" >req.query.expireTime;</span>
-<span class="cstat-no" title="statement not covered" >            if (!expireTime || expireTime == '') {</span>
-<span class="cstat-no" title="statement not covered" >                expireTime = 3600;</span>
-            } else {
-<span class="cstat-no" title="statement not covered" >                expireTime = parseInt(expireTime, 10);</span>
-            }
-            const currentTime = <span class="cstat-no" title="statement not covered" >Math.floor(Date.now() / 1000);</span>
-            const privilegeExpireTime = <span class="cstat-no" title="statement not covered" >currentTime + expireTime;</span>
-            const tokenChat = <span class="cstat-no" title="statement not covered" >RtmTokenBuilder.buildToken(APP_ID, APP_CERTIFICATE, uid, role, privilegeExpireTime);</span>
-<span class="cstat-no" title="statement not covered" >            res.status(200).json({ tokenChat });</span>
-        } catch (error) {
-<span class="cstat-no" title="statement not covered" >            next(error);</span>
-        }
+    static generateToken(req, res, next) {
+      const channelName = req.query.channelName;
+      res.header('Access-Control-Allow-Origin', '*');
+      if (!channelName) {
+          return res.status(400).json({ message: 'channel is required' });
+      }
+      let uid = req.query.uid;
+      // if(!uid || uid == '') {
+      //     uid = 0;
+      // }
+      let role = RtmRole.PUBLISHER;
+      // if (req.query.role == 'publisher') {
+      //     role = RtmRole.PUBLISHER;
+      // }
+      let expireTime = req.query.expireTime;
+      if (!expireTime || <span class="branch-1 cbranch-no" title="branch not covered" >expireTime == '')</span> {
+          expireTime = 3600;
+      }
+      const currentTime = Math.floor(Date.now() / 1000);
+      const privilegeExpireTime = currentTime + expireTime;
+      const tokenChat = RtmTokenBuilder.buildToken(APP_ID, APP_CERTIFICATE, uid, role, privilegeExpireTime);
+      // buat video token
+      const appID = "3ef3371d43e04d80a1656a7bf535aedf";
+      const appCertificate = "e66eb9de2f544b60a863b22dc7561f13";
+      const expirationTimeInSeconds = 3600;
+      const roleRtc = RtcRole.SUBSCRIBER;
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      const expirationTimestamp = currentTimestamp + expirationTimeInSeconds;
+      const tokenVideo = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, uid, roleRtc, expirationTimestamp);
+      res.status(201).json({ tokenChat, tokenVideo });
     }
 }
 &nbsp;
@@ -1504,7 +1510,7 @@ module.exports = EventController;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Wed Nov 17 2021 05:53:48 GMT+0700 (Western Indonesia Time)
+                at Wed Nov 17 2021 07:33:12 GMT+0700 (Western Indonesia Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

@@ -451,21 +451,19 @@ class EventController {
       const channelName = req.query.channelName;
       res.header('Access-Control-Allow-Origin', '*');
       if (!channelName) {
-          return res.status(400).json({ error: 'channel is required' });
+          return res.status(400).json({ message: 'channel is required' });
       }
       let uid = req.query.uid;
-      if(!uid || uid == '') {
-          uid = 0;
-      }
+      // if(!uid || uid == '') {
+      //     uid = 0;
+      // }
       let role = RtmRole.PUBLISHER;
-      if (req.query.role == 'publisher') {
-          role = RtmRole.PUBLISHER;
-      }
+      // if (req.query.role == 'publisher') {
+      //     role = RtmRole.PUBLISHER;
+      // }
       let expireTime = req.query.expireTime;
       if (!expireTime || expireTime == '') {
           expireTime = 3600;
-      } else {
-          expireTime = parseInt(expireTime, 10);
       }
       const currentTime = Math.floor(Date.now() / 1000);
       const privilegeExpireTime = currentTime + expireTime;

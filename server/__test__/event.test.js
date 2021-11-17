@@ -887,4 +887,31 @@ describe('Event fiture', () => {
             expect(res.body).toEqual({"message": "Internal server error."});
           })
     })
+
+    test('Get Token Video and Token Chat', (done) => {
+        request(app)
+            .get('/access_token?channelName=test&uid=damar')
+            .then((res) => {
+                expect(res.status).toBe(201);
+                expect(res.body).toEqual(expect.any(Object));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
+
+    test('Get Token Video and Token Chat Failed Because Empty channelName', (done) => {
+        request(app)
+            .get('/access_token?uid=damar')
+            .then((res) => {
+                expect(res.status).toBe(400);
+                expect(res.body).toEqual(expect.any(Object));
+                expect(res.body).toEqual({message: 'channel is required'});
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
 })
