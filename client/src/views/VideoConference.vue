@@ -29,14 +29,14 @@
               Chat Participants
             </div>
             <div class="flex-grow h-full">
-              <div class="my-2">
-                <div><span class="font-semibold text-sm">asd</span> <span class="italic text-xs text-gray-400">asd</span></div>
-                <div class="text-sm">ASd</div>
+              <div v-for="(data, index) in chat.messages" :key="index" class="my-2">
+                <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
+                <div class="text-sm">{{ data.message }}</div>
               </div>
             </div>
-            <form class="flex flex-grow-0">
+            <form class="flex flex-grow-0" @submit.prevent="createNewMessage">
               <div class='w-5/6'>
-                <textarea type="text" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' rows="2">
+                <textarea type="text" @keydown="createNewMessage" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="chat.message" rows="2">
                 </textarea>
               </div>
               <div class='w-1/6'>
@@ -91,7 +91,8 @@ export default {
       chat: {
         client: null,
         channel: null,
-        messages: []
+        messages: [],
+        message: ''
       },
       video: {
         client: null,
@@ -117,6 +118,25 @@ export default {
   },
   methods: {
     ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
+    async createNewMessage (e) {
+      console.log(this.chat.messages)
+      const checkEmptyMsg = this.chat.message.trim()
+      if (this.chat.channel != null && (e.type === 'submit' || (e.type === 'keydown' && e.keyCode === 13)) && checkEmptyMsg) {
+        await this.chat.channel.sendMessage({ text: this.chat.message })
+
+        const name = this.eventDetail.participants.find(e => e.userid === this.settings.uid)
+
+        this.chat.messages.push({
+          message: this.chat.message,
+          name,
+          time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
+        })
+
+        console.log(name)
+
+        this.chat.message = ''
+      }
+    },
     leaveHandler () {
       console.log('eave')
     },
@@ -127,6 +147,7 @@ export default {
       this.isJoined = true
     },
     async initializeChat () {
+      console.log(this.eventDetail)
       // ! Get Chat Token
       const payload = { ...this.settings }
 
@@ -164,57 +185,6 @@ export default {
       await this.getVideoToken(payload)
 
       // ! Video Call Event Handler
-
-      // ! Volume Indicator Handler
-      // this.video.client.enableAudioVolumeIndicator()
-      // this.video.client.on('volume-indicator', (result) => {
-      //   const sortArr = []
-
-      //   result.forEach((vol, idx) => {
-      //     console.log(idx, vol.level, vol.uid)
-      //     this.volumeCounter += 1
-
-      //     if (this.volumeCounter === 20) {
-      //       this.volumeCounter = 0
-
-      //       sortArr.push({ uid: vol.uid, level: vol.level })
-      //       sortArr.sort((a, b) => a.level - b.level)
-
-      //       const userIdx = this.inMeetParticipants.findIndex(user => user.id === sortArr[0].uid)
-
-      //       const volUser = { ...this.inMeetParticipants[userIdx] }
-
-      //       volUser.videoTrack.play('main_video', {
-      //         fit: 'contain'
-      //       })
-      //     }
-      //   })
-      // })
-
-      // result.forEach((vol, idx) => {
-      //   console.log(idx, vol.level, vol.uid)
-      //   this.volumeCounter += 1
-
-      //   if (this.volumeCounter === 20) {
-      //     this.volumeCounter = 0
-
-      //     sortArr.push({ uid: vol.uid, level: vol.level})
-
-      //     sortArr.sort((a, b) => a.level - b.level)
-
-      //     const userIdx = this.inMeetParticipants.findIndex(user => user.id === sortArr[0].uid)
-
-      //     const volUser = { ...this.inMeetParticipants[userIdx] }
-
-      //     volUser.videoTrack.play('main_video', {
-      //       fit: 'contain'
-      //     })
-      //   }
-      // })
-      // result.forEach((vol, idx) => {
-
-      // })
-
       this.video.client.on('user-joined', (user) => {
         const checkParticipant = this.inMeetParticipants.some(el => el.id === user.uid)
 
