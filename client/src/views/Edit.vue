@@ -85,9 +85,11 @@ export default {
   computed: {
     ...mapState(['eventDetail', 'categories'])
   },
+  async created () {
+    await this.fetchCategories()
+  },
   async mounted () {
     await this.fetchEventDetail(this.$route.params.id)
-    await this.fetchCategories()
 
     const googleMapApi = await GoogleMapsApiLoader({
       apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,

@@ -43,7 +43,8 @@ export default new Vuex.Store({
       video: '',
       screen
     },
-    messages: []
+    messages: [],
+    categories: null
   },
   mutations: {
     GET_TOKEN_MESSAGE (state, payload) {

@@ -85,7 +85,7 @@ export default {
     }
   },
   mounted () {
-    if (+this.userId === this.event.event.eventOrganizerId) this.isHost = true
+    if (+localStorage.getItem('user_id') === this.event.event.eventOrganizerId) this.isHost = true
 
     if (!this.isHost) this.isAttending = true
 

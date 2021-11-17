@@ -103,7 +103,7 @@ export default {
   },
   async mounted () {
     const googleMapApi = await GoogleMapsApiLoader({
-      apiKey: '',
+      apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
       libraries: ['places']
     })
 
