@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">98.36% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>180/183</span>
+                <span class='fraction'>181/184</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">98.88% </span>
+                <span class="strong">98.89% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>178/180</span>
+                <span class='fraction'>179/181</span>
             </div>
         
             
@@ -520,13 +520,7 @@
 <a name='L461'></a><a href='#L461'>461</a>
 <a name='L462'></a><a href='#L462'>462</a>
 <a name='L463'></a><a href='#L463'>463</a>
-<a name='L464'></a><a href='#L464'>464</a>
-<a name='L465'></a><a href='#L465'>465</a>
-<a name='L466'></a><a href='#L466'>466</a>
-<a name='L467'></a><a href='#L467'>467</a>
-<a name='L468'></a><a href='#L468'>468</a>
-<a name='L469'></a><a href='#L469'>469</a>
-<a name='L470'></a><a href='#L470'>470</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L464'></a><a href='#L464'>464</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -553,11 +547,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -808,7 +797,6 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -817,7 +805,7 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1033,29 +1021,24 @@ class EventController {
                 longitude,
                 latitude,
             });
-&nbsp;
-            // if (location === "Online") {
-            //     let dateInput = req.body.dateAndTime;
-&nbsp;
-            //     let minute = dateInput.slice(14, 16);
-            //     let hour = dateInput.slice(11, 13);
-            //     let day = dateInput.slice(8, 10);
-            //     let month = dateInput.slice(5, 7);
-&nbsp;
-            //     CRON_SCHEDULER[result.id] = cron.schedule(
-            //     `${minute} ${hour} ${day} ${month} *`,
-            //     () =&gt; {
-            //         console.log("Running on");
-            //     },
-            //     {
-            //         scheduled: false,
-            //         timezone: "Asia/Jakarta",
-            //     }
-            //     );
-&nbsp;
-            //     CRON_SCHEDULER[result.id].start();
-            // }
-&nbsp;
+        // if (location === "Online") {
+        //     let dateInput = req.body.dateAndTime;
+        //     let minute = dateInput.slice(14, 16);
+        //     let hour = dateInput.slice(11, 13);
+        //     let day = dateInput.slice(8, 10);
+        //     let month = dateInput.slice(5, 7);
+        //     CRON_SCHEDULER[result.id] = cron.schedule(
+        //     `${minute} ${hour} ${day} ${month} *`,
+        //     () =&gt; {
+        //         console.log("Running on");
+        //     },
+        //     {
+        //         scheduled: false,
+        //         timezone: "Asia/Jakarta",
+        //     }
+        //     );
+        //     CRON_SCHEDULER[result.id].start();
+        // }
             res.status(201).json(result);
         } catch (err) {
             next(err);
@@ -1276,7 +1259,6 @@ class EventController {
                 categoryId,
             } = req.body;
 &nbsp;
-          
 &nbsp;
             const id = req.params.eventId;
             const userId = +req.user.id;
@@ -1286,7 +1268,7 @@ class EventController {
             if (!foundEvent) {
                 throw { name: "Event Not Found" };
             }
-&nbsp;
+            console.log(foundEvent.eventOrganizerId === userId, id)
             if (foundEvent.eventOrganizerId === userId) {
                 const responseFromSeq = await Event.update(
                     {
@@ -1471,7 +1453,7 @@ module.exports = EventController;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu Nov 18 2021 01:37:40 GMT+0700 (Western Indonesia Time)
+                at Thu Nov 18 2021 01:51:46 GMT+0700 (Western Indonesia Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>
