@@ -39,7 +39,10 @@
         </option>
       </select>
     </div>
-    <section class="flex items-center flex-col" v-for="event in events" :key="event.id">
+    <section v-if="!events">
+      <div class="flex items-center flex-col">Loading... please wait</div>
+    </section>
+    <section v-else class="flex items-center flex-col" v-for="event in events" :key="event.id">
       <EventCard :event={event} />
     </section>
   </div>
@@ -72,84 +75,85 @@ export default {
   methods: {
     ...mapActions(['fetchEvents', 'fetchCategories']),
     async dropdownFilterHandler (e) {
-      const { name, value } = e.target
-
-      if (!value) {
-        delete this.filter[name]
-        this.$refs[name].classList.remove('bg-blue-300')
-        this.$refs[name].classList.remove('hover:bg-blue-400')
-        this.$refs[name].classList.add('bg-gray-200')
-        this.$refs[name].classList.add('hover:bg-gray-300')
-
-        const payload = { ...this.filter }
-
-        await this.fetchEvents(payload)
-      } else if (name !== 'distance') {
-        if (name === 'location' && this.filter.distance) {
-          this.distance = ''
-          this.latitude = 0
-          this.longitude = 0
-          delete this.filter.distance
-          delete this.filter.latitude
-          delete this.filter.longitude
+      try {
+        const { name, value } = e.target
+        if (!value) {
+          delete this.filter[name]
+          this.$refs[name].classList.remove('bg-blue-300')
+          this.$refs[name].classList.remove('hover:bg-blue-400')
+          this.$refs[name].classList.add('bg-gray-200')
+          this.$refs[name].classList.add('hover:bg-gray-300')
+          const payload = { ...this.filter }
+          await this.fetchEvents(payload)
+        } else if (name !== 'distance') {
+          if (name === 'location' && this.filter.distance) {
+            this.distance = ''
+            this.latitude = 0
+            this.longitude = 0
+            delete this.filter.distance
+            delete this.filter.latitude
+            delete this.filter.longitude
+          }
+          this.filter = {
+            ...this.filter,
+            [name]: value
+          }
+          this.$refs[name].classList.add('bg-blue-300')
+          this.$refs[name].classList.add('hover:bg-blue-400')
+          this.$refs[name].classList.remove('bg-gray-200')
+          this.$refs[name].classList.remove('hover:bg-gray-300')
+          const payload = { ...this.filter }
+          await this.fetchEvents(payload)
+        } else {
+          this.filter = {
+            distance: value
+          }
+          navigator.geolocation.getCurrentPosition(this.showPosition)
+          this.$refs[name].classList.add('bg-blue-300')
+          this.$refs[name].classList.add('hover:bg-blue-400')
+          this.$refs[name].classList.remove('bg-gray-200')
+          this.$refs[name].classList.remove('hover:bg-gray-300')
         }
-
-        this.filter = {
-          ...this.filter,
-          [name]: value
-        }
-
-        this.$refs[name].classList.add('bg-blue-300')
-        this.$refs[name].classList.add('hover:bg-blue-400')
-        this.$refs[name].classList.remove('bg-gray-200')
-        this.$refs[name].classList.remove('hover:bg-gray-300')
-
-        const payload = { ...this.filter }
-
-        await this.fetchEvents(payload)
-      } else {
-        this.filter = {
-          distance: value
-        }
-
-        navigator.geolocation.getCurrentPosition(this.showPosition)
-
-        this.$refs[name].classList.add('bg-blue-300')
-        this.$refs[name].classList.add('hover:bg-blue-400')
-        this.$refs[name].classList.remove('bg-gray-200')
-        this.$refs[name].classList.remove('hover:bg-gray-300')
+        console.log(this.filter)
+      } catch (error) {
+        console.log(error)
       }
-
-      console.log(this.filter)
     },
     async showPosition (position) {
-      this.latitude = position.coords.latitude
-      this.longitude = position.coords.longitude
-
-      this.filter = {
-        ...this.filter,
-        latitude: this.latitude,
-        longitude: this.longitude
+      try {
+        this.latitude = position.coords.latitude
+        this.longitude = position.coords.longitude
+        this.filter = {
+          ...this.filter,
+          latitude: this.latitude,
+          longitude: this.longitude
+        }
+        const payload = { ...this.filter }
+        await this.fetchEvents(payload)
+      } catch (error) {
+        console.log(error)
       }
-
-      const payload = { ...this.filter }
-
-      await this.fetchEvents(payload)
     },
     async submitHandler () {
-      this.filter = {
-        ...this.filter,
-        eventName: this.eventName
+      try {
+        this.filter = {
+          ...this.filter,
+          eventName: this.eventName
+        }
+        const payload = { ...this.filter }
+        await this.fetchEvents(payload)
+      } catch (error) {
+        console.log(error)
       }
-
-      const payload = { ...this.filter }
-
-      await this.fetchEvents(payload)
     }
   },
   async created () {
-    await this.fetchEvents()
-    await this.fetchCategories()
+    try {
+      await this.fetchEvents()
+      await this.fetchCategories()
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 </script>
