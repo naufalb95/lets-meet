@@ -183,7 +183,7 @@ export default {
 
       // ! When a user left video call
       this.video.client.on('user-unpublished', async (user) => {
-
+        this.inMeetParticipants = this.inMeetParticipants.filter(participant => participant.id !== user.uid)
       })
     }
   },
