@@ -180,7 +180,6 @@ export default new Vuex.Store({
       context.commit('SET_USER_ID', userId)
     },
     async createEvent (_, payload) {
-      console.log(payload)
       const formData = new FormData()
 
       for (const key in payload) {
@@ -198,6 +197,12 @@ export default new Vuex.Store({
       })
     },
     async editEvent (_, payload) {
+      const formData = new FormData()
+
+      for (const key in payload) {
+        formData.append(key, payload[key])
+      }
+
       await server({
         method: 'PUT',
         url: '/events/' + payload.eventId,
@@ -205,7 +210,7 @@ export default new Vuex.Store({
           access_token: localStorage.getItem('access_token'),
           'Content-Type': 'multipart/form-data'
         },
-        data: payload.form
+        data: formData
       })
     },
     async userLeaveEvent (_, payload) {

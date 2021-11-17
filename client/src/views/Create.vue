@@ -6,10 +6,6 @@
           <label id="name" class="text-center text-lg font-normal">Event Name</label>
           <input name="name" v-model="name" type="text" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none" placeholder="Yoga Training"/>
         </div>
-        <div class="w-full mb-4">
-          <label id="photo" class="text-center text-lg font-normal">Event Photo</label>
-          <input @change="photoInputHandler" name="photo" type="file" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
-        </div>
         <div class="mt-1 mb-2 flex">
           <div class="w-3/4 mr-3 mb-4">
             <label id="date" class="text-center text-lg font-normal">Date</label>
@@ -42,6 +38,10 @@
         <div class="w-full mb-4">
           <label id="description" class="text-center text-lg font-normal">Description</label>
           <textarea name="description" v-model="description" class="overflow-y-auto mb-2 px-2 py-2 rounded text-xs border shadow focus:outline-none block w-full" rows="8" placeholder="Type your event description here"/>
+        </div>
+        <div class="w-full mb-4">
+          <label id="photo" class="text-center text-lg font-normal">Event Photo</label>
+          <input @change="photoInputHandler" name="photo" type="file" class="w-full px-3 py-3 mt-1 rounded text-sm border shadow focus:outline-none"/>
         </div>
         <div class="w-full mb-4" ref="location">
           <label id="location" class="text-center text-lg font-normal">Location</label>
@@ -195,8 +195,6 @@ export default {
     },
     photoInputHandler (e) {
       this.photo = e.target.files[0]
-
-      console.log(this.photo)
     }
   }
 }
