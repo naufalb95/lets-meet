@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1637109464253" clover="3.2.0">
-  <project timestamp="1637109464253" name="All files">
-    <metrics statements="371" coveredstatements="325" conditionals="94" coveredconditionals="74" methods="38" coveredmethods="34" elements="503" coveredelements="433" complexity="0" loc="371" ncloc="371" packages="6" files="17" classes="17"/>
+<coverage generated="1637109932577" clover="3.2.0">
+  <project timestamp="1637109932578" name="All files">
+    <metrics statements="362" coveredstatements="348" conditionals="88" coveredconditionals="78" methods="37" coveredmethods="36" elements="487" coveredelements="462" complexity="0" loc="362" ncloc="362" packages="6" files="17" classes="17"/>
     <package name="server">
       <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="app.js" path="D:\Hacktiv8\Phase3\Final Project\lets-meet\server\app.js">
@@ -18,7 +18,7 @@
       </file>
     </package>
     <package name="server.controllers">
-      <metrics statements="208" coveredstatements="178" conditionals="68" coveredconditionals="54" methods="16" coveredmethods="13"/>
+      <metrics statements="200" coveredstatements="198" conditionals="62" coveredconditionals="58" methods="15" coveredmethods="14"/>
       <file name="categoryController.js" path="D:\Hacktiv8\Phase3\Final Project\lets-meet\server\controllers\categoryController.js">
         <metrics statements="6" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
@@ -29,7 +29,7 @@
         <line num="18" count="2" type="stmt"/>
       </file>
       <file name="eventController.js" path="D:\Hacktiv8\Phase3\Final Project\lets-meet\server\controllers\eventController.js">
-        <metrics statements="184" coveredstatements="155" conditionals="64" coveredconditionals="50" methods="13" coveredmethods="10"/>
+        <metrics statements="176" coveredstatements="175" conditionals="58" coveredconditionals="54" methods="12" coveredmethods="11"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="4" count="2" type="stmt"/>
@@ -185,35 +185,27 @@
         <line num="442" count="1" type="stmt"/>
         <line num="444" count="1" type="stmt"/>
         <line num="446" count="1" type="stmt"/>
-        <line num="451" count="0" type="stmt"/>
-        <line num="452" count="0" type="stmt"/>
-        <line num="453" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="454" count="0" type="stmt"/>
-        <line num="456" count="0" type="stmt"/>
-        <line num="457" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="458" count="0" type="stmt"/>
-        <line num="460" count="0" type="stmt"/>
-        <line num="461" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="462" count="0" type="stmt"/>
-        <line num="464" count="0" type="stmt"/>
-        <line num="465" count="0" type="cond" truecount="0" falsecount="4"/>
-        <line num="466" count="0" type="stmt"/>
-        <line num="468" count="0" type="stmt"/>
-        <line num="470" count="0" type="stmt"/>
-        <line num="471" count="0" type="stmt"/>
-        <line num="472" count="0" type="stmt"/>
-        <line num="473" count="0" type="stmt"/>
-        <line num="477" count="0" type="stmt"/>
-        <line num="478" count="0" type="stmt"/>
-        <line num="479" count="0" type="stmt"/>
-        <line num="480" count="0" type="stmt"/>
-        <line num="481" count="0" type="stmt"/>
-        <line num="482" count="0" type="stmt"/>
-        <line num="483" count="0" type="stmt"/>
-        <line num="484" count="0" type="stmt"/>
-        <line num="485" count="0" type="stmt"/>
-        <line num="486" count="0" type="stmt"/>
-        <line num="490" count="2" type="stmt"/>
+        <line num="451" count="2" type="stmt"/>
+        <line num="452" count="2" type="stmt"/>
+        <line num="453" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="454" count="1" type="stmt"/>
+        <line num="456" count="1" type="stmt"/>
+        <line num="460" count="1" type="stmt"/>
+        <line num="464" count="1" type="stmt"/>
+        <line num="465" count="1" type="cond" truecount="2" falsecount="2"/>
+        <line num="466" count="1" type="stmt"/>
+        <line num="468" count="1" type="stmt"/>
+        <line num="469" count="1" type="stmt"/>
+        <line num="470" count="1" type="stmt"/>
+        <line num="472" count="1" type="stmt"/>
+        <line num="473" count="1" type="stmt"/>
+        <line num="474" count="1" type="stmt"/>
+        <line num="475" count="1" type="stmt"/>
+        <line num="476" count="1" type="stmt"/>
+        <line num="477" count="1" type="stmt"/>
+        <line num="478" count="1" type="stmt"/>
+        <line num="479" count="1" type="stmt"/>
+        <line num="483" count="2" type="stmt"/>
       </file>
       <file name="userController.js" path="D:\Hacktiv8\Phase3\Final Project\lets-meet\server\controllers\userController.js">
         <metrics statements="18" coveredstatements="18" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
@@ -261,7 +253,7 @@
       </file>
     </package>
     <package name="server.middlewares">
-      <metrics statements="65" coveredstatements="50" conditionals="15" coveredconditionals="12" methods="4" coveredmethods="3"/>
+      <metrics statements="65" coveredstatements="54" conditionals="15" coveredconditionals="12" methods="4" coveredmethods="4"/>
       <file name="authentication.js" path="D:\Hacktiv8\Phase3\Final Project\lets-meet\server\middlewares\authentication.js">
         <metrics statements="14" coveredstatements="14" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
@@ -280,12 +272,12 @@
         <line num="32" count="2" type="stmt"/>
       </file>
       <file name="cacheRTMAgora.js" path="D:\Hacktiv8\Phase3\Final Project\lets-meet\server\middlewares\cacheRTMAgora.js">
-        <metrics statements="6" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
-        <line num="2" count="0" type="stmt"/>
-        <line num="3" count="0" type="stmt"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
         <line num="8" count="2" type="stmt"/>
       </file>
       <file name="errorHandler.js" path="D:\Hacktiv8\Phase3\Final Project\lets-meet\server\middlewares\errorHandler.js">
@@ -411,9 +403,9 @@
       </file>
     </package>
     <package name="server.routes">
-      <metrics statements="26" coveredstatements="26" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="25" coveredstatements="25" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="index.js" path="D:\Hacktiv8\Phase3\Final Project\lets-meet\server\routes\index.js">
-        <metrics statements="26" coveredstatements="26" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <metrics statements="25" coveredstatements="25" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -429,17 +421,16 @@
         <line num="14" count="2" type="stmt"/>
         <line num="15" count="2" type="stmt"/>
         <line num="16" count="2" type="stmt"/>
-        <line num="17" count="2" type="stmt"/>
-        <line num="19" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
         <line num="21" count="2" type="stmt"/>
         <line num="22" count="2" type="stmt"/>
         <line num="23" count="2" type="stmt"/>
         <line num="24" count="2" type="stmt"/>
         <line num="25" count="2" type="stmt"/>
         <line num="26" count="2" type="stmt"/>
-        <line num="27" count="2" type="stmt"/>
-        <line num="29" count="2" type="stmt"/>
-        <line num="31" count="2" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
       </file>
     </package>
   </project>
