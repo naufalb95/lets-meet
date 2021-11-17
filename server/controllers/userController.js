@@ -6,6 +6,7 @@ class UserController {
   static async register(req, res, next) {
     try {
       const { username, email, password } = req.body;
+      console.log(req.body, '<--------')
       const result = await User.create({ username, email, password });
       res.status(201).json({
         message: `Success create account, username: ${result.username}`,

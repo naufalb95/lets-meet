@@ -92,7 +92,7 @@ module.exports = (sequelize, DataTypes) => {
     {
         hooks: {
             beforeValidate: (event) => {
-                event.isDone = true;
+                event.isDone = false;
             }
         },
         sequelize,

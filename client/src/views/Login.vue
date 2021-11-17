@@ -37,15 +37,17 @@ export default {
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
     },
     async submitHandler () {
-      const payload = {
-        email: this.email,
-        password: this.password
+      try {
+        const payload = {
+          email: this.email,
+          password: this.password
+        }
+        await this.loginUser(payload)
+        this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
+        this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
+      } catch (error) {
+        console.log(error)
       }
-
-      await this.loginUser(payload)
-
-      this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
-      this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
     },
     closeHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
