@@ -147,6 +147,7 @@ export default {
         const form = {
           name: this.name,
           dateAndTime: this.dateAndTime,
+          imgUrl: this.imgUrl,
           description: this.description,
           maxParticipants: +this.maxParticipants,
           categoryId: +this.categoryId
