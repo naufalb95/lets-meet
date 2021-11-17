@@ -2,8 +2,8 @@
   <div id='app' class='min-h-screen w-screen bg-gray-900 relative'>
     <div id='content' class='text-white pl-5 flex items-center'>
       <div id='video_container' class='flex-grow h-full p-2'>
-        <div class='bg-gray-800 bg-opacity-80 w-full h-full rounded-lg text-black flex items-center justify-center relative'>
-          <div id='main_video' class='w-full relative z-10'></div>
+        <div class='bg-gray-800 bg-opacity-80 w-full h-full rounded-lg text-black flex items-center justify-center relative overflow-hidden'>
+          <div id='main_video' class='w-full relative z-10 h-full'></div>
           <div class="absolute top-0 left-0 h-full w-full flex justify-center items-center text-gray-300">Waiting for host to share their screen or cam</div>
         </div>
       </div>
@@ -52,10 +52,10 @@
     <div id='bottom_row' class='text-white pl-5 flex items-center'>
       <button class='mx-3'>Screen Share</button>
       <button class='mx-3'>Stop Screen Share</button>
-      <button class='mx-3'>Open Cam</button>
-      <button class='mx-3'>Close Cam</button>
-      <button class='mx-3'>Mute</button>
-      <button class='mx-3'>Unmute</button>
+      <button class='mx-3' @click="openCamHandler">Open Cam</button>
+      <button class='mx-3' @click="closeCamHandler">Close Cam</button>
+      <button class='mx-3' @click="muteHandler">Mute</button>
+      <button class='mx-3' @click="unmuteHandler">Unmute</button>
       <button class='mx-3' @click="leaveHandler">Leave Room</button>
     </div>
     <div class='absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80 flex justify-center items-center hidden' v-if='false'>
@@ -95,6 +95,11 @@ export default {
       },
       video: {
         client: null
+      },
+      local: {
+        video: null,
+        audio: null,
+        screen: null
       },
       inMeetParticipants: [],
       screenClient: null
@@ -185,6 +190,32 @@ export default {
       this.video.client.on('user-unpublished', async (user) => {
         this.inMeetParticipants = this.inMeetParticipants.filter(participant => participant.id !== user.uid)
       })
+    },
+    async openCamHandler () {
+      if (!this.local.video) {
+        this.local.video = await AgoraRTC.createCameraVideoTrack()
+
+        await this.video.client.publish(this.local.video)
+
+        this.local.video.play('main_video')
+      } else {
+        this.local.video.setEnabled(true)
+      }
+    },
+    async closeCamHandler () {
+      this.local.video.setEnabled(false)
+    },
+    async unmuteHandler () {
+      if (!this.local.audio) {
+        this.local.audio = await AgoraRTC.createMicrophoneAudioTrack()
+
+        await this.video.client.publish(this.local.audio)
+      } else {
+        this.local.audio.setEnabled(true)
+      }
+    },
+    async muteHandler () {
+      this.local.audio.setEnabled(false)
     }
   },
   async created () {
