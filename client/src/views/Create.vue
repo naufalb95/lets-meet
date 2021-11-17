@@ -86,7 +86,6 @@ export default {
     ...mapState(['categories'])
   },
   async created () {
-    await this.fetchCategories()
     const date = new Date()
     const years = date.getFullYear()
     let months = date.getMonth() + 1
