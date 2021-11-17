@@ -348,7 +348,7 @@ export default {
 
       const isParticipant = this.participantsId.includes(user.uid)
 
-      if (!isParticipant && user.uid !== this.hostId) this.screenId = user.uid
+      if (!isParticipant && (user.uid !== +this.hostId)) this.screenId = user.uid
 
       if ((userRemotes.length !== 0 && userRemotes[0].uid !== this.screenId) || (this.screenId && this.rtc.localVideoTrack)) {
         partChatDiv.classList.remove('hidden')
@@ -370,6 +370,7 @@ export default {
         if (user.uid === this.screenId && !this.isHost) {
           // * Jika client adalah screen share
           const mainContainer = document.getElementById('main_video')
+          console.log('CEK MASUK SINI HOST')
 
           mainContainer.style.width = '100%'
           const playerWidth = mainContainer.offsetWidth
@@ -385,9 +386,10 @@ export default {
           }
         }
 
-        if (user.uid === this.hostId) {
+        if (user.uid === +this.hostId) {
           // * Jika client adalah host
           if (this.screenId) {
+            console.log('CEK MASUK SINI HOST 2')
             const hostContainer = document.getElementById('host_video')
             this.hostVideoTrack = remoteVideoTrack
 
