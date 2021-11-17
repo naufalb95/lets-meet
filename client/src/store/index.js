@@ -14,8 +14,12 @@ export default new Vuex.Store({
     isModalRegister: false,
     isModalCreate: false,
     isModalEdit: false,
+    isModalLeave: false,
+    isModalDelete: false,
     isLogin: false,
-    isVideoConference: true,
+    isVideoConference: false,
+    leaveEvent: false,
+    deleteEvent: false,
     userId: null,
     events: [],
     eventDetail: {
@@ -47,6 +51,12 @@ export default new Vuex.Store({
     categories: null
   },
   mutations: {
+    SET_LEAVE_EVENT (state, payload) {
+      state.leaveEvent = payload
+    },
+    SET_DELETE_EVENT (state, payload) {
+      state.deleteEvent = payload
+    },
     GET_TOKEN_MESSAGE (state, payload) {
       state.tokenMessage = payload
     },
@@ -61,6 +71,12 @@ export default new Vuex.Store({
     },
     SET_IS_MODAL_SHOW_REGISTER (state, payload) {
       state.isModalRegister = payload
+    },
+    SET_IS_MODAL_SHOW_LEAVE (state, payload) {
+      state.isModalLeave = payload
+    },
+    SET_IS_MODAL_SHOW_DELETE (state, payload) {
+      state.isModalDelete = payload
     },
     SET_IS_MODAL_SHOW_CREATE (state, payload) {
       state.isModalCreate = payload

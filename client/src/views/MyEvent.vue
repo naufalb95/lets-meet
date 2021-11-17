@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col mt-28 mb-64">
+  <div class="flex flex-col mt-28 mb-96">
     <div class="text-gray-900 mb-8">
       <h1 class="text-5xl text-center filter drop-shadow-lg">My Event List</h1>
     </div>

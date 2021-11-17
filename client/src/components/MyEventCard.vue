@@ -55,14 +55,16 @@ export default {
       this.$router.push({ name: 'Detail', params: { id: this.event.event.id } })
     },
     async leaveEventHandler () {
-      await this.userLeaveEvent(this.event.event.id)
+      this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', true)
+      // await this.userLeaveEvent(this.event.event.id)
 
-      await this.fetchMyEvents()
+      // await this.fetchMyEvents()
     },
     async deleteEventHandler () {
-      await this.deleteEvent(this.event.event.id)
+      this.$store.commit('SET_IS_MODAL_SHOW_DELETE', true)
+      // await this.deleteEvent(this.event.event.id)
 
-      await this.fetchMyEvents()
+      // await this.fetchMyEvents()
     },
     async doneEventHandler () {
       await this.doneEvent(this.event.event.id)
@@ -82,6 +84,26 @@ export default {
     },
     isDone () {
       return this.event.event.isDone
+    },
+    leaveEvent () {
+      return this.$store.state.leaveEvent
+    },
+    deletezEvent () {
+      return this.$store.state.deleteEvent
+    }
+  },
+  watch: {
+    leaveEvent: async function (newVal, oldVal) {
+      await this.userLeaveEvent(this.event.event.id)
+      await this.fetchMyEvents()
+      await this.$store.commit('SET_LEAVE_EVENT', false)
+      await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+    },
+    deletezEvent: async function (newVal, oldVal) {
+      await this.deleteEvent(this.event.event.id)
+      await this.fetchMyEvents()
+      await this.$store.commit('SET_DELETE_EVENT', false)
+      await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
     }
   },
   mounted () {

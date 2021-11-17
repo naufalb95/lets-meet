@@ -1,5 +1,5 @@
 <template>
-  <div class="flex mt-16 flex-col mb-64">
+  <div class="flex mt-16 flex-col mb-96">
     <div class="text-center" v-if="isLoading">
       <h1>Loading...</h1>
     </div>
@@ -118,6 +118,26 @@ export default {
     },
     attendees () {
       return this.eventDetail.participants?.length + 1
+    },
+    leaveEvent () {
+      return this.$store.state.leaveEvent
+    },
+    deletezEvent () {
+      return this.$store.state.deleteEvent
+    }
+  },
+  watch: {
+    leaveEvent: async function (newVal, oldVal) {
+      await this.userLeaveEvent(this.$route.params.id)
+      this.isAttending = false
+      await this.$store.commit('SET_LEAVE_EVENT', false)
+      await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+    },
+    deletezEvent: async function (newVal, oldVal) {
+      await this.deleteEvent(this.$route.params.id)
+      await this.$store.commit('SET_DELETE_EVENT', false)
+      await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
+      this.$router.push({ name: 'MyEvent' })
     }
   },
   methods: {
@@ -151,20 +171,16 @@ export default {
       }
     },
     async leaveEventHandler () {
-      try {
-        await this.userLeaveEvent(this.$route.params.id)
-        this.isAttending = false
-      } catch (error) {
-        console.log(error)
-      }
+      await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', true)
+      // await this.userLeaveEvent(this.$route.params.id)
+
+      // this.isAttending = false
     },
     async deleteEventHandler () {
-      try {
-        await this.deleteEvent(this.$route.params.id)
-        this.$router.push({ name: 'MyEvent' })
-      } catch (error) {
-        console.log(error)
-      }
+      this.$store.commit('SET_IS_MODAL_SHOW_DELETE', true)
+      // await this.deleteEvent(this.$route.params.id)
+
+      // this.$router.push({ name: 'MyEvent' })
     },
     async doneEventHandler () {
       try {
