@@ -128,16 +128,20 @@ export default {
   },
   watch: {
     leaveEvent: async function (newVal, oldVal) {
-      await this.userLeaveEvent(this.$route.params.id)
-      this.isAttending = false
-      await this.$store.commit('SET_LEAVE_EVENT', false)
-      await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+      if (newVal === true) {
+        await this.userLeaveEvent(this.$route.params.id)
+        this.isAttending = false
+        await this.$store.commit('SET_LEAVE_EVENT', false)
+        await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+      }
     },
     deletezEvent: async function (newVal, oldVal) {
-      await this.deleteEvent(this.$route.params.id)
-      await this.$store.commit('SET_DELETE_EVENT', false)
-      await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
-      this.$router.push({ name: 'MyEvent' })
+      if (newVal === true) {
+        await this.deleteEvent(this.$route.params.id)
+        await this.$store.commit('SET_DELETE_EVENT', false)
+        await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
+        this.$router.push({ name: 'MyEvent' })
+      }
     }
   },
   methods: {
