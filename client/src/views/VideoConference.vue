@@ -5,14 +5,18 @@
     </div>
     <div id='content' class='text-white pl-5 flex items-center'>
       <div id='video_container' class='flex-grow h-full p-2'>
-        <div class='bg-black bg-opacity-80 w-full h-full rounded-lg text-black flex items-center justify-center'>
-          <div id='main_video' class='w-full'></div>
+        <div class='bg-gray-800 bg-opacity-80 w-full h-full rounded-lg text-black flex items-center justify-center relative'>
+          <div id='main_video' class='w-full relative z-10'></div>
+          <div class="absolute top-0 left-0 h-full w-full flex justify-center items-center text-gray-300">Waiting for host to share their screen or cam</div>
         </div>
       </div>
       <div id='part_container' class='flex-grow-0 h-full p-2 hidden'>
-        <div id='video_part' class='flex-grow-0 h-full overflow-x-hidden overflow-y-scroll part_video_container'>
+        <div id='video_part' class='flex-grow-0 h-full overflow-x-hidden overflow-y-scroll part_video_container relative'>
           <div id='host_video' class='participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden hidden'></div>
-          <div id='local_video' class='participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden'></div>
+          <div id='local_video' class='participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'>
+            <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300">{{ this.options.uid }}</div>
+            <div class="absolute top-0 left-0 pl-4 pb-2 filter drop-shadow-lg z-20 w-full h-full flex justify-start items-end text-gray-300 hidden" ref="local_video_username">{{ this.options.uid }}</div>
+          </div>
         </div>
       </div>
        <div id='part_chat' class='flex-grow-0 h-full p-2'>
@@ -32,7 +36,7 @@
               </textarea>
             </div>
             <div class='w-1/6'>
-              <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0'>
+              <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0 bg-white'>
                 <font-awesome-icon :icon="['fas', 'paper-plane']" class="mr-2 text-2xl text-gray-600"/>
               </button>
             </div>
@@ -41,6 +45,7 @@
       </div>
     </div>
     <div id='bottom_row' class='text-white pl-5 flex items-center'>
+      <button @click='shareScreenHandler' class='mx-3' v-if='!isScreenShare && isHost'>Screen Share</button>
       <button @click='stopScreenShareHandler' class='mx-3' v-if='isScreenShare && isHost'>Stop Screen Share</button>
       <button @click='openCamHandler' class='mx-3' v-if='!isOpenCam'>Open Cam</button>
       <button @click='closeCamHandler' class='mx-3' v-if='isOpenCam'>Close Cam</button>
@@ -100,7 +105,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getToken', 'fetchEventDetail']),
+    ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
     ...mapMutations({
       setIsVideoConference: 'SET_IS_VIDEO_CONFERENCE'
     }),
@@ -118,14 +123,13 @@ export default {
       }
     },
     async joinHandler () {
-      // ! cek uid
-      await this.getToken({ uid: this.options.uid, channelName: this.options.channel })
+      await this.getChatToken({ uid: this.options.uid, channelName: this.options.channel })
 
       const appId = this.options.appId
       const client = AgoraRTM.createInstance(appId)
       const options = {
-        uid: this.options.uid.toString(),
-        token: this.token.video
+        uid: this.options.uid,
+        token: this.token.chat
       }
 
       await client.login(options)
@@ -137,14 +141,15 @@ export default {
       this.channelChat.on('ChannelMessage', (message, uid) => {
         this.messages.push({
           message: message.text,
-          name: uid,
+          name: this.options.uid,
           time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
         })
       })
 
       // * Video
-      // ! cek uid
-      await this.rtc.client.join(this.options.appId, this.options.channel, this.options.token.video, this.options.uid)
+      await this.getVideoToken({ uid: +this.myId, channelName: this.options.channel })
+
+      await this.rtc.client.join(appId, this.options.channel, this.token.video, +this.myId)
       this.isJoined = true
       this.isMuted = true
       this.isOpenCam = false
@@ -173,12 +178,11 @@ export default {
 
         let container = null
 
-        // ! Check localStorage pada userId, kalau dia host maka masuk sini, ganti this.options.uid-nya
-        // ! cek uid
         if (this.hostId === this.options.uid && !this.screenId) {
           container = document.getElementById('main_video')
           const localVidDiv = document.getElementById('local_video')
           localVidDiv.className = ''
+          this.$refs.local_video_username.classList.add('hidden')
 
           container.style.height = `${container.offsetWidth / 16 * 9}px`
         } else {
@@ -186,8 +190,9 @@ export default {
           container = document.getElementById('local_video')
           const partChatDiv = document.getElementById('part_container')
           partChatDiv.classList.remove('hidden')
+          this.$refs.local_video_username.classList.remove('hidden')
 
-          container.className = 'participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden'
+          container.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
         }
 
         this.rtc.localVideoTrack.play(container)
@@ -205,9 +210,7 @@ export default {
       const partChatDiv = document.getElementById('part_container')
       const remoteUsers = this.rtc.client.remoteUsers
 
-      // ! cek uid
       if (this.hostId === this.options.uid) {
-        // ! Jika user adalah host, maka localVidDiv ditutup dan partchat div ditutup
         if (this.isScreenShare && remoteUsers.length === 1) {
           partChatDiv.classList.add('hidden')
         }
@@ -215,6 +218,7 @@ export default {
 
       this.rtc.localVideoTrack = null
       this.isOpenCam = false
+      this.$refs.local_video_username.classList.add('hidden')
     },
     async unmuteHandler () {
       if (!this.rtc.localAudioTrack) {
@@ -231,10 +235,13 @@ export default {
       this.isMuted = true
     },
     async shareScreenHandler () {
+      await this.getScreenToken({ channelName: this.options.channel })
+
       let container = null
 
       this.rtc.screenClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
-      await this.rtc.screenClient.join(this.options.appId, this.options.channel, this.options.token.video)
+
+      await this.rtc.screenClient.join(this.options.appId, this.options.channel, this.token.screen)
 
       this.rtc.localScreenTrack = await AgoraRTC.createScreenVideoTrack({
         encoderConfig: '1080p_1',
@@ -258,7 +265,8 @@ export default {
       if (this.rtc.localVideoTrack) {
         container = document.getElementById('local_video')
 
-        container.className = 'participants-video bg-white h-full rounded-lg text-black mb-3 overflow-hidden'
+        container.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
+        this.$refs.local_video_username.classList.remove('hidden')
 
         this.rtc.localVideoTrack.play(container)
       }
@@ -279,6 +287,7 @@ export default {
         container = document.getElementById('main_video')
         const localVidDiv = document.getElementById('local_video')
         localVidDiv.className = ''
+        this.$refs.local_video_username.classList.add('hidden')
 
         this.rtc.localVideoTrack.play(container)
       }
@@ -293,8 +302,10 @@ export default {
     this.options.channel = this.eventDetail.event.id.toString()
     this.participantsId = this.eventDetail.participants.map((p) => p.userId)
 
-    if (this.userId === this.hostId) this.options.uid = this.eventDetail.eventOrganizer.username
-    else {
+    if (this.userId === this.hostId) {
+      this.options.uid = this.eventDetail.eventOrganizer.username
+      this.myId = this.eventDetail.eventOrganizer.id.toString()
+    } else {
       const userIdx = this.eventDetail.participants.findIndex((p) => {
         return p.userId === +this.userId
       })
@@ -303,16 +314,20 @@ export default {
       this.options.uid = uid.User.username
       this.myId = uid.userId.toString()
     }
+
+    if (this.hostId === this.myId) {
+      this.isHost = true
+      this.isHostPresent = true
+    }
   },
   computed: {
     ...mapState(['token', 'eventDetail', 'userId'])
   },
   async mounted () {
     window.addEventListener('resize', this.videoResizeHandler)
+    //  this.$refs.local_video_username.classList.remove('hidden')
 
     this.rtc.client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
-
-    if (this.hostId === this.myId) this.isHost = true
 
     if (this.host) {
       const localVidDiv = document.getElementById('local_video')
@@ -347,14 +362,12 @@ export default {
 
       videoContainer = document.getElementById('video_part')
 
-      // ! cek user.uid
       if (user.uid === this.hostId) this.isHostPresent = true
 
       if (mediaType === 'video') {
         const remoteVideoTrack = user.videoTrack
 
-        // ! cek user.uid
-        if (user.uid === this.screenId && this.options.uid !== this.hostId) {
+        if (user.uid === this.screenId && !this.isHost) {
           // * Jika client adalah screen share
           const mainContainer = document.getElementById('main_video')
 
@@ -372,7 +385,6 @@ export default {
           }
         }
 
-        // ! cek user.uid
         if (user.uid === this.hostId) {
           // * Jika client adalah host
           if (this.screenId) {
@@ -394,14 +406,18 @@ export default {
           }
         }
 
-        // ! cek user.uid
         if (user.uid !== this.screenId && user.uid !== this.hostId) {
-          // * Jika client bukanlah screen dan host
+          // * Jika client bukanlah screen dan host, melainkan participants
           const remotePlayerContainer = document.createElement('div')
           remotePlayerContainer.id = user.uid.toString()
           remotePlayerContainer.style.width = '100%'
           remotePlayerContainer.style.height = '168.76px'
-          remotePlayerContainer.className = 'bg-white h-full rounded-lg text-black mb-3 overflow-hidden'
+          remotePlayerContainer.className = 'participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'
+          const remotePlayerUsername = document.createElement('div')
+          remotePlayerUsername.className = 'absolute top-0 left-0 pl-4 pb-2 z-20 w-full h-full flex justify-start items-end text-gray-300'
+          const idx = this.eventDetail.participants.findIndex(p => p.userId === user.uid)
+          remotePlayerUsername.innerText = this.eventDetail.participants[idx].User.username
+          remotePlayerContainer.append(remotePlayerUsername)
           videoContainer.append(remotePlayerContainer)
           remoteVideoTrack.play(remotePlayerContainer)
         }
@@ -415,7 +431,6 @@ export default {
       this.rtc.client.on('user-unpublished', user => {
         const remotePlayerContainer = document.getElementById(user.uid)
 
-        // ! cek user.uid
         if (user.uid === this.screenId) {
           this.screenId = null
 
@@ -432,7 +447,7 @@ export default {
             hostContainer.classList.add('hidden')
           }
         }
-        // ! cek user.uid
+
         if (user.uid === this.hostId) {
           const hostContainer = document.getElementById('host_video')
 

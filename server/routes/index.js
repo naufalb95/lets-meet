@@ -13,7 +13,8 @@ router.post("/users/login", UserController.login);
 router.get("/events", EventController.findAll);
 router.get("/events/:eventId", EventController.detailEvent);
 router.get("/categories", CategoryController.getAll);
-router.get("/access_token", nocache, EventController.generateToken);
+router.get("/create_chat_token", nocache, EventController.generateChatToken);
+router.get("/create_video_token", nocache, EventController.generateVideoToken);
 
 router.use(authentication);
 

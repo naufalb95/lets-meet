@@ -40,10 +40,9 @@ export default new Vuex.Store({
     },
     token: {
       chat: '',
-      video: ''
+      video: '',
+      screen
     },
-    tokenMessage: '',
-    tokenVideo: '',
     messages: []
   },
   mutations: {
@@ -89,34 +88,37 @@ export default new Vuex.Store({
     SET_TOKEN_VIDEO (state, payload) {
       state.token.video = payload
     },
+    SET_TOKEN_SCREEN (state, payload) {
+      state.token.screen = payload
+    },
     SET_TOKEN_CHAT (state, payload) {
       state.token.chat = payload
     }
   },
   actions: {
-    async getToken (context, payload) {
+    async getChatToken (context, payload) {
       const response = await server({
-        url: `/access_token?channelName=${payload.channelName}&uid=${payload.uid}`,
+        url: `/create_chat_token?channelName=${payload.channelName}&uid=${payload.uid}`,
         method: 'GET'
       })
 
       context.commit('SET_TOKEN_CHAT', response.data.token)
     },
-    getTokenVideo (_, payload) {
-      return new Promise((resolve, reject) => {
-        server({
-          url: `/access_token_video?channelName=${payload.channelName}&uid=${payload.uid}`,
-          method: 'GET'
-        })
-          .then(({ data }) => {
-            resolve(data)
-            console.log(data, '=======')
-          })
-          .catch((err) => {
-            console.log('fail')
-            reject(err)
-          })
+    async getVideoToken (context, payload) {
+      const response = await server({
+        url: `/create_video_token?channelName=${payload.channelName}&uid=${payload.uid}`,
+        method: 'GET'
       })
+
+      context.commit('SET_TOKEN_VIDEO', response.data.token)
+    },
+    async getScreenToken (context, payload) {
+      const response = await server({
+        url: `/create_video_token?channelName=${payload.channelName}`,
+        method: 'GET'
+      })
+
+      context.commit('SET_TOKEN_SCREEN', response.data.token)
     },
     async fetchEvents (context, payload) {
       const response = await server({
