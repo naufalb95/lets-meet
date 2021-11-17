@@ -26,9 +26,6 @@ let errorHandler = (error, req, res, next) => {
         case "Event Full":
             message = res.status(400).json({ message: `Event Full` });
             break;
-        case 'fileTooBig':
-            res.status(400).json({ error: 'The file that accepted must be less than 25MB' })
-            break;
         case 'wrongFormat':
             res.status(400).json({ error: 'The format besides jpg, jpeg and png is not acceptable' })
             break;
