@@ -72,11 +72,12 @@ class EventController {
             if (category) {
                 condition.categoryId = category;
             }
-
-            if (location === "Online") {
-                condition.location = "Online";
-            } else {
-                condition.location = { [Op.notLike]: `Online` };
+            if (location) {
+                if (location === "Online") {
+                    condition.location = "Online";
+                } else if (location !== "Online") {
+                    condition.location = { [Op.notLike]: `Online` };
+                }
             }
 
             if (day) {
@@ -86,7 +87,7 @@ class EventController {
                     tomorrow.setDate(tomorrow.getDate() + 1);
                     tomorrow.setHours(23, 59, 59, 59);
                     condition.dateAndTime = {
-                        [Op.between]: [today, tomorrow],
+                        [Op.between]: [today.setHours(23, 59, 59, 59), tomorrow],
                     };
                 }
                 if (day == "today") {
