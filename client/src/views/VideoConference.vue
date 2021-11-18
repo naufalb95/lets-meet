@@ -167,12 +167,12 @@ export default {
       // ! Chat Event Handler
       // * If there is a new message handler
       this.chat.channel.on('ChannelMessage', (message, uid) => {
-        const userDetail = this.eventDetail.participants.find(el => el.userId === this.settings.uid)
+        const userDetail = this.eventDetail.participants.find(el => el.userId === uid)
         let username = ''
 
         if (userDetail) username = userDetail.User.username
         else {
-          if (this.settings.uid === this.hostId) username = this.eventDetail.eventOrganizer.username
+          if (uid === this.hostId) username = this.eventDetail.eventOrganizer.username
         }
 
         this.chat.messages.push({
@@ -209,7 +209,7 @@ export default {
 
           if (userDetail) remoteUser.username = userDetail.User.username
           else {
-            if (remoteUser.id === this.hostId) remoteUser.username = this.eventDetail.eventOrganizer.username
+            if (remoteUser.id === this.hostId) remoteUser.username = this.eventDetail.eventOrganizer.username + ' (Host)'
           }
 
           this.inMeetParticipants.push(remoteUser)
@@ -333,7 +333,7 @@ export default {
 
     if (userDetail) username = userDetail.User.username
     else {
-      if (this.settings.uid === this.hostId) username = this.eventDetail.eventOrganizer.username
+      if (this.settings.uid === this.hostId) username = this.eventDetail.eventOrganizer.username + ' (Host)'
     }
 
     this.inMeetParticipants.push({
