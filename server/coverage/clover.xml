@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1637249687210" clover="3.2.0">
-  <project timestamp="1637249687210" name="All files">
-    <metrics statements="384" coveredstatements="379" conditionals="112" coveredconditionals="99" methods="39" coveredmethods="38" elements="535" coveredelements="516" complexity="0" loc="384" ncloc="384" packages="6" files="18" classes="18"/>
+<coverage generated="1637250219691" clover="3.2.0">
+  <project timestamp="1637250219691" name="All files">
+    <metrics statements="384" coveredstatements="380" conditionals="112" coveredconditionals="100" methods="39" coveredmethods="38" elements="535" coveredelements="518" complexity="0" loc="384" ncloc="384" packages="6" files="18" classes="18"/>
     <package name="server">
       <metrics statements="9" coveredstatements="9" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="app.js" path="D:\Hacktiv8\Phase3\lets-meet\server\app.js">
@@ -18,7 +18,7 @@
       </file>
     </package>
     <package name="server.controllers">
-      <metrics statements="211" coveredstatements="208" conditionals="78" coveredconditionals="69" methods="16" coveredmethods="15"/>
+      <metrics statements="211" coveredstatements="209" conditionals="78" coveredconditionals="70" methods="16" coveredmethods="15"/>
       <file name="categoryController.js" path="D:\Hacktiv8\Phase3\lets-meet\server\controllers\categoryController.js">
         <metrics statements="6" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
@@ -29,7 +29,7 @@
         <line num="18" count="2" type="stmt"/>
       </file>
       <file name="eventController.js" path="D:\Hacktiv8\Phase3\lets-meet\server\controllers\eventController.js">
-        <metrics statements="187" coveredstatements="185" conditionals="74" coveredconditionals="65" methods="13" coveredmethods="12"/>
+        <metrics statements="187" coveredstatements="186" conditionals="74" coveredconditionals="66" methods="13" coveredmethods="12"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -192,19 +192,19 @@
         <line num="380" count="1" type="stmt"/>
         <line num="382" count="1" type="stmt"/>
         <line num="384" count="1" type="stmt"/>
-        <line num="389" count="2" type="stmt"/>
-        <line num="391" count="2" type="stmt"/>
-        <line num="393" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="389" count="3" type="stmt"/>
+        <line num="391" count="3" type="stmt"/>
+        <line num="393" count="3" type="cond" truecount="2" falsecount="0"/>
         <line num="394" count="1" type="stmt"/>
-        <line num="397" count="1" type="stmt"/>
-        <line num="399" count="1" type="cond" truecount="3" falsecount="1"/>
-        <line num="400" count="0" type="stmt"/>
-        <line num="403" count="1" type="stmt"/>
-        <line num="404" count="1" type="stmt"/>
-        <line num="405" count="1" type="stmt"/>
-        <line num="406" count="1" type="stmt"/>
-        <line num="407" count="1" type="stmt"/>
-        <line num="409" count="1" type="stmt"/>
+        <line num="397" count="2" type="stmt"/>
+        <line num="399" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="400" count="1" type="stmt"/>
+        <line num="403" count="2" type="stmt"/>
+        <line num="404" count="2" type="stmt"/>
+        <line num="405" count="2" type="stmt"/>
+        <line num="406" count="2" type="stmt"/>
+        <line num="407" count="2" type="stmt"/>
+        <line num="409" count="2" type="stmt"/>
         <line num="413" count="2" type="stmt"/>
         <line num="415" count="2" type="stmt"/>
         <line num="417" count="2" type="cond" truecount="2" falsecount="0"/>
@@ -284,10 +284,10 @@
       <file name="cacheRTMAgora.js" path="D:\Hacktiv8\Phase3\lets-meet\server\middlewares\cacheRTMAgora.js">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
-        <line num="2" count="4" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
-        <line num="4" count="4" type="stmt"/>
-        <line num="5" count="4" type="stmt"/>
+        <line num="2" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
+        <line num="4" count="5" type="stmt"/>
+        <line num="5" count="5" type="stmt"/>
         <line num="8" count="2" type="stmt"/>
       </file>
       <file name="errorHandler.js" path="D:\Hacktiv8\Phase3\lets-meet\server\middlewares\errorHandler.js">

@@ -942,51 +942,18 @@ describe('Event fiture', () => {
             })
     })
 
-    // test("Add Event Success with Image Kit", async () => {
-    //     const filePath = "assets/image.png";
-    //     const buffer = Buffer.from(filePath);
-
-    //     const { status, body } = await request(app)
-    //       .post("events")
-    //       .set({access_token})
-
-
-    //     expect(status).toBe(201);
-    //     expect(body).toEqual(expect.any(Object));
-    //     expect(body).toHaveProperty("name");
-    //     expect(body).toHaveProperty("dateAndTime");
-    //     expect(body).toHaveProperty("location");
-    //     expect(body).toHaveProperty("description");
-    //     expect(body).toHaveProperty("maxParticipants");
-    //     expect(body).toHaveProperty("eventOrganizerId");
-    //     expect(body).toHaveProperty("isDone");
-    //   })
-
-    // test('Create New Event With Image Kit', (done) => {
-    //     const filePath = "assets/image.png";
-    //     const buffer = Buffer.from(filePath);
-
-    //     request(app)
-    //         .post('/events')
-    //         .set({ access_token })
-    //         .attach("imgUrl", buffer, "image.png")
-    //         .then((res) => {
-    //             expect(res.status).toBe(201);
-    //             expect(res.body).toEqual(expect.any(Object));
-    //             expect(body).toHaveProperty("name");
-    //             expect(body).toHaveProperty("dateAndTime");
-    //             expect(body).toHaveProperty("location");
-    //             expect(body).toHaveProperty("description");
-    //             expect(body).toHaveProperty("maxParticipants");
-    //             expect(body).toHaveProperty("eventOrganizerId");
-    //             expect(body).toHaveProperty("isDone");
-    //             done();
-    //         })
-
-    //         .catch((err) => {
-    //             done(err)
-    //         })
-    // })
+    test('Get Video Token With Empty Uid', (done) => {
+        request(app)
+            .get('/create_video_token?channelName=test&uid=')
+            .then((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body).toEqual(expect.any(Object));
+                done();
+            })
+            .catch((err) => {
+                done(err)
+            })
+    })
 
     test('Create New Event With Image Kit', (done) => {
         const filePath = "assets/image.png";
