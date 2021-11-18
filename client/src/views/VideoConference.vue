@@ -239,28 +239,35 @@ export default {
               // ! dan ada host
               // ! Maka screen masuk ke main_video
               // ! cam host pindah ke kanan
-              console.log(hostDetail, this.screenId, user.uid)
 
               this.screenShareTrack = user.videoTrack
 
-              this.screenShareTrack.play('main_video')
+              this.screenShareTrack.play('main_video', {
+                fit: 'contain'
+              })
 
-              hostDetail.screenTrack.play(hostDetail.id.toString())
+              hostDetail.screenTrack.play(hostDetail.id.toString(), {
+                fit: 'contain'
+              })
             } else if (hostDetail.id === user.uid && !this.screenId) {
               // ! Jika ini adalah host
               // ! Jika tidak ada screen share
               // ! Maka screen masuk ke main_video
-              console.log('Ada host, tidak ada screenshare')
+
               hostDetail.screenTrack = user.videoTrack
 
-              hostDetail.screenTrack.play('main_video')
+              hostDetail.screenTrack.play('main_video', {
+                fit: 'contain'
+              })
             } else if (hostDetail.id === user.uid && this.screenId) {
               // ! Jika ini adalah host
               // ! Jika ada screenshare
               // ! Maka masuk ke div kecil
               hostDetail.screenTrack = user.videoTrack
 
-              hostDetail.screenTrack.play(hostDetail.id.toString())
+              hostDetail.screenTrack.play(hostDetail.id.toString(), {
+                fit: 'contain'
+              })
             } else {
               // ! Jika ini adalah user
               // ! Dan ada host
@@ -325,10 +332,24 @@ export default {
       })
 
       this.video.client.on('user-unpublished', (user) => {
-        if (user.uid === this.screenId) {
-          // ! Clear screen share ID if it is unpublished
-          this.screenId = null
+        const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
+
+        if (hostDetail) {
+          if (this.screenId === user.uid) {
+            // ! Yang keluar adalah screen share
+            // ! Ada open cam host
+
+            this.screenId = null
+            hostDetail.screenTrack.play('main_video', {
+              fit: 'contain'
+            })
+          }
         }
+
+        // if (user.uid === this.screenId) {
+        //   // ! Clear screen share ID if it is unpublished
+        //   this.screenId = null
+        // }
       })
 
       // ! When a user left video call
