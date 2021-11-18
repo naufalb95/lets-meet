@@ -119,7 +119,6 @@ export default {
   methods: {
     ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
     async createNewMessage (e) {
-      console.log(this.chat.messages)
       const checkEmptyMsg = this.chat.message.trim()
       if (this.chat.channel != null && (e.type === 'submit' || (e.type === 'keydown' && e.keyCode === 13)) && checkEmptyMsg) {
         await this.chat.channel.sendMessage({ text: this.chat.message })
