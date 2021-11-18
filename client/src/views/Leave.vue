@@ -17,6 +17,8 @@ export default {
     },
     async leave () {
       await this.$store.commit('SET_LEAVE_EVENT', true)
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'hidden'
     }
   }
 }

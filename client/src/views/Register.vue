@@ -70,6 +70,8 @@ export default {
     closeHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'hidden'
     }
   }
 }
