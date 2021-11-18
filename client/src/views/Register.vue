@@ -48,6 +48,7 @@ export default {
     },
     async submitHandler () {
       try {
+        var show = document.getElementsByTagName('body')
         if (this.password !== this.confirmPassword) console.log('salah!')
         else {
           const payload = {
@@ -58,9 +59,11 @@ export default {
           await this.registerUser(payload)
           this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
           this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
+          show[0].style.overflow = 'visible'
         }
       } catch (error) {
         console.log(error)
+        show[0].style.overflow = 'visible'
       }
     },
     signInHandler () {
@@ -71,7 +74,7 @@ export default {
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
       var show = document.getElementsByTagName('body')
-      show[0].style.overflow = 'hidden'
+      show[0].style.overflow = 'visible'
     }
   }
 }

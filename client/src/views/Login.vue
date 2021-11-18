@@ -38,6 +38,7 @@ export default {
     },
     async submitHandler () {
       try {
+        var show = document.getElementsByTagName('body')
         const payload = {
           email: this.email,
           password: this.password
@@ -45,15 +46,17 @@ export default {
         await this.loginUser(payload)
         this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
         this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
+        show[0].style.overflow = 'visible'
       } catch (error) {
         console.log(error)
+        show[0].style.overflow = 'visible'
       }
     },
     closeHandler () {
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'visible'
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
-      var show = document.getElementsByTagName('body')
-      show[0].style.overflow = 'hidden'
     }
   }
 }
