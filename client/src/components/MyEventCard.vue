@@ -61,6 +61,8 @@ export default {
     async leaveEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', true)
       this.$store.commit('SET_CURRENT_EVENT_ID', this.event.event.id)
+      document.body.scrollTop = 0
+      document.documentElement.scrollTop = 0
       var show = document.getElementsByTagName('body')
       show[0].style.overflow = 'hidden'
       // await this.userLeaveEvent(this.event.event.id)
@@ -70,6 +72,8 @@ export default {
     async deleteEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_DELETE', true)
       this.$store.commit('SET_CURRENT_EVENT_ID', this.event.event.id)
+      document.body.scrollTop = 0
+      document.documentElement.scrollTop = 0
       var show = document.getElementsByTagName('body')
       show[0].style.overflow = 'hidden'
       // await this.deleteEvent(this.event.event.id)
