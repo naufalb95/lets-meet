@@ -58,7 +58,7 @@
       <!-- <button class='mx-3' @click="openCamHandler" v-if="isOpenCam">Close Cam</button> -->
       <!-- <button class='mx-3' @click="unmuteHandler" v-if="!isMuted">Mute</button> -->
       <button ref="mic" class='mx-2 px-5 py-2 bg-gray-600 rounded-full' @click="unmuteHandler"><font-awesome-icon :icon="['fas', 'microphone-alt']" class="text-2xl text-gray-300"/></button>
-      <button class='mx-2 px-5 py-2 bg-red-600 rounded-full' @click="leaveHandler"><font-awesome-icon :icon="['fas', 'sign-out-alt']" class="text-2xl text-gray-300"/></button>
+      <button class='mx-2 px-5 py-2 bg-red-600 rounded-full' @click="leaveHandler"><font-awesome-icon :icon="['fas', 'phone']" class="text-2xl text-gray-300"/></button>
     </div>
     <div class='absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80 flex justify-center items-center z-40' v-if='!isJoined'>
       <div class='bg-white rounded w-3/12 py-12 px-8 flex justify-center items-center flex-col'>
