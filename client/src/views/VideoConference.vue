@@ -109,7 +109,7 @@ export default {
       screenId: null,
       inMeetParticipants: [],
       participantVolumeId: null,
-      volumeCounter: 0,
+      screenShareTrack: null,
       isJoined: false
     }
   },
@@ -199,6 +199,8 @@ export default {
         const checkScreenShareId = this.eventDetail.participants.some(el => el.userId === user.uid)
 
         if (!checkParticipant) {
+          console.log(checkScreenShareId, this.screenId)
+
           if (!checkScreenShareId) this.screenId = user.uid
 
           const remoteUser = {
@@ -212,7 +214,7 @@ export default {
             if (remoteUser.id === this.hostId) remoteUser.username = this.eventDetail.eventOrganizer.username + ' (Host)'
           }
 
-          this.inMeetParticipants.push(remoteUser)
+          if (!this.screenId) this.inMeetParticipants.push(remoteUser)
         }
       })
 
@@ -226,6 +228,16 @@ export default {
             videoTrack.play('main_video', {
               fit: 'contain'
             })
+
+            const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
+
+            if (hostDetail) {
+              if (hostDetail.screenTrack) {
+                hostDetail.screenTrack.play(hostDetail.id.toString(), {
+                  fit: 'contain'
+                })
+              }
+            }
           } else {
             user.videoTrack.play(user.uid.toString(), {
               fit: 'contain'
