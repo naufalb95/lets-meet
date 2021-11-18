@@ -195,13 +195,16 @@ export default {
       // ! Video Call Event Handler
       this.video.client.on('user-joined', (user) => {
         const checkParticipant = this.inMeetParticipants.some(el => el.id === user.uid)
+        const checkHost = this.eventDetail.event.eventOrganizerId === user.uid
+
+        console.log(checkHost)
 
         const checkScreenShareId = this.eventDetail.participants.some(el => el.userId === user.uid)
 
-        if (!checkParticipant) {
+        if (!checkParticipant || checkHost) {
           console.log(checkScreenShareId, this.screenId)
 
-          if (!checkScreenShareId) this.screenId = user.uid
+          if (!checkScreenShareId && !checkHost) this.screenId = user.uid
 
           const remoteUser = {
             id: user.uid
@@ -214,7 +217,10 @@ export default {
             if (remoteUser.id === this.hostId) remoteUser.username = this.eventDetail.eventOrganizer.username + ' (Host)'
           }
 
-          if (!this.screenId) this.inMeetParticipants.push(remoteUser)
+          if (this.screenId !== remoteUser.id || checkHost) {
+            console.log('Masuk sini')
+            this.inMeetParticipants.push(remoteUser)
+          }
         }
       })
 
@@ -223,26 +229,93 @@ export default {
         await this.video.client.subscribe(user, mediaType)
 
         if (mediaType === 'video') {
-          if (this.hostId === user.uid || this.screenId === user.uid) {
-            const videoTrack = user.videoTrack
-            videoTrack.play('main_video', {
-              fit: 'contain'
-            })
+          const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
 
-            const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
+          if (hostDetail) {
+            // ! Jika hostnya ada
 
-            if (hostDetail) {
-              if (hostDetail.screenTrack) {
-                hostDetail.screenTrack.play(hostDetail.id.toString(), {
-                  fit: 'contain'
-                })
-              }
+            if (this.screenId === user.uid) {
+              // ! Jika ini screen
+              // ! dan ada host
+              // ! Maka screen masuk ke main_video
+              // ! cam host pindah ke kanan
+              console.log(hostDetail, this.screenId, user.uid)
+
+              this.screenShareTrack = user.videoTrack
+
+              this.screenShareTrack.play('main_video')
+
+              hostDetail.screenTrack.play(hostDetail.id.toString())
+            } else if (hostDetail.id === user.uid && !this.screenId) {
+              // ! Jika ini adalah host
+              // ! Jika tidak ada screen share
+              // ! Maka screen masuk ke main_video
+              console.log('Ada host, tidak ada screenshare')
+              hostDetail.screenTrack = user.videoTrack
+
+              hostDetail.screenTrack.play('main_video')
+            } else if (hostDetail.id === user.uid && this.screenId) {
+              // ! Jika ini adalah host
+              // ! Jika ada screenshare
+              // ! Maka masuk ke div kecil
+              hostDetail.screenTrack = user.videoTrack
+
+              hostDetail.screenTrack.play(hostDetail.id.toString())
+            } else {
+              // ! Jika ini adalah user
+              // ! Dan ada host
+              // ! Maka masuk ke div kecil
+
+              user.videoTrack.play(user.uid.toString(), {
+                fit: 'contain'
+              })
             }
           } else {
-            user.videoTrack.play(user.uid.toString(), {
-              fit: 'contain'
-            })
+            if (this.screenId === user.uid) {
+              // ! Jika tidak ada cam host
+              // ! Jika ini adalah screen
+              // ! Maka masuk layar besar
+
+              this.screenShareTrack = user.videoTrack
+
+              this.screenShareTrack.play('main_video')
+            } else {
+              // ! Jika tidak ada host
+              // ! Jika user
+              user.videoTrack.play(user.uid.toString(), {
+                fit: 'contain'
+              })
+            }
           }
+
+          // else {
+          //   user.videoTrack.play(user.uid.toString(), {
+          //     fit: 'contain'
+          //   })
+          // }
+
+          // ! .... ini udah work
+          // if (this.hostId === user.uid || this.screenId === user.uid) {
+          //   const videoTrack = user.videoTrack
+          //   videoTrack.play('main_video', {
+          //     fit: 'contain'
+          //   })
+
+          //   const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
+
+          //   if (hostDetail) {
+          //     if (hostDetail.screenTrack) {
+          //       hostDetail.screenTrack.play(hostDetail.id.toString(), {
+          //         fit: 'contain'
+          //       })
+          //     }
+          //   }
+          // } else {
+          //   user.videoTrack.play(user.uid.toString(), {
+          //     fit: 'contain'
+          //   })
+          // }
+          // @ .... ini udah work
         }
 
         if (mediaType === 'audio') {
