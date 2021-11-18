@@ -17,6 +17,8 @@ export default {
     },
     async deletez () {
       await this.$store.commit('SET_DELETE_EVENT', true)
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'hidden'
     }
   }
 }

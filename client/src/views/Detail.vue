@@ -45,14 +45,14 @@
                 <font-awesome-icon :icon="['far', 'user']" class="mr-2 text-xl"/>
               </div>
               <div>
-                <h3 class="block text-gray-800">{{ attendees }}/{{ eventDetail.event.maxParticipants }} Attendees</h3>
+                <h3 class="block text-gray-800">{{ attendees + plusMin }}/{{ eventDetail.event.maxParticipants }} Attendees</h3>
               </div>
             </div>
             <div class="w-full flex items-center flex-col mt-4 px-6">
               <button @click="attendHandler" v-if="!isHost && !isAttending && !isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
                 Attend
               </button>
-              <button @click="joinMeetHandler" v-if="(isAttending || isHost) && isStart && !isDone" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
+              <button @click="joinMeetHandler" v-if="(isAttending || isHost) && isStart && !isDone && eventDetail.event.location === 'Online'" class="bg-blue-700 text-white px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-blue-800">
                 Join Meet
               </button>
               <button @click="leaveEventHandler" v-if="!isHost && isAttending && !isStart && !isDone" class="bg-white border border-red-700 text-red-700 px-3 py-1 rounded w-3/4 mt-2 text-lg font-semibold hover:bg-red-700 hover:border-red-700 hover:text-white">
@@ -87,6 +87,7 @@ export default {
   name: 'Detail',
   data () {
     return {
+      plusMin: 0,
       isLoading: true,
       isAttending: false,
       isHost: false,
@@ -128,16 +129,21 @@ export default {
   },
   watch: {
     leaveEvent: async function (newVal, oldVal) {
-      await this.userLeaveEvent(this.$route.params.id)
-      this.isAttending = false
-      await this.$store.commit('SET_LEAVE_EVENT', false)
-      await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+      if (newVal === true) {
+        await this.userLeaveEvent(this.$route.params.id)
+        this.isAttending = false
+        await this.$store.commit('SET_LEAVE_EVENT', false)
+        await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+        this.plusMin = this.plusMin - 1
+      }
     },
     deletezEvent: async function (newVal, oldVal) {
-      await this.deleteEvent(this.$route.params.id)
-      await this.$store.commit('SET_DELETE_EVENT', false)
-      await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
-      this.$router.push({ name: 'MyEvent' })
+      if (newVal === true) {
+        await this.deleteEvent(this.$route.params.id)
+        await this.$store.commit('SET_DELETE_EVENT', false)
+        await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
+        this.$router.push({ name: 'MyEvent' })
+      }
     }
   },
   methods: {
@@ -165,6 +171,7 @@ export default {
         } else {
           await this.attendEvent(this.$route.params.id)
           this.isAttending = true
+          this.plusMin = this.plusMin + 1
         }
       } catch (error) {
         console.log(error)
@@ -172,12 +179,16 @@ export default {
     },
     async leaveEventHandler () {
       await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', true)
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'hidden'
       // await this.userLeaveEvent(this.$route.params.id)
 
       // this.isAttending = false
     },
     async deleteEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_DELETE', true)
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'hidden'
       // await this.deleteEvent(this.$route.params.id)
 
       // this.$router.push({ name: 'MyEvent' })
@@ -200,8 +211,8 @@ export default {
     try {
       await this.fetchEventDetail(this.$route.params.id)
       this.isLoading = false
-      if (+this.userId === this.eventDetail.eventOrganizer.id) this.isHost = true
-      const participantIdx = this.eventDetail.participants.findIndex(p => p.userId === +this.userId)
+      if (+localStorage.getItem('user_id') === this.eventDetail.eventOrganizer.id) this.isHost = true
+      const participantIdx = this.eventDetail.participants.findIndex(p => p.userId === +localStorage.getItem('user_id'))
       if (participantIdx !== -1) this.isAttending = true
       const startDate = new Date(this.eventDetail.event.dateAndTime)
       const nowDate = new Date()

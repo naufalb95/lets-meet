@@ -7,6 +7,7 @@ import MyEvent from '../views/MyEvent.vue'
 import VideoConference from '../views/VideoConference.vue'
 import Create from '../views/Create.vue'
 import Edit from '../views/Edit.vue'
+import FourZeroFour from '../views/FourZeroFour.vue'
 
 Vue.use(VueRouter)
 
@@ -45,6 +46,11 @@ const routes = [
     path: '/myevent',
     name: 'MyEvent',
     component: MyEvent
+  },
+  {
+    path: '/404',
+    name: 'FourZeroFour',
+    component: FourZeroFour
   }
 ]
 
