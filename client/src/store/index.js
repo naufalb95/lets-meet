@@ -17,7 +17,7 @@ export default new Vuex.Store({
     isModalLeave: false,
     isModalDelete: false,
     isLogin: false,
-    isVideoConference: false,
+    isVideoConference: true,
     leaveEvent: false,
     deleteEvent: false,
     currentEventId: '',
