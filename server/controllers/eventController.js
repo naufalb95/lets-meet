@@ -1,11 +1,8 @@
 const { Event, Category, User, Participant } = require("../models");
 const { Op } = require("sequelize");
-// const cron = require("node-cron");
 const { RtmTokenBuilder, RtmRole, RtcRole, RtcTokenBuilder } = require('agora-access-token');
 const APP_ID = "bba821c9f0374c0a86b015c0668097d8";
 const APP_CERTIFICATE = "07331de6cdcb4a3ebe1686214c79921c";
-
-// const CRON_SCHEDULER = {};
 
 class EventController {
     static async create(req, res, next) {
@@ -35,25 +32,7 @@ class EventController {
                 eventOrganizerId,
                 longitude,
                 latitude,
-            });
-        // if (location === "Online") {
-        //     let dateInput = req.body.dateAndTime;
-        //     let minute = dateInput.slice(14, 16);
-        //     let hour = dateInput.slice(11, 13);
-        //     let day = dateInput.slice(8, 10);
-        //     let month = dateInput.slice(5, 7);
-        //     CRON_SCHEDULER[result.id] = cron.schedule(
-        //     `${minute} ${hour} ${day} ${month} *`,
-        //     () => {
-        //         console.log("Running on");
-        //     },
-        //     {
-        //         scheduled: false,
-        //         timezone: "Asia/Jakarta",
-        //     }
-        //     );
-        //     CRON_SCHEDULER[result.id].start();
-        // }
+            })
             res.status(201).json(result);
         } catch (err) {
             next(err);
@@ -144,7 +123,6 @@ class EventController {
                     const lat1 = latitude * Math.PI / 180;
                     const lat2 = item.latitude * Math.PI / 180;
 
-                    // Haversine formula
                     let dlon = lon2 - lon1;
                     let dlat = lat2 - lat1;
                     let a = Math.pow(Math.sin(dlat / 2), 2)
@@ -153,11 +131,8 @@ class EventController {
 
                     let c = 2 * Math.asin(Math.sqrt(a));
 
-                    // Radius of earth in kilometers. Use 3956
-                    // for miles
                     let r = 6371;
 
-                    // calculate the result
                     return (c * r) <= +distance;
                 });
             }
@@ -275,6 +250,14 @@ class EventController {
                 categoryId,
             } = req.body;
 
+            let condition = {}
+
+            if (name) condition.name = name;
+            if (dateAndTime) condition.dateAndTime = dateAndTime;
+            if (description) condition.description = description;
+            if (maxParticipants) condition.maxParticipants = maxParticipants;
+            if (imgUrl) condition.imgUrl = imgUrl;
+            if (categoryId) condition.categoryId = categoryId;
 
             const id = req.params.eventId;
             const userId = +req.user.id;
@@ -284,23 +267,14 @@ class EventController {
             if (!foundEvent) {
                 throw { name: "Event Not Found" };
             }
-            console.log(foundEvent.eventOrganizerId === userId, id)
             if (foundEvent.eventOrganizerId === userId) {
-                const responseFromSeq = await Event.update(
-                    {
-                        name,
-                        dateAndTime,
-                        description,
-                        maxParticipants,
-                        imgUrl,
-                        categoryId,
-                    },
+                await Event.update(
+                    condition,
                     {
                         where: { id },
                         returning: true,
                     }
                 );
-                console.log({responseFromSeq});
                 res.status(200).json({ message: 'Success Update' });
 
             } else {
@@ -322,10 +296,6 @@ class EventController {
             }
             if (foundEvent.eventOrganizerId === userId) {
                 await Event.destroy({ where: { id: eventId } });
-                // if (foundEvent.location === "Online") {
-                //   CRON_SCHEDULER[eventId].stop();
-                //   delete CRON_SCHEDULER[eventId];
-                // }
                 res.status(200).json({ message: `Event ${foundEvent.name} has been deleted` });
             } else {
                 throw { name: "Access Denied" };
@@ -407,7 +377,6 @@ class EventController {
                 where: { eventOrganizerId: userId },
             })
 
-            // console.log(foundParticipant);
             let result = foundParticipant.map(event => { return event.Event }).concat(foundMyEvent)
 
             res.status(200).json(result);
