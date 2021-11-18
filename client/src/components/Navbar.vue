@@ -30,10 +30,14 @@ export default {
       setUserId: 'SET_USER_ID'
     }),
     showLoginModal () {
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'hidden'
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
     },
     showRegisterModal () {
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'hidden'
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', true)
     },

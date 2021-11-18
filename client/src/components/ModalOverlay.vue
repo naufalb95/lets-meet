@@ -46,6 +46,8 @@ export default {
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
       this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
       this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'visible'
     }
   }
 }
