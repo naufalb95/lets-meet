@@ -10,13 +10,13 @@
       <div id='part_container' class='flex-grow-0 h-full p-2 overflow-y-scroll overflow-x-hidden'>
         <div id='video_part' class='flex-grow-0 relative' v-for="user of inMeetParticipants" :key="user.id">
           <div :id="user.id" class='participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'>
-            <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300">asd</div>
+            <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300">{{ user.username }}</div>
             <div class="absolute top-0 right-0 z-10 w-full h-full flex justify-end items-start  text-gray-300 pr-2 pt-3">
               <font-awesome-icon :icon="['fas', 'microphone-alt-slash']" class="mr-2 text-red-500"/>
             </div>
             <div class="absolute top-0 left-0 z-20 w-full h-full flex justify-start items-end text-gray-300">
               <div class="px-4 bg-black bg-opacity-50 w-full overflow-hidden truncate">
-                <span class="text-sm">{{ user.id }}</span>
+                <span class="text-sm">{{ user.username }}</span>
               </div>
             </div>
           </div>
@@ -130,7 +130,7 @@ export default {
 
         this.chat.messages.push({
           message: this.chat.message,
-          name,
+          name: 'You',
           time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
         })
 
@@ -169,9 +169,17 @@ export default {
       // ! Chat Event Handler
       // * If there is a new message handler
       this.chat.channel.on('ChannelMessage', (message, uid) => {
+        const userDetail = this.eventDetail.participants.find(el => el.userId === this.settings.uid)
+        let username = ''
+
+        if (userDetail) username = userDetail.User.username
+        else {
+          if (this.settings.uid === this.hostId) username = this.eventDetail.eventOrganizer.username
+        }
+
         this.chat.messages.push({
           message: message.text,
-          name: uid,
+          name: username,
           time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
         })
       })
@@ -197,6 +205,13 @@ export default {
 
           const remoteUser = {
             id: user.uid
+          }
+
+          const userDetail = this.eventDetail.participants.find(el => el.userId === remoteUser.id)
+
+          if (userDetail) remoteUser.username = userDetail.User.username
+          else {
+            if (remoteUser.id === this.hostId) remoteUser.username = this.eventDetail.eventOrganizer.username
           }
 
           this.inMeetParticipants.push(remoteUser)
@@ -315,8 +330,17 @@ export default {
     this.settings.uid = +localStorage.getItem('user_id')
     this.isHostPresent = this.eventDetail.event.eventOrganizerId === this.settings.uid
 
+    const userDetail = this.eventDetail.participants.find(el => el.userId === this.settings.uid)
+    let username = ''
+
+    if (userDetail) username = userDetail.User.username
+    else {
+      if (this.settings.uid === this.hostId) username = this.eventDetail.eventOrganizer.username
+    }
+
     this.inMeetParticipants.push({
-      id: this.settings.uid
+      id: this.settings.uid,
+      username
     })
 
     // ! Initialize Chat RTM
