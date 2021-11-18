@@ -60,15 +60,17 @@ export default {
     },
     async leaveEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', true)
-      await this.userLeaveEvent(this.event.event.id)
+      this.$store.commit('SET_CURRENT_EVENT_ID', this.event.event.id)
+      // await this.userLeaveEvent(this.event.event.id)
 
-      await this.fetchMyEvents()
+      // await this.fetchMyEvents()
     },
     async deleteEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_DELETE', true)
-      await this.deleteEvent(this.event.event.id)
+      this.$store.commit('SET_CURRENT_EVENT_ID', this.event.event.id)
+      // await this.deleteEvent(this.event.event.id)
 
-      await this.fetchMyEvents()
+      // await this.fetchMyEvents()
     },
     async doneEventHandler () {
       await this.doneEvent(this.event.event.id)
@@ -94,21 +96,30 @@ export default {
     },
     deletezEvent () {
       return this.$store.state.deleteEvent
+    },
+    currentEventId () {
+      return this.$store.state.currentEventId
     }
   },
   watch: {
     leaveEvent: async function (newVal, oldVal) {
-      await this.userLeaveEvent(this.event.event.id)
-      await this.fetchMyEvents()
-      await this.$store.commit('SET_LEAVE_EVENT', false)
-      await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+      if (newVal === true) {
+        await this.$store.commit('SET_LEAVE_EVENT', false)
+        await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+        await this.userLeaveEvent(this.currentEventId)
+        await this.$store.commit('SET_CURRENT_EVENT_ID', '')
+        await this.fetchMyEvents()
+      }
     },
     deletezEvent: async function (newVal, oldVal) {
-      console.log(this.event.event.id)
-      await this.deleteEvent(this.event.event.id)
-      await this.fetchMyEvents()
-      await this.$store.commit('SET_DELETE_EVENT', false)
-      await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
+      if (newVal === true) {
+        console.log(this.currentEventId)
+        await this.$store.commit('SET_DELETE_EVENT', false)
+        await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
+        await this.deleteEvent(this.currentEventId)
+        await this.$store.commit('SET_CURRENT_EVENT_ID', '')
+        await this.fetchMyEvents()
+      }
     }
   },
   mounted () {

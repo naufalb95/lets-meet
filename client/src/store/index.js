@@ -20,6 +20,7 @@ export default new Vuex.Store({
     isVideoConference: false,
     leaveEvent: false,
     deleteEvent: false,
+    currentEventId: '',
     userId: null,
     events: [],
     eventDetail: {
@@ -51,6 +52,9 @@ export default new Vuex.Store({
     categories: null
   },
   mutations: {
+    SET_CURRENT_EVENT_ID (state, payload) {
+      state.currentEventId = payload
+    },
     SET_LEAVE_EVENT (state, payload) {
       state.leaveEvent = payload
     },
