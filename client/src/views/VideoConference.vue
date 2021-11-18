@@ -11,7 +11,7 @@
         <div id='video_part' class='flex-grow-0 relative' v-for="user of inMeetParticipants" :key="user.id">
           <div :id="user.id" class='participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'>
             <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300">{{ user.username }}</div>
-            <div class="absolute top-0 right-0 z-10 w-full h-full flex justify-end items-start  text-gray-300 pr-2 pt-3" v-if="!user.audioTrack">
+            <div class="absolute top-0 right-0 z-10 w-full h-full flex justify-end items-start hidden text-gray-300 pr-2 pt-3" v-if="user.audioTrack">
               <font-awesome-icon :icon="['fas', 'microphone-alt-slash']" class="mr-2 text-red-500"/>
             </div>
             <div class="absolute top-0 left-0 z-20 w-full h-full flex justify-start items-end text-gray-300">
@@ -140,8 +140,16 @@ export default {
         this.chat.message = ''
       }
     },
-    leaveHandler () {
-      console.log('eave')
+    async leaveHandler () {
+      if (this.local.video) this.local.video.close()
+      if (this.local.audio) this.local.audio.close()
+      if (this.local.screen) this.local.screen.close()
+
+      await this.video.client.leave()
+
+      this.setIsVideoConference(false)
+
+      this.$router.push({ name: 'Home' })
     },
     async joinHandler () {
       await this.chat.channel.join()
@@ -164,7 +172,18 @@ export default {
 
       // ! Chat Event Handler
       // * If there is a new message handler
-      this.chat.channel.on('ChannelMessage', (message, username) => {
+      this.chat.channel.on('ChannelMessage', (message, uid) => {
+        let username = ''
+
+        const foundParticipant = this.inMeetParticipants.find(p => p.id === +username)
+
+        if (foundParticipant) username = foundParticipant.username
+        else if (+uid === this.hostId) {
+          const foundHost = this.inMeetParticipants.find(h => this.hostId === h.id)
+
+          username = foundHost.username
+        }
+
         this.chat.messages.push({
           message: message.text,
           name: username,
@@ -333,9 +352,11 @@ export default {
           }
         }
 
+        console.log(user, mediaType)
+
         if (mediaType === 'audio') {
-          const userDetail = this.inMeetParticipants.find(p => p.id === user.uid)
-          userDetail.audioTrack = null
+          const userDetailIndex = this.inMeetParticipants.findIndex(p => p.id === user.uid)
+          this.inMeetParticipants[userDetailIndex].audioTrack = null
         }
 
         // if (user.uid === this.screenId) {
