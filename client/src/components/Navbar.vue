@@ -34,12 +34,16 @@ export default {
       show[0].style.overflow = 'hidden'
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', true)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', false)
+      document.body.scrollTop = 0
+      document.documentElement.scrollTop = 0
     },
     showRegisterModal () {
       var show = document.getElementsByTagName('body')
       show[0].style.overflow = 'hidden'
       this.$store.commit('SET_IS_MODAL_SHOW_LOGIN', false)
       this.$store.commit('SET_IS_MODAL_SHOW_REGISTER', true)
+      document.body.scrollTop = 0
+      document.documentElement.scrollTop = 0
     },
     logout () {
       localStorage.clear()

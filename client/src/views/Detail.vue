@@ -181,6 +181,8 @@ export default {
       await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', true)
       var show = document.getElementsByTagName('body')
       show[0].style.overflow = 'hidden'
+      document.body.scrollTop = 0
+      document.documentElement.scrollTop = 0
       // await this.userLeaveEvent(this.$route.params.id)
 
       // this.isAttending = false
@@ -189,6 +191,8 @@ export default {
       this.$store.commit('SET_IS_MODAL_SHOW_DELETE', true)
       var show = document.getElementsByTagName('body')
       show[0].style.overflow = 'hidden'
+      document.body.scrollTop = 0
+      document.documentElement.scrollTop = 0
       // await this.deleteEvent(this.$route.params.id)
 
       // this.$router.push({ name: 'MyEvent' })
