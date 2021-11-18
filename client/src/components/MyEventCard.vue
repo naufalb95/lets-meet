@@ -60,15 +60,13 @@ export default {
     },
     async leaveEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', true)
-      await this.userLeaveEvent(this.event.event.id)
-
-      await this.fetchMyEvents()
+      // await this.userLeaveEvent(this.event.event.id)
+      // await this.fetchMyEvents()
     },
     async deleteEventHandler () {
       this.$store.commit('SET_IS_MODAL_SHOW_DELETE', true)
-      await this.deleteEvent(this.event.event.id)
-
-      await this.fetchMyEvents()
+      // await this.deleteEvent(this.event.event.id)
+      // await this.fetchMyEvents()
     },
     async doneEventHandler () {
       await this.doneEvent(this.event.event.id)
@@ -104,7 +102,6 @@ export default {
       await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
     },
     deletezEvent: async function (newVal, oldVal) {
-      console.log(this.event.event.id)
       await this.deleteEvent(this.event.event.id)
       await this.fetchMyEvents()
       await this.$store.commit('SET_DELETE_EVENT', false)
