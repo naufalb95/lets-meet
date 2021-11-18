@@ -3,12 +3,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faTimes, faPaperPlane, faMicrophoneAlt, faMicrophoneAltSlash } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faTimes, faPaperPlane, faMicrophoneAlt, faMicrophoneAltSlash, faDesktop, faCamera, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { faClock, faMap, faUser } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import './index.css'
 
-library.add(faSearch, faClock, faMap, faUser, faTimes, faPaperPlane, faMicrophoneAltSlash, faMicrophoneAlt)
+library.add(faSearch, faClock, faMap, faUser, faTimes, faPaperPlane, faDesktop, faCamera, faMicrophoneAltSlash, faMicrophoneAlt, faPhone)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
