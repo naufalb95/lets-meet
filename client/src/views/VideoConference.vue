@@ -73,7 +73,7 @@
 <script>
 import AgoraRTC from 'agora-rtc-sdk-ng'
 import AgoraRTM from 'agora-rtm-sdk'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 import { utcToZonedTime, format } from 'date-fns-tz'
 
 export default {
@@ -118,6 +118,9 @@ export default {
   },
   methods: {
     ...mapActions(['getChatToken', 'getVideoToken', 'getScreenToken', 'fetchEventDetail']),
+    ...mapMutations({
+      setIsVideoConference: 'SET_IS_VIDEO_CONFERENCE'
+    }),
     async createNewMessage (e) {
       const checkEmptyMsg = this.chat.message.trim()
       if (this.chat.channel != null && (e.type === 'submit' || (e.type === 'keydown' && e.keyCode === 13)) && checkEmptyMsg) {
@@ -297,6 +300,7 @@ export default {
     }
   },
   async created () {
+    this.setIsVideoConference(true)
     // ! Get Event Detail
     this.eventId = +this.$route.params.id
     await this.fetchEventDetail(this.eventId)
