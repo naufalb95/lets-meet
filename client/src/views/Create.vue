@@ -117,7 +117,7 @@ export default {
   async mounted () {
     try {
       const googleMapApi = await GoogleMapsApiLoader({
-        apiKey: '',
+        apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
         libraries: ['places']
       })
       navigator.geolocation.getCurrentPosition(this.showPosition)
