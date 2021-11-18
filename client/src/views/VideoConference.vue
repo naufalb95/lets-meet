@@ -11,7 +11,7 @@
         <div id='video_part' class='flex-grow-0 relative' v-for="user of inMeetParticipants" :key="user.id">
           <div :id="user.id" class='participants-video bg-gray-800 h-full rounded-lg text-black mb-3 overflow-hidden relative'>
             <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center text-gray-300">{{ user.username }}</div>
-            <div class="absolute top-0 right-0 z-10 w-full h-full flex justify-end items-start  text-gray-300 pr-2 pt-3">
+            <div class="absolute top-0 right-0 z-10 w-full h-full flex justify-end items-start  text-gray-300 pr-2 pt-3" v-if="!user.audioTrack">
               <font-awesome-icon :icon="['fas', 'microphone-alt-slash']" class="mr-2 text-red-500"/>
             </div>
             <div class="absolute top-0 left-0 z-20 w-full h-full flex justify-start items-end text-gray-300">
@@ -22,41 +22,43 @@
           </div>
         </div>
       </div>
-       <div id='part_chat' class='flex-grow-0 h-full p-2'>
+       <div id='part_chat' class='h-full p-2'>
         <div class='bg-white h-full rounded-lg text-black'>
-          <div class='p-3 overflow-auto flex flex-col h-full'>
-            <div class="border-b border-gray-400 pb-2 font-semibold text-gray-700">
-              Chat Participants
+          <div class='p-3 h-full'>
+            <div class="h-full relative">
+              <div class="border-b border-gray-400 pb-2 font-semibold text-gray-700">
+                Chat Participants
+              </div>
+              <div id="chat_container" class="overflow-y-auto overflow-x-hidden">
+                <div v-for="(data, index) in chat.messages" :key="index" class="my-2">
+                  <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
+                  <div class="text-sm">{{ data.message }}</div>
+                </div>
+              </div>
+              <form style="height: 80px" class="flex absolute bottom-0 w-full" @submit.prevent="createNewMessage">
+                <div class='w-5/6'>
+                  <textarea type="text" @keydown="createNewMessage" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="chat.message" rows="2">
+                  </textarea>
+                </div>
+                <div class='w-1/6'>
+                  <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0 bg-white'>
+                    <font-awesome-icon :icon="['fas', 'paper-plane']" class="mr-2 text-2xl text-gray-600"/>
+                  </button>
+                </div>
+              </form>
             </div>
-            <div class="flex-grow h-full">
-              <div v-for="(data, index) in chat.messages" :key="index" class="my-2">
-                <div><span class="font-semibold text-sm">{{ data.name }}</span> <span class="italic text-xs text-gray-400">{{ data.time }}</span></div>
-                <div class="text-sm">{{ data.message }}</div>
-              </div>
-            </div>
-            <form class="flex flex-grow-0" @submit.prevent="createNewMessage">
-              <div class='w-5/6'>
-                <textarea type="text" @keydown="createNewMessage" id='chat_message' placeholder='Start talking with everyone!' class='p-1 border border-r-0 border-gray-300 w-full h-full rounded-l-md outline-none overflow-y-scroll overflow-x-hidden' v-model="chat.message" rows="2">
-                </textarea>
-              </div>
-              <div class='w-1/6'>
-                <button class='p-1 border border-gray-300 w-full h-full rounded-r-md outline-none border-l-0 bg-white'>
-                  <font-awesome-icon :icon="['fas', 'paper-plane']" class="mr-2 text-2xl text-gray-600"/>
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       </div>
     </div>
-    <div id='bottom_row' class='text-white pl-5 flex items-center'>
-      <button class='mx-3' @click="shareScreenHandler" v-if="isHostPresent">Screen Share</button>
-      <button class='mx-3' @click="stopScreenShareHandler" v-if="isHostPresent">Stop Screen Share</button>
-      <button class='mx-3' @click="openCamHandler">Open Cam</button>
-      <button class='mx-3' @click="closeCamHandler">Close Cam</button>
-      <button class='mx-3' @click="muteHandler">Mute</button>
-      <button class='mx-3' @click="unmuteHandler">Unmute</button>
-      <button class='mx-3' @click="leaveHandler">Leave Room</button>
+    <div id='bottom_row' class='text-white pl-5 flex items-center justify-center'>
+      <button ref="shareScreen" class='mx-2 px-5 py-2 bg-gray-600 rounded-full' @click="shareScreenHandler" v-if="isHostPresent"><font-awesome-icon :icon="['fas', 'desktop']" class="text-xl text-gray-300"/></button>
+      <!-- <button class='mx-3' @click="shareScreenHandler" v-if="isHostPresent && isScreenSharing">Stop Screen Share</button> -->
+      <button ref="camera" class='mx-2 px-5 py-2 bg-gray-600 rounded-full' @click="openCamHandler"><font-awesome-icon :icon="['fas', 'camera']" class="text-2xl text-gray-300"/></button>
+      <!-- <button class='mx-3' @click="openCamHandler" v-if="isOpenCam">Close Cam</button> -->
+      <!-- <button class='mx-3' @click="unmuteHandler" v-if="!isMuted">Mute</button> -->
+      <button ref="mic" class='mx-2 px-5 py-2 bg-gray-600 rounded-full' @click="unmuteHandler"><font-awesome-icon :icon="['fas', 'microphone-alt']" class="text-2xl text-gray-300"/></button>
+      <button class='mx-2 px-5 py-2 bg-red-600 rounded-full' @click="leaveHandler"><font-awesome-icon :icon="['fas', 'sign-out-alt']" class="text-2xl text-gray-300"/></button>
     </div>
     <div class='absolute top-0 left-0 h-screen w-screen bg-black bg-opacity-80 flex justify-center items-center z-40' v-if='!isJoined'>
       <div class='bg-white rounded w-3/12 py-12 px-8 flex justify-center items-center flex-col'>
@@ -110,7 +112,10 @@ export default {
       inMeetParticipants: [],
       participantVolumeId: null,
       screenShareTrack: null,
-      isJoined: false
+      isJoined: false,
+      isMuted: true,
+      isOpenCam: false,
+      isScreenSharing: false
     }
   },
   computed: {
@@ -126,15 +131,11 @@ export default {
       if (this.chat.channel != null && (e.type === 'submit' || (e.type === 'keydown' && e.keyCode === 13)) && checkEmptyMsg) {
         await this.chat.channel.sendMessage({ text: this.chat.message })
 
-        const name = this.eventDetail.participants.find(e => e.userid === this.settings.uid)
-
         this.chat.messages.push({
           message: this.chat.message,
           name: 'You',
           time: format(utcToZonedTime(new Date(), 'Asia/Jakarta'), 'kk:mm')
         })
-
-        console.log(name)
 
         this.chat.message = ''
       }
@@ -149,7 +150,6 @@ export default {
       this.isJoined = true
     },
     async initializeChat () {
-      console.log(this.eventDetail)
       // ! Get Chat Token
       const payload = { ...this.settings }
 
@@ -162,19 +162,9 @@ export default {
 
       this.chat.channel = this.chat.client.createChannel(this.settings.channelName)
 
-      // await this.chat.channel.join()
-
       // ! Chat Event Handler
       // * If there is a new message handler
-      this.chat.channel.on('ChannelMessage', (message, uid) => {
-        const userDetail = this.eventDetail.participants.find(el => el.userId === uid)
-        let username = ''
-
-        if (userDetail) username = userDetail.User.username
-        else {
-          if (uid === this.hostId) username = this.eventDetail.eventOrganizer.username
-        }
-
+      this.chat.channel.on('ChannelMessage', (message, username) => {
         this.chat.messages.push({
           message: message.text,
           name: username,
@@ -197,13 +187,9 @@ export default {
         const checkParticipant = this.inMeetParticipants.some(el => el.id === user.uid)
         const checkHost = this.eventDetail.event.eventOrganizerId === user.uid
 
-        console.log(checkHost)
-
         const checkScreenShareId = this.eventDetail.participants.some(el => el.userId === user.uid)
 
         if (!checkParticipant || checkHost) {
-          console.log(checkScreenShareId, this.screenId)
-
           if (!checkScreenShareId && !checkHost) this.screenId = user.uid
 
           const remoteUser = {
@@ -218,7 +204,6 @@ export default {
           }
 
           if (this.screenId !== remoteUser.id || checkHost) {
-            console.log('Masuk sini')
             this.inMeetParticipants.push(remoteUser)
           }
         }
@@ -326,12 +311,14 @@ export default {
         }
 
         if (mediaType === 'audio') {
-          const audioTrack = user.audioTrack
-          audioTrack.play()
+          const userDetail = this.inMeetParticipants.find(p => p.id === user.uid)
+          userDetail.audioTrack = user.audioTrack
+
+          userDetail.audioTrack.play()
         }
       })
 
-      this.video.client.on('user-unpublished', (user) => {
+      this.video.client.on('user-unpublished', (user, mediaType) => {
         const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
 
         if (hostDetail) {
@@ -346,6 +333,11 @@ export default {
           }
         }
 
+        if (mediaType === 'audio') {
+          const userDetail = this.inMeetParticipants.find(p => p.id === user.uid)
+          userDetail.audioTrack = null
+        }
+
         // if (user.uid === this.screenId) {
         //   // ! Clear screen share ID if it is unpublished
         //   this.screenId = null
@@ -355,7 +347,6 @@ export default {
       // ! When a user left video call
       this.video.client.on('user-left', async (user) => {
         if (user.uid === this.screenId) {
-          console.log('hai')
           this.screenId = null
         } else {
           this.inMeetParticipants = this.inMeetParticipants.filter(participant => participant.id !== user.uid)
@@ -363,7 +354,7 @@ export default {
       })
     },
     async openCamHandler () {
-      if (!this.inMeetParticipants[0].videoTrack) {
+      if (!this.isOpenCam) {
         this.inMeetParticipants[0].videoTrack = await AgoraRTC.createCameraVideoTrack()
 
         await this.video.client.publish(this.inMeetParticipants[0].videoTrack)
@@ -371,27 +362,55 @@ export default {
         this.inMeetParticipants[0].videoTrack.play(this.inMeetParticipants[0].id.toString(), {
           fit: 'contain'
         })
+
+        this.isOpenCam = true
+
+        this.$refs.camera.classList.add('bg-red-600')
+        this.$refs.camera.classList.remove('bg-gray-600')
       } else {
-        this.inMeetParticipants[0].videoTrack.setEnabled(true)
+        await this.video.client.unpublish(this.inMeetParticipants[0].videoTrack)
+
+        this.inMeetParticipants[0].videoTrack.close(true)
+
+        this.isOpenCam = false
+
+        this.$refs.camera.classList.remove('bg-red-600')
+        this.$refs.camera.classList.add('bg-gray-600')
       }
     },
     async closeCamHandler () {
       this.inMeetParticipants[0].videoTrack.setEnabled(false)
     },
     async unmuteHandler () {
-      if (!this.inMeetParticipants[0].audioTrack) {
+      if (this.isMuted) {
         this.inMeetParticipants[0].audioTrack = await AgoraRTC.createMicrophoneAudioTrack()
 
         await this.video.client.publish(this.inMeetParticipants[0].audioTrack)
+
+        this.isMuted = false
+
+        this.$refs.mic.classList.add('bg-red-600')
+        this.$refs.mic.classList.remove('bg-gray-600')
       } else {
-        this.inMeetParticipants[0].audioTrack.setEnabled(true)
+        await this.video.client.unpublish(this.inMeetParticipants[0].audioTrack)
+
+        this.inMeetParticipants[0].audioTrack = null
+
+        this.isMuted = true
+
+        this.$refs.mic.classList.remove('bg-red-600')
+        this.$refs.mic.classList.add('bg-gray-600')
       }
     },
     async muteHandler () {
-      this.inMeetParticipants[0].audioTrack.setEnabled(false)
+      await this.video.client.unpublish(this.inMeetParticipants[0].audioTrack)
+
+      this.local.video.close(true)
+
+      this.isMuted = true
     },
     async shareScreenHandler () {
-      if (!this.screenId) {
+      if (!this.isScreenSharing) {
         await this.getScreenToken({ channelName: this.settings.channelName })
 
         this.video.screen = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
@@ -405,9 +424,21 @@ export default {
 
         await this.video.screen.publish(this.local.screen)
 
-        // this.local.screen.play('main_video', {
-        //   fit: 'contain'
-        // })
+        this.isScreenSharing = true
+
+        this.$refs.shareScreen.classList.add('bg-red-600')
+        this.$refs.shareScreen.classList.remove('bg-gray-600')
+      } else {
+        await this.video.screen.unpublish(this.local.screen)
+
+        this.local.screen.close(true)
+
+        await this.video.screen.leave()
+
+        this.screenId = null
+
+        this.$refs.shareScreen.classList.remove('bg-red-600')
+        this.$refs.shareScreen.classList.add('bg-gray-600')
       }
     },
     async stopScreenShareHandler () {
@@ -508,5 +539,15 @@ export default {
 
   .btn {
     width: 100px;
+  }
+
+  #chat_container {
+    max-height: calc(100% - 130px);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  #chat_container::-webkit-scrollbar {
+    display: none;
   }
 </style>
