@@ -1008,13 +1008,11 @@ describe('Event fiture', () => {
             })
             .attach("imgUrl", buffer, "image.png")
             .then((res) => {
-                console.log(res.body, "ini body");
                 expect(res.status).toBe(201);
                 expect(res.body).toEqual(expect.any(Object));
                 done();
             })
             .catch((err) => {
-                console.log(err, "<<<<<<<<<<<");
                 done(err)
             })
     })
@@ -1039,13 +1037,11 @@ describe('Event fiture', () => {
             })
             .attach("imgUrl", buffer, "REACT_JS.TXT")
             .then((res) => {
-                console.log(res.body, "ini body");
                 expect(res.status).toBe(400);
                 expect(res.body).toEqual({ error: 'The format besides jpg, jpeg and png is not acceptable' });
                 done();
             })
             .catch((err) => {
-                console.log(err, "<<<<<<<<<<<");
                 done(err)
             })
     })
