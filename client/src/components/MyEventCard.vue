@@ -64,7 +64,6 @@ export default {
       var show = document.getElementsByTagName('body')
       show[0].style.overflow = 'hidden'
       // await this.userLeaveEvent(this.event.event.id)
-
       // await this.fetchMyEvents()
     },
     async deleteEventHandler () {
@@ -73,7 +72,6 @@ export default {
       var show = document.getElementsByTagName('body')
       show[0].style.overflow = 'hidden'
       // await this.deleteEvent(this.event.event.id)
-
       // await this.fetchMyEvents()
     },
     async doneEventHandler () {
@@ -116,7 +114,7 @@ export default {
       }
     },
     deletezEvent: async function (newVal, oldVal) {
-      if (newVal === true) {
+       if (newVal === true) {
         console.log(this.currentEventId)
         await this.$store.commit('SET_DELETE_EVENT', false)
         await this.$store.commit('SET_IS_MODAL_SHOW_DELETE', false)
