@@ -14,11 +14,13 @@ export default {
   methods: {
     async cancelLeave () {
       await this.$store.commit('SET_IS_MODAL_SHOW_LEAVE', false)
+      var show = document.getElementsByTagName('body')
+      show[0].style.overflow = 'visible'
     },
     async leave () {
       await this.$store.commit('SET_LEAVE_EVENT', true)
       var show = document.getElementsByTagName('body')
-      show[0].style.overflow = 'hidden'
+      show[0].style.overflow = 'visible'
     }
   }
 }

@@ -132,6 +132,8 @@ export default {
       this.google = googleMapApi
       this.initializeMap()
       this.showPosition()
+      if (this.eventType === 'Online') this.$refs.location.classList.add('hidden')
+      if (this.eventType === 'Offline') this.$refs.location.classList.remove('hidden')
     } catch (error) {
       console.log(error)
     }
