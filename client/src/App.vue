@@ -1,5 +1,8 @@
 <template>
   <div id="app" class="flex min-h-screen min-w-screen bg-gray-50 relative font-base overflow-x-hidden">
+    <div class="bg-blue-400 h-screen w-screen absolute top-0 left-0 z-50 flex justify-start items-start text-white font-logo text-9xl pl-32 pt-24">
+      Let's Meet
+    </div>
     <Navbar id="navbar" v-if="!isVideoConference" class="absolute z-10" />
     <router-view id="content" class="w-screen" />
     <div class="bottom-0 absolute">
