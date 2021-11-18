@@ -109,7 +109,7 @@ export default {
       screenId: null,
       inMeetParticipants: [],
       participantVolumeId: null,
-      volumeCounter: 0,
+      screenShareTrack: null,
       isJoined: false
     }
   },
@@ -167,12 +167,12 @@ export default {
       // ! Chat Event Handler
       // * If there is a new message handler
       this.chat.channel.on('ChannelMessage', (message, uid) => {
-        const userDetail = this.eventDetail.participants.find(el => el.userId === this.settings.uid)
+        const userDetail = this.eventDetail.participants.find(el => el.userId === uid)
         let username = ''
 
         if (userDetail) username = userDetail.User.username
         else {
-          if (this.settings.uid === this.hostId) username = this.eventDetail.eventOrganizer.username
+          if (uid === this.hostId) username = this.eventDetail.eventOrganizer.username
         }
 
         this.chat.messages.push({
@@ -195,11 +195,16 @@ export default {
       // ! Video Call Event Handler
       this.video.client.on('user-joined', (user) => {
         const checkParticipant = this.inMeetParticipants.some(el => el.id === user.uid)
+        const checkHost = this.eventDetail.event.eventOrganizerId === user.uid
+
+        console.log(checkHost)
 
         const checkScreenShareId = this.eventDetail.participants.some(el => el.userId === user.uid)
 
-        if (!checkParticipant) {
-          if (!checkScreenShareId) this.screenId = user.uid
+        if (!checkParticipant || checkHost) {
+          console.log(checkScreenShareId, this.screenId)
+
+          if (!checkScreenShareId && !checkHost) this.screenId = user.uid
 
           const remoteUser = {
             id: user.uid
@@ -209,10 +214,13 @@ export default {
 
           if (userDetail) remoteUser.username = userDetail.User.username
           else {
-            if (remoteUser.id === this.hostId) remoteUser.username = this.eventDetail.eventOrganizer.username
+            if (remoteUser.id === this.hostId) remoteUser.username = this.eventDetail.eventOrganizer.username + ' (Host)'
           }
 
-          this.inMeetParticipants.push(remoteUser)
+          if (this.screenId !== remoteUser.id || checkHost) {
+            console.log('Masuk sini')
+            this.inMeetParticipants.push(remoteUser)
+          }
         }
       })
 
@@ -221,16 +229,100 @@ export default {
         await this.video.client.subscribe(user, mediaType)
 
         if (mediaType === 'video') {
-          if (this.hostId === user.uid || this.screenId === user.uid) {
-            const videoTrack = user.videoTrack
-            videoTrack.play('main_video', {
-              fit: 'contain'
-            })
+          const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
+
+          if (hostDetail) {
+            // ! Jika hostnya ada
+
+            if (this.screenId === user.uid) {
+              // ! Jika ini screen
+              // ! dan ada host
+              // ! Maka screen masuk ke main_video
+              // ! cam host pindah ke kanan
+
+              this.screenShareTrack = user.videoTrack
+
+              this.screenShareTrack.play('main_video', {
+                fit: 'contain'
+              })
+
+              hostDetail.screenTrack.play(hostDetail.id.toString(), {
+                fit: 'contain'
+              })
+            } else if (hostDetail.id === user.uid && !this.screenId) {
+              // ! Jika ini adalah host
+              // ! Jika tidak ada screen share
+              // ! Maka screen masuk ke main_video
+
+              hostDetail.screenTrack = user.videoTrack
+
+              hostDetail.screenTrack.play('main_video', {
+                fit: 'contain'
+              })
+            } else if (hostDetail.id === user.uid && this.screenId) {
+              // ! Jika ini adalah host
+              // ! Jika ada screenshare
+              // ! Maka masuk ke div kecil
+              hostDetail.screenTrack = user.videoTrack
+
+              hostDetail.screenTrack.play(hostDetail.id.toString(), {
+                fit: 'contain'
+              })
+            } else {
+              // ! Jika ini adalah user
+              // ! Dan ada host
+              // ! Maka masuk ke div kecil
+
+              user.videoTrack.play(user.uid.toString(), {
+                fit: 'contain'
+              })
+            }
           } else {
-            user.videoTrack.play(user.uid.toString(), {
-              fit: 'contain'
-            })
+            if (this.screenId === user.uid) {
+              // ! Jika tidak ada cam host
+              // ! Jika ini adalah screen
+              // ! Maka masuk layar besar
+
+              this.screenShareTrack = user.videoTrack
+
+              this.screenShareTrack.play('main_video')
+            } else {
+              // ! Jika tidak ada host
+              // ! Jika user
+              user.videoTrack.play(user.uid.toString(), {
+                fit: 'contain'
+              })
+            }
           }
+
+          // else {
+          //   user.videoTrack.play(user.uid.toString(), {
+          //     fit: 'contain'
+          //   })
+          // }
+
+          // ! .... ini udah work
+          // if (this.hostId === user.uid || this.screenId === user.uid) {
+          //   const videoTrack = user.videoTrack
+          //   videoTrack.play('main_video', {
+          //     fit: 'contain'
+          //   })
+
+          //   const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
+
+          //   if (hostDetail) {
+          //     if (hostDetail.screenTrack) {
+          //       hostDetail.screenTrack.play(hostDetail.id.toString(), {
+          //         fit: 'contain'
+          //       })
+          //     }
+          //   }
+          // } else {
+          //   user.videoTrack.play(user.uid.toString(), {
+          //     fit: 'contain'
+          //   })
+          // }
+          // @ .... ini udah work
         }
 
         if (mediaType === 'audio') {
@@ -240,10 +332,24 @@ export default {
       })
 
       this.video.client.on('user-unpublished', (user) => {
-        if (user.uid === this.screenId) {
-          // ! Clear screen share ID if it is unpublished
-          this.screenId = null
+        const hostDetail = this.inMeetParticipants.find(el => el.id === this.hostId)
+
+        if (hostDetail) {
+          if (this.screenId === user.uid) {
+            // ! Yang keluar adalah screen share
+            // ! Ada open cam host
+
+            this.screenId = null
+            hostDetail.screenTrack.play('main_video', {
+              fit: 'contain'
+            })
+          }
         }
+
+        // if (user.uid === this.screenId) {
+        //   // ! Clear screen share ID if it is unpublished
+        //   this.screenId = null
+        // }
       })
 
       // ! When a user left video call
@@ -333,7 +439,7 @@ export default {
 
     if (userDetail) username = userDetail.User.username
     else {
-      if (this.settings.uid === this.hostId) username = this.eventDetail.eventOrganizer.username
+      if (this.settings.uid === this.hostId) username = this.eventDetail.eventOrganizer.username + ' (Host)'
     }
 
     this.inMeetParticipants.push({
