@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx jest --watchAll --detectOpenHandles --runInBand --verbose --forceExit --coverage"
+    "test": "npx jest --watchAll --detectOpenHandles --runInBand --verbose --forceExit --coverage",
+    "dev": "NODE_ENV=development npx nodemon app.js",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
