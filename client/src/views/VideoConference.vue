@@ -175,7 +175,7 @@ export default {
       this.chat.channel.on('ChannelMessage', (message, uid) => {
         let username = ''
 
-        const foundParticipant = this.inMeetParticipants.find(p => p.id === +username)
+        const foundParticipant = this.inMeetParticipants.find(p => p.id === +uid)
 
         if (foundParticipant) username = foundParticipant.username
         else if (+uid === this.hostId) {

@@ -1,8 +1,8 @@
 const { Event, Category, User, Participant } = require("../models");
 const { Op } = require("sequelize");
 const { RtmTokenBuilder, RtmRole, RtcRole, RtcTokenBuilder } = require('agora-access-token');
-const APP_ID = "bba821c9f0374c0a86b015c0668097d8";
-const APP_CERTIFICATE = "07331de6cdcb4a3ebe1686214c79921c";
+const APP_ID = process.env.AGORA_APP_ID;
+const APP_CERTIFICATE = process.env.AGORA_APP_CERTIFICATE;
 
 class EventController {
     static async create(req, res, next) {
