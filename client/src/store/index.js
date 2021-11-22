@@ -2,8 +2,11 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 
+// const server = axios.create({
+//   baseURL: 'http://localhost:3000'
+// })
 const server = axios.create({
-  baseURL: 'http://localhost:3000'
+  baseURL: process.env.VUE_APP_SERVER_URL
 })
 
 Vue.use(Vuex)
