@@ -1,0 +1,41 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest --watchAll --detectOpenHandles --runInBand --verbose --forceExit --coverage",
+    "dev": "NODE_ENV=development npx node bin/www",
+    "start": "node bin/www"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "agora-access-token": "^2.0.4",
+    "axios": "^0.24.0",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "date-and-time": "^2.0.1",
+    "express": "^4.17.1",
+    "form-data": "^4.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.3",
+    "node-cron": "^3.0.0",
+    "pg": "^8.7.1",
+    "sequelize": "^6.9.0"
+  },
+  "devDependencies": {
+    "jest": "^27.3.1",
+    "sequelize-cli": "^6.3.0",
+    "supertest": "^6.1.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naufalb95/lets-meet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/naufalb95/lets-meet/issues"
+  },
+  "homepage": "https://github.com/naufalb95/lets-meet#readme"
+}
